@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Insights & Tips - Freejobwala</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Blogs Page Specific Styles */
+        .blogs-page {
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .blogs-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blogs-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .blogs-header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .blogs-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .blogs-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .blogs-search-container {
+            background: white;
+            padding: 40px;
+            margin: -40px auto 60px auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .blogs-search-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input-group input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-input-group i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .blogs-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 2px solid #e1e5e9;
+            color: #666;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .blogs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .blogs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .blog-content {
+            padding: 25px;
+        }
+
+        .blog-category {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .blog-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .blog-excerpt {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .blog-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .blog-read-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .load-more-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .load-more-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .load-more-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .no-blogs-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-blogs-message i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .no-blogs-message h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .blogs-title {
+                font-size: 2rem;
+            }
+
+            .blogs-search-container {
+                margin: -20px 20px 40px 20px;
+                padding: 25px;
+            }
+
+            .blogs-search-bar {
+                flex-direction: column;
+            }
+
+            .blogs-filters {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .blogs-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .blog-card {
+                margin: 0 10px;
+            }
+
+            .blog-content {
+                padding: 20px;
+            }
+
+            .blog-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <div class="logo-text">
+                            <span class="logo-free">Free</span>
+                            <span class="logo-job">job</span>
+                            <span class="logo-wala">wala</span>
+                            <div class="logo-swoosh"></div>
+                        </div>
+                    </a>
+                </div>
+                
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="companies.html">Companies</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="resume.html">Resume</a></li>
+                        <li><a href="blogs.html" class="active">Blogs</a></li>
+                        <li><a href="packages.html">Packages</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <a href="login.html" class="btn btn-outline">Login</a>
+                    <a href="register.html" class="btn btn-primary">Register</a>
+                    <a href="employer-options.html" class="btn btn-secondary">For Employers</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Blogs Page Content -->
+    <div class="blogs-page">
+        <!-- Blogs Header -->
+        <section class="blogs-header">
+            <div class="container">
+                <div class="blogs-header-content">
+                    <h1 class="blogs-title">Career Insights & Tips</h1>
+                    <p class="blogs-subtitle">Stay ahead in your career with expert advice, industry insights, and practical tips from our team of professionals</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search and Filters -->
+        <div class="container">
+            <div class="blogs-search-container">
+                <div class="blogs-search-bar">
+                    <div class="search-input-group">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="blogSearchInput" placeholder="Search blogs by title, category, or content...">
+                    </div>
+                    <button class="search-btn" onclick="performBlogSearch()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Blog Filters -->
+            <div class="blogs-filters">
+                <button class="filter-btn active" onclick="filterBlogs('all')">All Blogs</button>
+                <button class="filter-btn" onclick="filterBlogs('Career Tips')">Career Tips</button>
+                <button class="filter-btn" onclick="filterBlogs('Interview Prep')">Interview Prep</button>
+                <button class="filter-btn" onclick="filterBlogs('Workplace Trends')">Workplace Trends</button>
+                <button class="filter-btn" onclick="filterBlogs('Networking')">Networking</button>
+                <button class="filter-btn" onclick="filterBlogs('Resume Writing')">Resume Writing</button>
+                <button class="filter-btn" onclick="filterBlogs('Job Search')">Job Search</button>
+            </div>
+
+            <!-- Blogs Grid -->
+            <div class="blogs-container">
+                <div class="blogs-grid" id="blogsGrid">
+                    <!-- Blog cards will be loaded here -->
+                </div>
+
+                <!-- Load More Button -->
+                <div class="load-more-container">
+                    <button class="load-more-btn" onclick="loadMoreBlogs()">
+                        <i class="fas fa-plus"></i> Load More Blogs
+                    </button>
+                </div>
+
+                <!-- No Blogs Found Message -->
+                <div id="noBlogsFound" class="no-blogs-message" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <h3>No blogs found</h3>
+                    <p>Try adjusting your search criteria or browse all blogs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <div class="logo-text">
+                            <span class="logo-free">Free</span>
+                            <span class="logo-job">job</span>
+                            <span class="logo-wala">wala</span>
+                            <div class="logo-swoosh"></div>
+                        </div>
+                    </div>
+                    <p>Connecting talent with opportunity. Find your dream job or hire the best talent with Freejobwala.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="jobs.html">Find Jobs</a></li>
+                        <li><a href="companies.html">Browse Companies</a></li>
+                        <li><a href="services.html">Our Services</a></li>
+                        <li><a href="blogs.html">Career Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>For Employers</h3>
+                    <ul>
+                        <li><a href="employer-options.html">Post Jobs</a></li>
+                        <li><a href="packages.html">Pricing Plans</a></li>
+                        <li><a href="login.html">Employer Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Freejobwala. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Blog data
+        let allBlogs = [];
+        let currentBlogs = [];
+        let currentFilter = 'all';
+        let currentPage = 1;
+        const blogsPerPage = 6;
+
+        // Initialize blogs when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllBlogs();
+            setupEventListeners();
+        });
+
+        // Load all blogs from API
+        async function loadAllBlogs() {
+            try {
+                console.log('Loading blogs from API...');
+                const response = await fetch('http://localhost:5000/api/blogs?limit=50');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch blogs: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                if (data.success && data.blogs) {
+                    allBlogs = data.blogs;
+                    currentBlogs = [...allBlogs];
+                    console.log('Blogs loaded:', allBlogs.length);
+                    displayBlogs();
+                } else {
+                    console.log('No blogs found, showing fallback');
+                    showFallbackBlogs();
+                }
+            } catch (error) {
+                console.error('Error loading blogs:', error);
+                showFallbackBlogs();
+            }
+        }
+        
+        // Show fallback blogs when API fails
+        function showFallbackBlogs() {
+            allBlogs = [
+                {
+                    _id: 1,
+                    title: "10 Essential Skills Every Job Seeker Should Master in 2024",
+                    excerpt: "Discover the most in-demand skills that will make you stand out in today's competitive job market. From technical expertise to soft skills, learn what employers are looking for.",
+                    category: "Career Tips",
+                    publishedAt: "2024-01-15",
+                    readTime: "5 min read",
+                    image: "📚",
+                    content: "In today's rapidly evolving job market, staying competitive requires a strategic approach to skill development. This comprehensive guide covers the top 10 skills that employers are actively seeking in 2024, including both technical and soft skills that will set you apart from other candidates."
+                },
+                {
+                    _id: 2,
+                    title: "How to Ace Your Next Job Interview: A Complete Guide",
+                    excerpt: "Master the art of job interviews with our comprehensive guide. Learn about common questions, body language tips, and how to make a lasting impression on your potential employer.",
+                    category: "Interview Prep",
+                    publishedAt: "2024-01-12",
+                    readTime: "7 min read",
+                    image: "💼",
+                    content: "Job interviews can be nerve-wracking, but with the right preparation and mindset, you can turn them into opportunities to shine. This detailed guide covers everything from pre-interview preparation to post-interview follow-up, ensuring you're ready to make a great impression."
+                },
+                {
+                    _id: 3,
+                    title: "Remote Work: The Future of Employment",
+                    excerpt: "Explore the growing trend of remote work and how it's reshaping the job market. Learn about the benefits, challenges, and tips for succeeding in a remote work environment.",
+                    category: "Workplace Trends",
+                    publishedAt: "2024-01-10",
+                    readTime: "6 min read",
+                    image: "🏠",
+                    content: "The remote work revolution has fundamentally changed how we think about employment. This article explores the long-term implications of remote work, including its impact on productivity, work-life balance, and the future of office culture."
+                },
+                {
+                    _id: 4,
+                    title: "Building a Professional Network That Works",
+                    excerpt: "Networking is crucial for career success. Learn effective strategies to build and maintain professional relationships that can open doors to new opportunities.",
+                    category: "Networking",
+                    publishedAt: "2024-01-08",
+                    readTime: "4 min read",
+                    image: "🤝",
+                    content: "Professional networking isn't just about collecting business cards or LinkedIn connections. It's about building meaningful relationships that can advance your career. Learn the art of authentic networking and how to leverage your connections effectively."
+                },
+                {
+                    _id: 5,
+                    title: "The Art of Writing a Standout Resume",
+                    excerpt: "Your resume is your first impression. Learn how to craft a compelling resume that gets noticed by recruiters and hiring managers.",
+                    category: "Resume Writing",
+                    publishedAt: "2024-01-05",
+                    readTime: "8 min read",
+                    image: "📝",
+                    content: "A well-crafted resume can be the difference between landing an interview and being overlooked. This comprehensive guide covers resume formatting, content optimization, and common mistakes to avoid when creating your professional document."
+                },
+                {
+                    _id: 6,
+                    title: "Job Search Strategies That Actually Work",
+                    excerpt: "Stop applying to hundreds of jobs with no response. Learn proven strategies to make your job search more effective and efficient.",
+                    category: "Job Search",
+                    publishedAt: "2024-01-03",
+                    readTime: "6 min read",
+                    image: "🎯",
+                    content: "A successful job search requires more than just applying to every available position. Learn strategic approaches to job searching, including how to identify the right opportunities, tailor your applications, and follow up effectively."
+                },
+                {
+                    _id: 7,
+                    title: "Salary Negotiation: Getting What You're Worth",
+                    excerpt: "Don't leave money on the table. Master the art of salary negotiation with these proven strategies and techniques.",
+                    category: "Career Tips",
+                    publishedAt: "2024-01-01",
+                    readTime: "5 min read",
+                    image: "💰",
+                    content: "Salary negotiation can be intimidating, but it's a crucial skill for career advancement. Learn when and how to negotiate your salary, including research strategies, timing, and communication techniques that work."
+                },
+                {
+                    _id: 8,
+                    title: "The Future of Work: AI and Automation",
+                    excerpt: "How artificial intelligence and automation are reshaping industries and what it means for your career.",
+                    category: "Workplace Trends",
+                    publishedAt: "2023-12-28",
+                    readTime: "7 min read",
+                    image: "🤖",
+                    content: "As AI and automation continue to advance, understanding their impact on the job market is crucial for career planning. This article explores which jobs are at risk, which are growing, and how to future-proof your career."
+                }
+            ];
+
+            currentBlogs = [...allBlogs];
+            displayBlogs();
+        }
+
+        // Display blogs
+        function displayBlogs() {
+            const blogsGrid = document.getElementById('blogsGrid');
+            const noBlogsFound = document.getElementById('noBlogsFound');
+            
+            if (currentBlogs.length === 0) {
+                blogsGrid.innerHTML = '';
+                noBlogsFound.style.display = 'block';
+                return;
+            }
+
+            noBlogsFound.style.display = 'none';
+            
+            const startIndex = 0;
+            const endIndex = currentPage * blogsPerPage;
+            const blogsToShow = currentBlogs.slice(startIndex, endIndex);
+            
+            blogsGrid.innerHTML = blogsToShow.map(blog => createBlogCard(blog)).join('');
+        }
+
+        // Create blog card HTML
+        function createBlogCard(blog) {
+            return `
+                <div class="blog-card" onclick="viewBlog('${blog._id || blog.id}')">
+                    <div class="blog-image">
+                        ${blog.image}
+                    </div>
+                    <div class="blog-content">
+                        <span class="blog-category">${blog.category}</span>
+                        <h3 class="blog-title">${blog.title}</h3>
+                        <p class="blog-excerpt">${blog.excerpt}</p>
+                        <div class="blog-meta">
+                            <div class="blog-date">
+                                <i class="fas fa-calendar"></i>
+                                ${formatDate(blog.publishedAt || blog.date)}
+                            </div>
+                            <div class="blog-read-time">
+                                <i class="fas fa-clock"></i>
+                                ${blog.readTime}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        // Filter blogs by category
+        function filterBlogs(category) {
+            currentFilter = category;
+            currentPage = 1;
+            
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (category === 'all') {
+                currentBlogs = [...allBlogs];
+            } else {
+                currentBlogs = allBlogs.filter(blog => blog.category === category);
+            }
+            
+            displayBlogs();
+        }
+
+        // Search blogs
+        function performBlogSearch() {
+            const searchTerm = document.getElementById('blogSearchInput').value.toLowerCase();
+            
+            if (searchTerm === '') {
+                currentBlogs = [...allBlogs];
+            } else {
+                currentBlogs = allBlogs.filter(blog => 
+                    blog.title.toLowerCase().includes(searchTerm) ||
+                    blog.excerpt.toLowerCase().includes(searchTerm) ||
+                    blog.category.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            currentPage = 1;
+            displayBlogs();
+        }
+
+        // Load more blogs
+        function loadMoreBlogs() {
+            currentPage++;
+            displayBlogs();
+        }
+
+        // View individual blog
+        function viewBlog(blogId) {
+            const blog = allBlogs.find(b => (b._id || b.id) == blogId);
+            if (blog) {
+                // For now, just show an alert. In a real app, this would open a blog detail page
+                alert(`Viewing: ${blog.title}\n\n${blog.content || blog.excerpt}`);
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search input enter key
+            document.getElementById('blogSearchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performBlogSearch();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

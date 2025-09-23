@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - JobWala</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            min-height: 700px;
+        }
+
+        .register-form-section {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .register-image-section {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .logo-free {
+            color: #1E88E5;
+        }
+        
+        .logo-job {
+            color: #ff6b35;
+        }
+        
+        .logo-wala {
+            color: #1E88E5;
+        }
+        
+        .logo-swoosh {
+            position: absolute;
+            bottom: -8px;
+            left: -5px;
+            right: -5px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 0%, #ff6b35 20%, #ff6b35 80%, transparent 100%);
+            border-radius: 2px;
+            transform: rotate(-2deg);
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .user-type-selection {
+            margin-bottom: 30px;
+        }
+
+        .user-type-label {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .user-type-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .user-type-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-type-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .user-type-card {
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .user-type-option input[type="radio"]:checked + .user-type-card {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .user-type-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .user-type-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-type-description {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .register-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: #666;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e9ecef;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .login-link {
+            text-align: center;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .login-link a:hover {
+            color: #764ba2;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .image-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .image-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .features {
+            list-style: none;
+            text-align: left;
+        }
+
+        .features li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .features li i {
+            margin-right: 15px;
+            font-size: 20px;
+            width: 24px;
+        }
+
+        .employer-type-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+        }
+
+        .employer-type-section.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .employer-type-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .employer-type-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .employer-type-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .employer-type-card {
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .employer-type-option input[type="radio"]:checked + .employer-type-card {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .employer-type-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .employer-type-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .employer-type-description {
+            font-size: 11px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .register-container {
+                flex-direction: column;
+                max-width: 500px;
+            }
+
+            .register-image-section {
+                display: none;
+            }
+
+            .register-form-section {
+                padding: 40px 30px;
+            }
+
+            .user-type-options {
+                grid-template-columns: 1fr;
+            }
+
+            .employer-type-options {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-form-section">
+                <div class="logo">
+                    <div class="logo-text">
+                        <span class="logo-free">Free</span>
+                        <span class="logo-job">job</span>
+                        <span class="logo-wala">wala</span>
+                        <div class="logo-swoosh"></div>
+                    </div>
+                </div>
+
+            <h1 class="welcome-title">Create Account</h1>
+            <p class="welcome-subtitle">Join thousands of job seekers and employers</p>
+
+            <form id="registerForm">
+                <div id="alertContainer"></div>
+
+                <!-- User Type Selection -->
+                <div class="user-type-selection">
+                    <label class="user-type-label">I am a *</label>
+                    <div class="user-type-options">
+                        <div class="user-type-option">
+                            <input type="radio" id="jobseeker" name="userType" value="jobseeker" onchange="handleUserTypeChange()">
+                            <label for="jobseeker" class="user-type-card">
+                                <div class="user-type-icon">👤</div>
+                                <div class="user-type-title">Job Seeker</div>
+                                <div class="user-type-description">Looking for job opportunities</div>
+                            </label>
+                        </div>
+                        <div class="user-type-option">
+                            <input type="radio" id="employer" name="userType" value="employer" onchange="handleUserTypeChange()">
+                            <label for="employer" class="user-type-card">
+                                <div class="user-type-icon">🏢</div>
+                                <div class="user-type-title">Employer</div>
+                                <div class="user-type-description">Hiring talent for companies</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employer Type Selection (Hidden by default) -->
+                <div class="employer-type-section" id="employerTypeSection">
+                    <label class="user-type-label">What type of employer are you? *</label>
+                    <div class="employer-type-options">
+                        <div class="employer-type-option">
+                            <input type="radio" id="company" name="employerType" value="company">
+                            <label for="company" class="employer-type-card">
+                                <div class="employer-type-icon">🏭</div>
+                                <div class="employer-type-title">Company</div>
+                                <div class="employer-type-description">Direct employer hiring for your company</div>
+                            </label>
+                        </div>
+                        <div class="employer-type-option">
+                            <input type="radio" id="consultancy" name="employerType" value="consultancy">
+                            <label for="consultancy" class="employer-type-card">
+                                <div class="employer-type-icon">🤝</div>
+                                <div class="employer-type-title">Consultancy</div>
+                                <div class="employer-type-description">Recruitment agency helping others hire</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName" class="form-label">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName" class="form-label">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="form-label">Mobile Number *</label>
+                    <input type="tel" id="phone" name="phone" class="form-input" placeholder="+91-9876543210" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password *</label>
+                    <input type="password" id="password" name="password" class="form-input" required>
+                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
+                        Password must be at least 6 characters long
+                    </small>
+                </div>
+
+                <button type="submit" class="register-btn" id="registerBtn">
+                    <span id="registerBtnText">Create Account</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>Already have an account?</span>
+            </div>
+
+            <div class="login-link">
+                <a href="login.html">Sign In</a>
+            </div>
+        </div>
+
+        <div class="register-image-section">
+            <h2>Find Your Perfect Match</h2>
+            <p>Connect with the right opportunities and talent</p>
+            <ul class="features">
+                <li><i class="fas fa-check-circle"></i> Access to thousands of job listings</li>
+                <li><i class="fas fa-check-circle"></i> Advanced search and filtering</li>
+                <li><i class="fas fa-check-circle"></i> Real-time notifications</li>
+                <li><i class="fas fa-check-circle"></i> Professional profile building</li>
+                <li><i class="fas fa-check-circle"></i> Direct communication with employers</li>
+                <li><i class="fas fa-check-circle"></i> Career guidance and support</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // Check for existing login
+        document.addEventListener('DOMContentLoaded', function() {
+            checkExistingLogin();
+            
+            // Check if API service is loaded with multiple attempts
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            const checkAPI = () => {
+                attempts++;
+                console.log(`API check attempt ${attempts}/${maxAttempts}`);
+                
+                if (window.api) {
+                    console.log('API service loaded successfully');
+                    console.log('API service instance:', window.api);
+                } else if (attempts < maxAttempts) {
+                    console.log('API service not ready, retrying...');
+                    setTimeout(checkAPI, 200);
+                } else {
+                    console.error('API service not loaded after maximum attempts');
+                    showAlert('API service not loaded. Please refresh the page.', 'error');
+                }
+            };
+            
+            checkAPI();
+            
+            // Test API connection after a delay
+            setTimeout(async () => {
+                if (window.api) {
+                    try {
+                        console.log('Testing API connection...');
+                        const testResponse = await fetch('http://localhost:5000/api/auth/register', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                firstName: 'Test',
+                                lastName: 'User',
+                                email: 'test@test.com',
+                                phone: '1234567890',
+                                password: 'password123',
+                                userType: 'jobseeker'
+                            })
+                        });
+                        console.log('Test API response status:', testResponse.status);
+                        const testData = await testResponse.json();
+                        console.log('Test API response data:', testData);
+                    } catch (error) {
+                        console.error('Test API error:', error);
+                    }
+                }
+            }, 2000);
+        });
+
+        function checkExistingLogin() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (token && user) {
+                try {
+                    currentUser = JSON.parse(user);
+                    
+                    // Redirect to appropriate dashboard based on user type
+                    if (currentUser.userType === 'admin' || currentUser.userType === 'superadmin') {
+                        window.location.href = 'admin.html';
+                    } else if (currentUser.userType === 'employer') {
+                        if (currentUser.employerType === 'consultancy') {
+                            window.location.href = 'consultancy-dashboard.html';
+                        } else if (currentUser.employerType === 'company') {
+                            window.location.href = 'company-dashboard.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                }
+            }
+        }
+
+        function handleUserTypeChange() {
+            const userType = document.querySelector('input[name="userType"]:checked')?.value;
+            const employerTypeSection = document.getElementById('employerTypeSection');
+            
+            if (userType === 'employer') {
+                employerTypeSection.classList.add('show');
+                // Make employer type required
+                document.querySelectorAll('input[name="employerType"]').forEach(input => {
+                    input.required = true;
+                });
+            } else {
+                employerTypeSection.classList.remove('show');
+                // Remove employer type requirement
+                document.querySelectorAll('input[name="employerType"]').forEach(input => {
+                    input.required = false;
+                    input.checked = false;
+                });
+            }
+        }
+
+        // Registration form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const userType = formData.get('userType');
+            const employerType = formData.get('employerType');
+            
+            console.log('Form data collected:');
+            console.log('userType:', userType);
+            console.log('employerType:', employerType);
+            console.log('firstName:', formData.get('firstName'));
+            console.log('lastName:', formData.get('lastName'));
+            console.log('email:', formData.get('email'));
+            console.log('phone:', formData.get('phone'));
+            console.log('password:', formData.get('password') ? '[PROVIDED]' : '[MISSING]');
+            
+            if (!userType) {
+                showAlert('Please select your user type', 'error');
+                return;
+            }
+            
+            if (userType === 'employer' && !employerType) {
+                showAlert('Please select your employer type', 'error');
+                return;
+            }
+            
+            // Check if API service is available
+            console.log('Checking API service availability...');
+            console.log('window.api exists:', !!window.api);
+            console.log('window.api type:', typeof window.api);
+            
+            if (!window.api) {
+                console.error('API service not loaded');
+                showAlert('API service not loaded. Please refresh the page and try again.', 'error');
+                return;
+            }
+            
+            console.log('API service is available, proceeding with registration...');
+            
+            const registerBtn = document.getElementById('registerBtn');
+            const registerBtnText = document.getElementById('registerBtnText');
+            
+            // Disable button and show loading
+            registerBtn.disabled = true;
+            registerBtnText.textContent = 'Creating Account...';
+            
+            try {
+                console.log('Starting registration process...');
+                
+                const registrationData = {
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    password: formData.get('password'),
+                    userType: userType,
+                    employerType: employerType
+                };
+                
+                console.log('Registration data:', registrationData);
+                
+                // Use API service for registration
+                console.log('Calling window.api.register...');
+                console.log('API service methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.api)));
+                
+                const data = await window.api.register(registrationData);
+                
+                console.log('Registration response data:', data);
+                
+                if (data.token) {
+                    console.log('Registration successful, storing data...');
+                    
+                    showAlert('Account created successfully! Redirecting to dashboard...', 'success');
+                    
+                    // Trigger global auth update
+                    if (window.globalAuth) {
+                        window.globalAuth.handleLogin({
+                            token: data.token,
+                            user: data.user
+                        });
+                    }
+                    
+                    // Redirect based on user type
+                    setTimeout(() => {
+                        if (data.user.userType === 'employer') {
+                            if (data.user.employerType === 'consultancy') {
+                                window.location.href = 'consultancy-dashboard.html';
+                            } else if (data.user.employerType === 'company') {
+                                window.location.href = 'company-dashboard.html';
+                            } else {
+                                window.location.href = 'dashboard.html';
+                            }
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                    }, 1500);
+                } else {
+                    console.error('Registration failed:', data);
+                    showAlert(data.message || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                console.error('Error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
+                
+                let errorMessage = 'Registration failed: ' + error.message;
+                
+                // Check for specific error types
+                if (error.message.includes('fetch')) {
+                    errorMessage = 'Network error: Cannot connect to server. Please check your internet connection and try again.';
+                } else if (error.message.includes('CORS')) {
+                    errorMessage = 'CORS error: Please refresh the page and try again.';
+                } else if (error.message.includes('User already exists')) {
+                    errorMessage = 'An account with this email already exists. Please use a different email or try logging in.';
+                }
+                
+                showAlert(errorMessage, 'error');
+            } finally {
+                // Re-enable button
+                registerBtn.disabled = false;
+                registerBtnText.textContent = 'Create Account';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+            
+            // Auto-hide success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard - JobWala</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="comprehensive-job-form-styles.css" rel="stylesheet">
+    <script src="js/api.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+            text-align: center;
+        }
+
+        .sidebar-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        
+        .logo-free {
+            color: #1E88E5;
+        }
+        
+        .logo-job {
+            color: #ff6b35;
+        }
+        
+        .logo-wala {
+            color: #1E88E5;
+        }
+        
+        .logo-swoosh {
+            position: absolute;
+            bottom: -4px;
+            left: -2px;
+            right: -2px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, #ff6b35 20%, #ff6b35 80%, transparent 100%);
+            border-radius: 2px;
+            transform: rotate(-2deg);
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: #3498db;
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+            margin-right: 10px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            transition: all 0.3s;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 20px;
+            color: #666;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .user-info:hover {
+            background: #f8f9fa;
+            transform: translateY(-1px);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        /* Dashboard Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-icon.employees { background: #3498db; }
+        .stat-icon.jobs { background: #2ecc71; }
+        .stat-icon.applications { background: #f39c12; }
+        .stat-icon.departments { background: #e74c3c; }
+
+        .stat-content h3 {
+            font-size: 32px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .stat-content p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* Employee Management */
+        .employee-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .employee-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .employee-item:last-child {
+            border-bottom: none;
+        }
+
+        .employee-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .employee-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .employee-info p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .employee-role {
+            margin-left: auto;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        /* Job Postings */
+        .job-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .job-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .job-item:last-child {
+            border-bottom: none;
+        }
+
+        .job-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #3498db;
+        }
+
+        .job-content h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .job-content p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .job-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Content Section Styles */
+    .content-section {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        margin: 20px 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Table Styles */
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .table-header h3 {
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .data-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .data-table tr:hover {
+        background: #f8f9fa;
+    }
+
+    /* Employee Info Styles */
+    .employee-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .employee-info .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #3498db;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 12px;
+    }
+
+    .employee-info .name {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .employee-info .email {
+        font-size: 12px;
+        color: #7f8c8d;
+    }
+
+    /* Status Badge Styles */
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-badge.status-active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.status-applied {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .status-badge.status-reviewed {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-badge.status-shortlisted {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-badge.status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-badge.status-hired {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    /* Button Styles */
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s;
+    }
+
+    .btn-primary {
+        background: #3498db;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #2980b9;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #218838;
+    }
+
+    .btn-warning {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .btn-warning:hover {
+        background: #e0a800;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+    }
+
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    /* Empty State Styles */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #7f8c8d;
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 20px;
+        color: #bdc3c7;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+    }
+
+    .empty-state p {
+        margin: 0 0 20px 0;
+    }
+
+    /* Form Styles */
+    .form-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .form-section h3 {
+        margin: 0 0 20px 0;
+        color: #2c3e50;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+        background: white;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+    }
+
+    /* Department Grid */
+    .departments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .department-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .department-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .department-header h4 {
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .department-actions {
+        display: flex;
+        gap: 5px;
+    }
+
+    .department-info p {
+        margin: 5px 0;
+        color: #7f8c8d;
+    }
+
+    /* Settings Sections */
+    .settings-sections {
+        display: grid;
+        gap: 30px;
+    }
+
+    .settings-section {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 25px;
+    }
+
+    .settings-section h3 {
+        margin: 0 0 20px 0;
+        color: #2c3e50;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 10px;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        margin-right: 10px;
+        width: auto;
+    }
+
+    .checkbox-group label {
+        margin: 0;
+        font-weight: normal;
+    }
+
+    /* Filter Options */
+    .filter-options {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .filter-options select {
+        padding: 8px 12px;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background: white;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 10px;
+        padding: 0;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+        padding: 20px 30px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: #333;
+        font-size: 20px;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #999;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-btn:hover {
+        color: #333;
+    }
+
+    .modal-content form {
+        padding: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .btn-primary {
+        background: #667eea;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #5a6fd8;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-text">
+                    <span class="logo-free">Free</span>
+                    <span class="logo-job">job</span>
+                    <span class="logo-wala">wala</span>
+                    <div class="logo-swoosh"></div>
+                </div>
+                <p>Company Dashboard</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="menu-item active" data-page="overview">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Overview</span>
+                </a></li>
+                <li><a href="#" class="menu-item" data-page="employees">
+                    <i class="fas fa-users"></i>
+                    <span>Employees</span>
+                </a></li>
+                <li><a href="#" class="menu-item" data-page="jobs">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Job Postings</span>
+                </a></li>
+                <li><a href="#" class="menu-item" data-page="applications">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Applications</span>
+                </a></li>
+                <li><a href="#" class="menu-item" data-page="departments">
+                    <i class="fas fa-building"></i>
+                    <span>Departments</span>
+                </a></li>
+                <li><a href="#" class="menu-item" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Company Profile</span>
+                </a></li>
+                <li><a href="#" class="menu-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h3 id="pageTitle">Company Overview</h3>
+                </div>
+                <div class="topbar-right">
+                    <div class="user-info" onclick="companyDashboard.openDashboard()" style="cursor: pointer;">
+                        <div class="user-avatar" id="userAvatar">C</div>
+                        <span id="userName">Company</span>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Overview Page -->
+                <div id="overviewPage" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Welcome to your Company Dashboard!</h1>
+                        <p class="page-subtitle">Manage your employees, job postings, and company operations</p>
+                    </div>
+
+                    <div class="stats-grid" id="statsGrid">
+                        <div class="stat-card">
+                            <div class="stat-icon employees">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalEmployees">0</h3>
+                                <p>Total Employees</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon jobs">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalJobs">0</h3>
+                                <p>Active Job Postings</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon applications">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalApplications">0</h3>
+                                <p>New Applications</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon departments">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalDepartments">0</h3>
+                                <p>Departments</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Employees -->
+                    <div class="employee-section">
+                        <h3 class="section-title">Recent Employees</h3>
+                        <div id="recentEmployees">
+                            <div class="employee-item">
+                                <div class="employee-avatar">JS</div>
+                                <div class="employee-info">
+                                    <h4>John Smith</h4>
+                                    <p>Software Engineer • Joined 2 weeks ago</p>
+                                </div>
+                                <div class="employee-role">Engineering</div>
+                            </div>
+                            <div class="employee-item">
+                                <div class="employee-avatar">MJ</div>
+                                <div class="employee-info">
+                                    <h4>Mary Johnson</h4>
+                                    <p>Marketing Manager • Joined 1 month ago</p>
+                                </div>
+                                <div class="employee-role">Marketing</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Job Postings -->
+                    <div class="job-section">
+                        <h3 class="section-title">Recent Job Postings</h3>
+                        <div id="recentJobs">
+                            <div class="job-item">
+                                <div class="job-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="job-content">
+                                    <h4>Senior Developer</h4>
+                                    <p>Engineering • Posted 3 days ago • 25 applications</p>
+                                </div>
+                                <div class="job-actions">
+                                    <button class="btn btn-primary">View</button>
+                                    <button class="btn btn-success">Edit</button>
+                                </div>
+                            </div>
+                            <div class="job-item">
+                                <div class="job-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="job-content">
+                                    <h4>Product Manager</h4>
+                                    <p>Product • Posted 1 week ago • 18 applications</p>
+                                </div>
+                                <div class="job-actions">
+                                    <button class="btn btn-primary">View</button>
+                                    <button class="btn btn-success">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other pages will be added here -->
+                <div id="employeesPage" class="page hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Employee Management</h1>
+                        <p class="page-subtitle">Manage your company employees</p>
+                    </div>
+                    <div id="employeesTable" class="content-section">
+                        <!-- Employee table will be loaded here -->
+                    </div>
+                </div>
+
+                <div id="jobsPage" class="page hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Job Postings</h1>
+                        <p class="page-subtitle">Manage job postings for your company</p>
+                    </div>
+                    <div id="jobsTable" class="content-section">
+                        <!-- Job table will be loaded here -->
+                    </div>
+                </div>
+
+                <div id="applicationsPage" class="page hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Applications</h1>
+                        <p class="page-subtitle">Review and manage job applications</p>
+                    </div>
+                    <div id="applicationsTable" class="content-section">
+                        <!-- Applications table will be loaded here -->
+                    </div>
+                </div>
+
+                <div id="departmentsPage" class="page hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Departments</h1>
+                        <p class="page-subtitle">Manage company departments and teams</p>
+                    </div>
+                    <div id="departmentsTable" class="content-section">
+                        <!-- Departments will be loaded here -->
+                    </div>
+                </div>
+
+                <div id="profilePage" class="page hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Company Profile</h1>
+                        <p class="page-subtitle">Manage your company information</p>
+                    </div>
+                    <div id="profileForm" class="content-section">
+                        <!-- Company profile form will be loaded here -->
+                    </div>
+                </div>
+
+                <div id="settingsPage" class="page hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Settings</h1>
+                        <p class="page-subtitle">Configure your company settings</p>
+                    </div>
+                    <div id="settingsForm" class="content-section">
+                        <!-- Settings form will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="company-dashboard.js"></script>
+</body>
+</html>
