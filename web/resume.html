@@ -34,9 +34,8 @@
                 </nav>
                 
                 <div class="header-actions">
-                    <a href="login.html" class="btn-login">Login</a>
-                    <a href="register.html" class="btn-register">Register</a>
-                    <a href="employer-options.html" class="btn-employer">For Employers</a>
+                    <a href="dashboard.html" class="btn-login">Dashboard</a>
+                    <a href="resume-builder.html" class="btn-register">Create Resume</a>
                 </div>
             </div>
         </div>
@@ -45,19 +44,47 @@
     <!-- Resume Page Content -->
     <div class="container" style="padding: 60px 0;">
         <div style="text-align: center; margin-bottom: 60px;">
-            <h1 style="font-size: 3rem; color: #333; margin-bottom: 15px;">Resume Builder</h1>
-            <p style="font-size: 1.3rem; color: #666; max-width: 600px; margin: 0 auto;">Create a professional, ATS-friendly resume that gets you noticed by employers</p>
+            <h1 style="font-size: 3rem; color: #333; margin-bottom: 15px;">Professional Resume Builder</h1>
+            <p style="font-size: 1.3rem; color: #666; max-width: 600px; margin: 0 auto;">Create stunning, ATS-friendly resumes that get you noticed by employers</p>
         </div>
 
-        <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); text-align: center;">
+        <!-- Features Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 60px;">
+            <div style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); text-align: center;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; color: white;">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <h3 style="color: #333; margin-bottom: 15px;">10 Unique Templates</h3>
+                <p style="color: #666; margin: 0;">Choose from modern, classic, creative, and professional designs</p>
+            </div>
+
+            <div style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); text-align: center;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #43A047, #2E7D32); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; color: white;">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3 style="color: #333; margin-bottom: 15px;">Real-time Preview</h3>
+                <p style="color: #666; margin: 0;">See your resume update instantly as you type</p>
+            </div>
+
+            <div style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); text-align: center;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #E53935, #C62828); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; color: white;">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h3 style="color: #333; margin-bottom: 15px;">PDF Download</h3>
+                <p style="color: #666; margin: 0;">Download your resume as a professional PDF instantly</p>
+            </div>
+        </div>
+
+        <!-- Main CTA Section -->
+        <div style="background: white; border-radius: 20px; padding: 50px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); text-align: center;">
             <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; font-size: 2rem; color: white;">
                 <i class="fas fa-file-alt"></i>
             </div>
-            <h2 style="color: #333; margin-bottom: 20px;">Resume Builder Coming Soon</h2>
-            <p style="color: #666; margin-bottom: 30px; font-size: 1.1rem;">We're working on an amazing resume builder that will help you create professional resumes with AI-powered suggestions and ATS optimization.</p>
+            <h2 style="color: #333; margin-bottom: 20px; font-size: 2.2rem;">Ready to Build Your Resume?</h2>
+            <p style="color: #666; margin-bottom: 40px; font-size: 1.1rem; max-width: 500px; margin-left: auto; margin-right: auto;">Create a professional resume in minutes with our easy-to-use builder. No registration required!</p>
             <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                <a href="register.html" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: 600;">Get Started</a>
-                <a href="packages.html" style="background: transparent; color: #667eea; border: 2px solid #667eea; padding: 13px 30px; border-radius: 25px; text-decoration: none; font-weight: 600;">View Packages</a>
+                <a href="resume-builder.html" style="background: rgba(102, 126, 234, 0.15); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.2); padding: 18px 40px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.2s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);" onmouseover="this.style.background='rgba(102, 126, 234, 0.25)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.2)'" onmouseout="this.style.background='rgba(102, 126, 234, 0.15)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(102, 126, 234, 0.1)'">Start Building Now</a>
+                <a href="dashboard.html" style="background: rgba(102, 126, 234, 0.15); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.2); padding: 18px 40px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.2s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);" onmouseover="this.style.background='rgba(102, 126, 234, 0.25)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.2)'" onmouseout="this.style.background='rgba(102, 126, 234, 0.15)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(102, 126, 234, 0.1)'">View My Resumes</a>
             </div>
         </div>
     </div>
@@ -92,5 +119,7 @@
             </div>
         </div>
     </footer>
+
+    <script src="js/chatbot-integration.js"></script>
 </body>
 </html>

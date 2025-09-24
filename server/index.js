@@ -54,6 +54,8 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/applications', require('./routes/applications'));
 app.use('/api/employers', require('./routes/employers'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/bulk', require('./routes/bulkImportExport'));
+app.use('/api/verification', require('./routes/verification')); // Employer verification routes
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

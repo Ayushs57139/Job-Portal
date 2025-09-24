@@ -169,6 +169,14 @@ router.post('/', [
       return res.status(400).json({ errors: errors.array() });
     }
 
+    // Check if employer is verified (only for employers, not admins)
+    if (req.user.userType === 'employer' && !req.user.canPostJobs()) {
+      return res.status(403).json({
+        message: 'Your employer account is not verified yet. Please wait for admin verification before posting jobs.',
+        verificationStatus: req.user.verificationStatus
+      });
+    }
+
     // Check for duplicate job posting within last 30 seconds
     const recentJob = await Job.findOne({
       postedBy: req.user._id,

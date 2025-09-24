@@ -120,6 +120,12 @@ class AdminPanel {
             this.loadApplications();
         });
 
+        // Bulk import/export events
+        this.setupBulkImportExportEvents();
+
+        // Verification events
+        this.setupVerificationEvents();
+
         // Modal events
         this.setupModalEvents();
     }
@@ -181,6 +187,154 @@ class AdminPanel {
                 }
             });
         });
+
+        // Bulk import modal events
+        document.getElementById('closeBulkImportModal').addEventListener('click', () => {
+            this.hideModal('bulkImportModal');
+        });
+
+        document.getElementById('cancelBulkImportBtn').addEventListener('click', () => {
+            this.hideModal('bulkImportModal');
+        });
+
+        document.getElementById('bulkImportForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleBulkImport();
+        });
+    }
+
+    setupBulkImportExportEvents() {
+        // Users bulk operations
+        document.getElementById('exportUsersBtn').addEventListener('click', () => {
+            this.exportData('users');
+        });
+
+        document.getElementById('importUsersBtn').addEventListener('click', () => {
+            this.showBulkImportModal('users');
+        });
+
+        document.getElementById('sampleUsersBtn').addEventListener('click', () => {
+            this.downloadSampleCSV('users');
+        });
+
+        // Jobs bulk operations
+        document.getElementById('exportJobsBtn').addEventListener('click', () => {
+            this.exportData('jobs');
+        });
+
+        document.getElementById('importJobsBtn').addEventListener('click', () => {
+            this.showBulkImportModal('jobs');
+        });
+
+        document.getElementById('sampleJobsBtn').addEventListener('click', () => {
+            this.downloadSampleCSV('jobs');
+        });
+
+        // Applications bulk operations
+        document.getElementById('exportApplicationsBtn').addEventListener('click', () => {
+            this.exportData('applications');
+        });
+
+        document.getElementById('importApplicationsBtn').addEventListener('click', () => {
+            this.showBulkImportModal('applications');
+        });
+
+        document.getElementById('sampleApplicationsBtn').addEventListener('click', () => {
+            this.downloadSampleCSV('applications');
+        });
+
+        // Blogs bulk operations
+        document.getElementById('exportBlogsBtn').addEventListener('click', () => {
+            this.exportData('blogs');
+        });
+
+        document.getElementById('importBlogsBtn').addEventListener('click', () => {
+            this.showBulkImportModal('blogs');
+        });
+
+        document.getElementById('sampleBlogsBtn').addEventListener('click', () => {
+            this.downloadSampleCSV('blogs');
+        });
+    }
+
+    setupVerificationEvents() {
+        console.log('Setting up verification events...');
+        
+        // Refresh verifications
+        const refreshBtn = document.getElementById('refreshVerificationsBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                console.log('Refresh verifications clicked');
+                this.loadVerifications();
+            });
+        } else {
+            console.error('Refresh verifications button not found');
+        }
+
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                e.target.classList.add('active');
+                // Load verifications with filter
+                const status = e.target.dataset.status;
+                this.loadVerifications(status);
+            });
+        });
+
+        // Verification modals
+        const closeVerificationModal = document.getElementById('closeVerificationModal');
+        if (closeVerificationModal) {
+            closeVerificationModal.addEventListener('click', () => {
+                console.log('Close verification modal clicked');
+                this.hideModal('verificationModal');
+            });
+        } else {
+            console.error('Close verification modal button not found');
+        }
+
+        const closeVerificationActionModal = document.getElementById('closeVerificationActionModal');
+        if (closeVerificationActionModal) {
+            closeVerificationActionModal.addEventListener('click', () => {
+                console.log('Close verification action modal clicked');
+                this.hideModal('verificationActionModal');
+            });
+        } else {
+            console.error('Close verification action modal button not found');
+        }
+
+        const cancelVerificationActionBtn = document.getElementById('cancelVerificationActionBtn');
+        if (cancelVerificationActionBtn) {
+            cancelVerificationActionBtn.addEventListener('click', () => {
+                console.log('Cancel verification action clicked');
+                this.hideModal('verificationActionModal');
+            });
+        } else {
+            console.error('Cancel verification action button not found');
+        }
+
+        document.getElementById('actionType').addEventListener('change', (e) => {
+            const rejectionReasonGroup = document.getElementById('rejectionReasonGroup');
+            if (e.target.value === 'reject') {
+                rejectionReasonGroup.style.display = 'block';
+                document.getElementById('rejectionReason').required = true;
+            } else {
+                rejectionReasonGroup.style.display = 'none';
+                document.getElementById('rejectionReason').required = false;
+            }
+        });
+
+        const submitVerificationActionBtn = document.getElementById('submitVerificationActionBtn');
+        if (submitVerificationActionBtn) {
+            submitVerificationActionBtn.addEventListener('click', () => {
+                console.log('Submit verification action clicked');
+                this.submitVerificationAction();
+            });
+        } else {
+            console.error('Submit verification action button not found');
+        }
     }
 
     async checkAuth() {
@@ -269,6 +423,10 @@ class AdminPanel {
             case 'blogs':
                 this.loadBlogs();
                 break;
+            case 'verification':
+                this.loadVerifications();
+                this.loadVerificationStats();
+                break;
             case 'analytics':
                 this.loadAnalytics();
                 break;
@@ -282,6 +440,7 @@ class AdminPanel {
             jobs: 'Job Management',
             applications: 'Application Management',
             blogs: 'Blog Management',
+            verification: 'Employer Verification',
             analytics: 'Analytics',
             settings: 'Settings'
         };
@@ -1237,7 +1396,7 @@ class AdminPanel {
     // Blog Management Methods
     async loadBlogs() {
         try {
-            const response = await fetch('/api/blogs/admin/all', {
+            const response = await fetch('http://localhost:5000/api/blogs/admin/all', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -1314,7 +1473,7 @@ class AdminPanel {
 
     async editBlog(blogId) {
         try {
-            const response = await fetch(`/api/blogs/${blogId}`, {
+            const response = await fetch(`http://localhost:5000/api/blogs/${blogId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -1375,7 +1534,7 @@ class AdminPanel {
 
         try {
             const blogId = form.dataset.blogId;
-            const url = blogId ? `/api/blogs/${blogId}` : '/api/blogs';
+            const url = blogId ? `http://localhost:5000/api/blogs/${blogId}` : 'http://localhost:5000/api/blogs';
             const method = blogId ? 'PUT' : 'POST';
 
             const response = await fetch(url, {
@@ -1408,7 +1567,7 @@ class AdminPanel {
         }
 
         try {
-            const response = await fetch(`/api/blogs/${blogId}`, {
+            const response = await fetch(`http://localhost:5000/api/blogs/${blogId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1430,9 +1589,567 @@ class AdminPanel {
     closeBlogModal() {
         this.hideModal('blogModal');
     }
+
+    // Bulk Import/Export Methods
+    async exportData(type) {
+        try {
+            this.showLoading('Exporting data...');
+            
+            const response = await fetch(`http://localhost:5000/api/bulk/export/${type}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Accept': 'text/csv'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to export data');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `${type}_export_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            this.hideLoading();
+            this.showSuccess(`${type.charAt(0).toUpperCase() + type.slice(1)} data exported successfully!`);
+        } catch (error) {
+            console.error('Export error:', error);
+            this.hideLoading();
+            this.showError('Failed to export data: ' + error.message);
+        }
+    }
+
+    showBulkImportModal(type) {
+        const modal = document.getElementById('bulkImportModal');
+        const title = document.getElementById('bulkImportModalTitle');
+        const importType = document.getElementById('importType');
+        
+        title.textContent = `Bulk Import ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+        importType.value = type;
+        
+        // Reset form
+        document.getElementById('bulkImportForm').reset();
+        importType.value = type;
+        
+        modal.classList.add('show');
+    }
+
+    async downloadSampleCSV(type) {
+        try {
+            this.showLoading('Downloading sample CSV...');
+            
+            const response = await fetch(`http://localhost:5000/api/bulk/sample/${type}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Accept': 'text/csv'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to download sample CSV');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `sample_${type}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            this.hideLoading();
+            this.showSuccess(`Sample ${type} CSV downloaded successfully!`);
+        } catch (error) {
+            console.error('Download sample error:', error);
+            this.hideLoading();
+            this.showError('Failed to download sample CSV: ' + error.message);
+        }
+    }
+
+    async handleBulkImport() {
+        const fileInput = document.getElementById('csvFile');
+        const importType = document.getElementById('importType');
+        const submitBtn = document.getElementById('submitBulkImportBtn');
+        
+        if (!fileInput.files[0]) {
+            this.showError('Please select a CSV file');
+            return;
+        }
+
+        if (!importType.value) {
+            this.showError('Please select an import type');
+            return;
+        }
+
+        try {
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importing...';
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const response = await fetch(`http://localhost:5000/api/bulk/import/${importType.value}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Import failed');
+            }
+
+            // Show results
+            this.showImportResults(result.results, importType.value);
+            
+            // Refresh the current page data
+            this.refreshCurrentPageData(importType.value);
+            
+            // Close modal
+            this.hideModal('bulkImportModal');
+            
+        } catch (error) {
+            console.error('Import error:', error);
+            this.showError('Import failed: ' + error.message);
+        } finally {
+            // Reset button state
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-upload"></i> Import Data';
+        }
+    }
+
+    showImportResults(results, type) {
+        const { total, success, failed, errors } = results;
+        
+        let message = `Import completed for ${type}:\n`;
+        message += `Total records: ${total}\n`;
+        message += `Successfully imported: ${success}\n`;
+        message += `Failed: ${failed}\n`;
+        
+        if (errors.length > 0) {
+            message += `\nErrors:\n${errors.slice(0, 5).join('\n')}`;
+            if (errors.length > 5) {
+                message += `\n... and ${errors.length - 5} more errors`;
+            }
+        }
+        
+        if (failed === 0) {
+            this.showSuccess(message);
+        } else if (success === 0) {
+            this.showError(message);
+        } else {
+            this.showWarning(message);
+        }
+    }
+
+    refreshCurrentPageData(type) {
+        switch (type) {
+            case 'users':
+                this.loadUsers();
+                break;
+            case 'jobs':
+                this.loadJobs();
+                break;
+            case 'applications':
+                this.loadApplications();
+                break;
+            case 'blogs':
+                this.loadBlogs();
+                break;
+        }
+    }
+
+    showLoading(message = 'Loading...') {
+        // Create or update loading overlay
+        let loadingOverlay = document.getElementById('loadingOverlay');
+        if (!loadingOverlay) {
+            loadingOverlay = document.createElement('div');
+            loadingOverlay.id = 'loadingOverlay';
+            loadingOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                color: white;
+                font-size: 18px;
+            `;
+            document.body.appendChild(loadingOverlay);
+        }
+        loadingOverlay.innerHTML = `
+            <div style="text-align: center;">
+                <div class="spinner" style="margin: 0 auto 10px;"></div>
+                <div>${message}</div>
+            </div>
+        `;
+        loadingOverlay.style.display = 'flex';
+    }
+
+    hideLoading() {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+
+    showWarning(message) {
+        // Create warning notification
+        this.showNotification(message, 'warning');
+    }
+
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+            word-wrap: break-word;
+            white-space: pre-line;
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 5000);
+    }
+
+    // Verification Management Methods
+    async loadVerifications(status = 'all') {
+        try {
+            this.showLoading('Loading verifications...');
+            
+            const params = new URLSearchParams();
+            if (status !== 'all') {
+                params.append('status', status);
+            }
+            
+            const response = await fetch(`http://localhost:5000/api/verification/all?${params}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load verifications');
+            }
+
+            const result = await response.json();
+            this.displayVerifications(result.data);
+            this.hideLoading();
+        } catch (error) {
+            console.error('Error loading verifications:', error);
+            this.hideLoading();
+            this.showError('Failed to load verifications: ' + error.message);
+        }
+    }
+
+    async loadVerificationStats() {
+        try {
+            const response = await fetch('http://localhost:5000/api/verification/stats', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load verification stats');
+            }
+
+            const result = await response.json();
+            this.displayVerificationStats(result.data);
+        } catch (error) {
+            console.error('Error loading verification stats:', error);
+        }
+    }
+
+    displayVerificationStats(stats) {
+        document.getElementById('pendingCount').textContent = stats.pending || 0;
+        document.getElementById('verifiedCount').textContent = stats.verified || 0;
+        document.getElementById('rejectedCount').textContent = stats.rejected || 0;
+    }
+
+    displayVerifications(verifications) {
+        const tbody = document.getElementById('verificationTableBody');
+        tbody.innerHTML = '';
+
+        if (verifications.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 20px; color: #666;">
+                        No verifications found
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        verifications.forEach(verification => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <div>
+                        <strong>${verification.firstName} ${verification.lastName}</strong><br>
+                        <small>${verification.email}</small>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <strong>${verification.profile?.company?.name || 'N/A'}</strong><br>
+                        <small>${verification.profile?.company?.website || ''}</small>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge badge-info">${verification.employerType || 'N/A'}</span>
+                </td>
+                <td>
+                    <span class="status-badge ${verification.verificationStatus}">
+                        ${verification.verificationStatus}
+                    </span>
+                </td>
+                <td>
+                    ${new Date(verification.verificationDetails?.submittedAt || verification.createdAt).toLocaleDateString()}
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="adminPanel.viewVerificationDetails('${verification._id}')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    async viewVerificationDetails(employerId) {
+        try {
+            console.log('Loading verification details for:', employerId);
+            this.showLoading('Loading verification details...');
+            
+            const response = await fetch(`http://localhost:5000/api/verification/${employerId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to load verification details');
+            }
+
+            const result = await response.json();
+            console.log('Verification details loaded:', result.data);
+            this.displayVerificationDetails(result.data);
+            this.hideLoading();
+        } catch (error) {
+            console.error('Error loading verification details:', error);
+            this.hideLoading();
+            this.showError('Failed to load verification details: ' + error.message);
+        }
+    }
+
+    displayVerificationDetails(employer) {
+        console.log('Displaying verification details for:', employer);
+        const modalBody = document.getElementById('verificationModalBody');
+        const modalFooter = document.getElementById('verificationModalFooter');
+        
+        if (!modalBody || !modalFooter) {
+            console.error('Modal elements not found');
+            this.showError('Modal elements not found');
+            return;
+        }
+        
+        modalBody.innerHTML = `
+            <div class="verification-details">
+                <div class="verification-section">
+                    <h4>Employer Information</h4>
+                    <p><strong>Name:</strong> ${employer.firstName} ${employer.lastName}</p>
+                    <p><strong>Email:</strong> ${employer.email}</p>
+                    <p><strong>Phone:</strong> ${employer.phone || 'N/A'}</p>
+                    <p><strong>Type:</strong> ${employer.employerType || 'N/A'}</p>
+                </div>
+                
+                <div class="verification-section">
+                    <h4>Company Information</h4>
+                    <p><strong>Company Name:</strong> ${employer.profile?.company?.name || 'N/A'}</p>
+                    <p><strong>Website:</strong> ${employer.profile?.company?.website || 'N/A'}</p>
+                    <p><strong>Industry:</strong> ${employer.profile?.company?.industry || 'N/A'}</p>
+                    <p><strong>Size:</strong> ${employer.profile?.company?.size || 'N/A'}</p>
+                </div>
+                
+                <div class="verification-section">
+                    <h4>Verification Status</h4>
+                    <p><strong>Status:</strong> <span class="status-badge ${employer.verificationStatus}">${employer.verificationStatus}</span></p>
+                    <p><strong>Submitted:</strong> ${new Date(employer.verificationDetails?.submittedAt || employer.createdAt).toLocaleString()}</p>
+                    ${employer.verificationDetails?.verifiedAt ? `<p><strong>Verified:</strong> ${new Date(employer.verificationDetails.verifiedAt).toLocaleString()}</p>` : ''}
+                    ${employer.verificationDetails?.rejectionReason ? `<p><strong>Rejection Reason:</strong> ${employer.verificationDetails.rejectionReason}</p>` : ''}
+                    ${employer.verificationDetails?.notes ? `<p><strong>Notes:</strong> ${employer.verificationDetails.notes}</p>` : ''}
+                </div>
+                
+                <div class="verification-section">
+                    <h4>Documents</h4>
+                    ${employer.verificationDetails?.documents?.length > 0 ? 
+                        employer.verificationDetails.documents.map(doc => 
+                            `<p><a href="${doc.url}" target="_blank">${doc.name}</a> (${doc.type})</p>`
+                        ).join('') : 
+                        '<p>No documents uploaded</p>'
+                    }
+                </div>
+            </div>
+        `;
+
+        // Set up action buttons based on current status
+        let actionButtons = '';
+        if (employer.verificationStatus === 'pending') {
+            actionButtons = `
+                <button class="btn btn-success" onclick="adminPanel.showVerificationAction('${employer._id}', 'verify')">
+                    <i class="fas fa-check"></i> Verify
+                </button>
+                <button class="btn btn-danger" onclick="adminPanel.showVerificationAction('${employer._id}', 'reject')">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+            `;
+        } else if (employer.verificationStatus === 'rejected') {
+            actionButtons = `
+                <button class="btn btn-warning" onclick="adminPanel.showVerificationAction('${employer._id}', 'resubmit')">
+                    <i class="fas fa-redo"></i> Allow Resubmission
+                </button>
+            `;
+        } else {
+            actionButtons = `
+                <button class="btn btn-secondary" disabled>
+                    <i class="fas fa-check-circle"></i> Already Verified
+                </button>
+            `;
+        }
+
+        modalFooter.innerHTML = actionButtons;
+        this.showModal('verificationModal');
+    }
+
+    showVerificationAction(employerId, action) {
+        console.log('Showing verification action:', { employerId, action });
+        this.currentVerificationAction = { employerId, action };
+        
+        const modal = document.getElementById('verificationActionModal');
+        const title = document.getElementById('verificationActionModalTitle');
+        const actionType = document.getElementById('actionType');
+        const rejectionReasonGroup = document.getElementById('rejectionReasonGroup');
+        
+        if (!modal || !title || !actionType || !rejectionReasonGroup) {
+            console.error('Action modal elements not found');
+            this.showError('Action modal elements not found');
+            return;
+        }
+        
+        // Reset form
+        document.getElementById('verificationActionForm').reset();
+        rejectionReasonGroup.style.display = 'none';
+        document.getElementById('rejectionReason').required = false;
+        
+        // Set title and action type
+        title.textContent = `${action.charAt(0).toUpperCase() + action.slice(1)} Employer`;
+        actionType.value = action;
+        
+        // Show/hide rejection reason field
+        if (action === 'reject') {
+            rejectionReasonGroup.style.display = 'block';
+            document.getElementById('rejectionReason').required = true;
+        }
+        
+        this.showModal('verificationActionModal');
+    }
+
+    async submitVerificationAction() {
+        console.log('Submitting verification action:', this.currentVerificationAction);
+        const { employerId, action } = this.currentVerificationAction;
+        const rejectionReason = document.getElementById('rejectionReason').value;
+        const adminNotes = document.getElementById('adminNotes').value;
+        
+        console.log('Form data:', { employerId, action, rejectionReason, adminNotes });
+        
+        if (action === 'reject' && !rejectionReason.trim()) {
+            this.showError('Rejection reason is required');
+            return;
+        }
+        
+        try {
+            this.showLoading(`Processing ${action}...`);
+            
+            let endpoint = '';
+            let body = {};
+            
+            if (action === 'verify') {
+                endpoint = `http://localhost:5000/api/verification/${employerId}/verify`;
+                body = { notes: adminNotes };
+            } else if (action === 'reject') {
+                endpoint = `http://localhost:5000/api/verification/${employerId}/reject`;
+                body = { rejectionReason, notes: adminNotes };
+            } else if (action === 'resubmit') {
+                endpoint = `http://localhost:5000/api/verification/${employerId}/resubmit`;
+            }
+            
+            const response = await fetch(endpoint, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(body)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Action failed');
+            }
+            
+            const result = await response.json();
+            this.hideLoading();
+            this.hideModal('verificationActionModal');
+            this.hideModal('verificationModal');
+            this.showSuccess(result.message);
+            
+            // Refresh verifications
+            this.loadVerifications();
+            this.loadVerificationStats();
+            
+        } catch (error) {
+            console.error('Error submitting verification action:', error);
+            this.hideLoading();
+            this.showError('Failed to process action: ' + error.message);
+        }
+    }
 }
 
 // Initialize admin panel when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.adminPanel = new AdminPanel();
+    console.log('Admin panel initialized:', window.adminPanel);
 });

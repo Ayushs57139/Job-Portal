@@ -884,6 +884,107 @@
 
         // Initialize
         updateProgress();
+        
+        // Check employer verification status
+        checkEmployerVerification();
     </script>
+    
+    <script>
+        // Check if employer is verified before allowing job posting
+        async function checkEmployerVerification() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showVerificationError('Please login to post jobs');
+                    return;
+                }
+
+                const response = await fetch('http://localhost:5000/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    showVerificationError('Authentication failed');
+                    return;
+                }
+
+                const result = await response.json();
+                const user = result.user;
+
+                // Check if user is admin (can always post jobs)
+                if (user.userType === 'admin' || user.userType === 'superadmin') {
+                    return; // Admin can post jobs
+                }
+
+                // Check if user is employer and verified
+                if (user.userType === 'employer') {
+                    if (!user.isEmployerVerified || user.verificationStatus !== 'verified') {
+                        showVerificationError('Your employer account is not verified yet. Please wait for admin verification before posting jobs.');
+                        return;
+                    }
+                } else {
+                    showVerificationError('Only verified employers can post jobs');
+                    return;
+                }
+
+            } catch (error) {
+                console.error('Error checking verification:', error);
+                showVerificationError('Failed to verify employer status');
+            }
+        }
+
+        function showVerificationError(message) {
+            const formContainer = document.querySelector('.form-container');
+            const header = document.querySelector('.header');
+            
+            // Hide the form
+            formContainer.style.display = 'none';
+            
+            // Create verification error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'verification-error';
+            errorDiv.style.cssText = `
+                padding: 40px;
+                text-align: center;
+                background: white;
+            `;
+            
+            errorDiv.innerHTML = `
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <div style="font-size: 4rem; color: #e74c3c; margin-bottom: 20px;">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h2 style="color: #2c3e50; margin-bottom: 20px;">Account Verification Required</h2>
+                    <p style="color: #7f8c8d; font-size: 1.1rem; margin-bottom: 30px; line-height: 1.6;">
+                        ${message}
+                    </p>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                        <h3 style="color: #2c3e50; margin-bottom: 15px;">What happens next?</h3>
+                        <ul style="text-align: left; color: #7f8c8d; line-height: 1.8;">
+                            <li>Your account will be reviewed by our admin team</li>
+                            <li>You'll receive an email notification once verified</li>
+                            <li>After verification, you can post unlimited jobs</li>
+                            <li>This process usually takes 1-2 business days</li>
+                        </ul>
+                    </div>
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <a href="dashboard.html" class="btn" style="background: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                        </a>
+                        <a href="index.html" class="btn" style="background: #95a5a6; color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            // Insert after header
+            header.insertAdjacentElement('afterend', errorDiv);
+        }
+    </script>
+    
+    <script src="js/chatbot-integration.js"></script>
 </body>
 </html>

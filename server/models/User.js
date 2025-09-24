@@ -241,6 +241,41 @@ const userSchema = new mongoose.Schema({
   isAdminActive: {
     type: Boolean,
     default: true
+  },
+  // Employer verification fields
+  isEmployerVerified: {
+    type: Boolean,
+    default: false
+  },
+  verificationStatus: {
+    type: String,
+    enum: ['pending', 'verified', 'rejected'],
+    default: 'pending'
+  },
+  verificationDetails: {
+    submittedAt: {
+      type: Date,
+      default: Date.now
+    },
+    verifiedAt: Date,
+    verifiedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    rejectionReason: String,
+    documents: [{
+      type: {
+        type: String,
+        enum: ['business_license', 'registration_certificate', 'tax_certificate', 'company_profile', 'other']
+      },
+      url: String,
+      name: String,
+      uploadedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+    notes: String
   }
 }, {
   timestamps: true
@@ -284,6 +319,18 @@ userSchema.methods.hasAdminPermission = function(permission) {
   if (!this.isAdmin() || !this.isAdminActive) return false;
   if (this.isSuperAdmin()) return true;
   return this.adminPermissions[permission] === true;
+};
+
+// Check if employer is verified
+userSchema.methods.isEmployerVerifiedUser = function() {
+  return this.userType === 'employer' && this.isEmployerVerified === true && this.verificationStatus === 'verified';
+};
+
+// Check if user can post jobs
+userSchema.methods.canPostJobs = function() {
+  if (this.userType === 'admin' || this.userType === 'superadmin') return true;
+  if (this.userType === 'employer') return this.isEmployerVerifiedUser();
+  return false;
 };
 
 // Remove password from JSON output

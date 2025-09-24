@@ -660,14 +660,87 @@
                 <div id="resumePage" class="page" style="display: none;">
                     <div class="page-header">
                         <h1 class="page-title">Resume Builder</h1>
-                        <p class="page-subtitle">Create and manage your resume</p>
+                        <p class="page-subtitle">Create and manage your professional resumes</p>
                     </div>
+
+                    <!-- Quick Actions -->
+                    <div class="stats-grid" style="margin-bottom: 30px;">
+                        <div class="stat-card" onclick="createNewResume()" style="cursor: pointer;">
+                            <div class="stat-icon users">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Create New</h3>
+                                <p>Start building a new resume</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" onclick="showTemplates()" style="cursor: pointer;">
+                            <div class="stat-icon applications">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Browse Templates</h3>
+                                <p>Explore 10+ professional designs</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" onclick="importResume()" style="cursor: pointer;">
+                            <div class="stat-icon saved">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Import Resume</h3>
+                                <p>Upload existing resume</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Saved Resumes -->
                     <div class="table-container">
                         <div class="table-header">
-                            <h3 class="table-title">Resume Builder</h3>
+                            <h3 class="table-title">My Resumes</h3>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select id="templateFilter" onchange="filterResumes()" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <option value="">All Templates</option>
+                                    <option value="modern">Modern</option>
+                                    <option value="classic">Classic</option>
+                                    <option value="creative">Creative</option>
+                                    <option value="minimal">Minimal</option>
+                                    <option value="executive">Executive</option>
+                                    <option value="tech">Tech</option>
+                                    <option value="academic">Academic</option>
+                                    <option value="artistic">Artistic</option>
+                                    <option value="corporate">Corporate</option>
+                                    <option value="startup">Startup</option>
+                                </select>
+                                <select id="colorFilter" onchange="filterResumes()" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <option value="">All Colors</option>
+                                    <option value="blue">Blue</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="purple">Purple</option>
+                                    <option value="green">Green</option>
+                                    <option value="red">Red</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="navy">Navy</option>
+                                    <option value="pink">Pink</option>
+                                    <option value="gray">Gray</option>
+                                    <option value="teal">Teal</option>
+                                </select>
+                            </div>
                         </div>
                         <div style="padding: 25px;">
-                            <p>Resume builder coming soon...</p>
+                            <div id="resumesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                                <!-- Resumes will be loaded here -->
+                            </div>
+                            <div id="emptyResumesState" style="text-align: center; padding: 40px; display: none;">
+                                <div style="font-size: 3rem; color: #ddd; margin-bottom: 20px;">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <h3 style="color: #666; margin-bottom: 10px;">No Resumes Yet</h3>
+                                <p style="color: #999; margin-bottom: 20px;">Create your first professional resume to get started</p>
+                                <button class="btn" onclick="createNewResume()">
+                                    <i class="fas fa-plus"></i> Create Resume
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -725,6 +798,7 @@
 
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
         <script>
             // User Panel Object
             const userPanel = {
@@ -811,6 +885,9 @@
                             break;
                         case 'saved-jobs':
                             this.loadSavedJobsData();
+                            break;
+                        case 'resume':
+                            this.loadResumeData();
                             break;
                         default:
                             console.log(`Loading data for ${pageName}...`);
@@ -1077,6 +1154,153 @@
                     } else {
                         window.location.href = 'index.html';
                     }
+                },
+
+                loadResumeData() {
+                    this.loadSavedResumes();
+                },
+
+                loadSavedResumes() {
+                    const resumesGrid = document.getElementById('resumesGrid');
+                    const emptyState = document.getElementById('emptyResumesState');
+                    
+                    // Get saved resumes from localStorage
+                    const savedResumes = this.getSavedResumes();
+                    
+                    if (savedResumes.length === 0) {
+                        resumesGrid.style.display = 'none';
+                        emptyState.style.display = 'block';
+                        return;
+                    }
+                    
+                    resumesGrid.style.display = 'grid';
+                    emptyState.style.display = 'none';
+                    resumesGrid.innerHTML = '';
+                    
+                    savedResumes.forEach((resume, index) => {
+                        const resumeCard = this.createResumeCard(resume, index);
+                        resumesGrid.appendChild(resumeCard);
+                    });
+                },
+
+                getSavedResumes() {
+                    const resumes = [];
+                    const savedResume = localStorage.getItem('savedResume');
+                    
+                    if (savedResume) {
+                        const resumeData = JSON.parse(savedResume);
+                        resumes.push({
+                            ...resumeData,
+                            id: 'current',
+                            name: resumeData.data.personal.fullName || 'Untitled Resume',
+                            lastModified: new Date(resumeData.timestamp || Date.now())
+                        });
+                    }
+                    
+                    // Get additional saved resumes
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key.startsWith('resume_') && key !== 'savedResume') {
+                            try {
+                                const resumeData = JSON.parse(localStorage.getItem(key));
+                                resumes.push({
+                                    ...resumeData,
+                                    id: key,
+                                    name: resumeData.data.personal.fullName || 'Untitled Resume',
+                                    lastModified: new Date(resumeData.timestamp || Date.now())
+                                });
+                            } catch (e) {
+                                console.error('Error parsing resume:', key, e);
+                            }
+                        }
+                    }
+                    
+                    return resumes.sort((a, b) => b.lastModified - a.lastModified);
+                },
+
+                createResumeCard(resume, index) {
+                    const card = document.createElement('div');
+                    card.className = 'resume-card';
+                    card.style.cssText = `
+                        background: white;
+                        border: 1px solid #e9ecef;
+                        border-radius: 10px;
+                        padding: 20px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        cursor: pointer;
+                    `;
+                    
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="margin: 0 0 5px 0; color: #333; font-size: 1.1rem;">${resume.name}</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.9rem;">${this.getTemplateName(resume.template)} • ${this.getColorName(resume.color)}</p>
+                            </div>
+                            <div class="resume-actions" style="display: flex; gap: 5px;">
+                                <button onclick="event.stopPropagation(); previewResume('${resume.id}')" style="background: #667eea; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Preview">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); editResume('${resume.id}')" style="background: #28a745; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); deleteResume('${resume.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div style="color: #999; font-size: 0.8rem;">
+                            Last modified: ${resume.lastModified.toLocaleDateString()}
+                        </div>
+                    `;
+                    
+                    card.addEventListener('mouseenter', () => {
+                        card.style.transform = 'translateY(-2px)';
+                        card.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
+                    });
+                    
+                    card.addEventListener('mouseleave', () => {
+                        card.style.transform = 'translateY(0)';
+                        card.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                    });
+                    
+                    card.addEventListener('click', () => {
+                        editResume(resume.id);
+                    });
+                    
+                    return card;
+                },
+
+                getTemplateName(template) {
+                    const templates = {
+                        'modern': 'Modern',
+                        'classic': 'Classic',
+                        'creative': 'Creative',
+                        'minimal': 'Minimal',
+                        'executive': 'Executive',
+                        'tech': 'Tech',
+                        'academic': 'Academic',
+                        'artistic': 'Artistic',
+                        'corporate': 'Corporate',
+                        'startup': 'Startup'
+                    };
+                    return templates[template] || 'Unknown';
+                },
+
+                getColorName(color) {
+                    const colors = {
+                        'blue': 'Blue',
+                        'dark': 'Dark',
+                        'purple': 'Purple',
+                        'green': 'Green',
+                        'red': 'Red',
+                        'orange': 'Orange',
+                        'navy': 'Navy',
+                        'pink': 'Pink',
+                        'gray': 'Gray',
+                        'teal': 'Teal'
+                    };
+                    return colors[color] || 'Unknown';
                 }
             };
 
@@ -1090,6 +1314,312 @@
                 // Initialize user panel
                 userPanel.init();
             });
+
+            // Global Resume Management Functions
+            function createNewResume() {
+                window.location.href = 'resume-builder.html';
+            }
+
+            function showTemplates() {
+                window.location.href = 'resume-builder.html';
+            }
+
+            function importResume() {
+                alert('Resume import feature coming soon!');
+            }
+
+            function editResume(resumeId) {
+                if (resumeId === 'current') {
+                    window.location.href = 'resume-builder.html';
+                } else {
+                    // Load specific resume and redirect to builder
+                    const resumeData = localStorage.getItem(resumeId);
+                    if (resumeData) {
+                        localStorage.setItem('savedResume', resumeData);
+                        window.location.href = 'resume-builder.html';
+                    }
+                }
+            }
+
+            function previewResume(resumeId) {
+                const resumeData = resumeId === 'current' ? 
+                    localStorage.getItem('savedResume') : 
+                    localStorage.getItem(resumeId);
+                
+                if (resumeData) {
+                    const resume = JSON.parse(resumeData);
+                    showResumePreview(resume);
+                }
+            }
+
+            function deleteResume(resumeId) {
+                if (confirm('Are you sure you want to delete this resume?')) {
+                    if (resumeId === 'current') {
+                        localStorage.removeItem('savedResume');
+                    } else {
+                        localStorage.removeItem(resumeId);
+                    }
+                    userPanel.loadSavedResumes();
+                }
+            }
+
+            function filterResumes() {
+                const templateFilter = document.getElementById('templateFilter').value;
+                const colorFilter = document.getElementById('colorFilter').value;
+                
+                const resumeCards = document.querySelectorAll('.resume-card');
+                resumeCards.forEach(card => {
+                    const template = card.dataset.template || '';
+                    const color = card.dataset.color || '';
+                    
+                    const templateMatch = !templateFilter || template === templateFilter;
+                    const colorMatch = !colorFilter || color === colorFilter;
+                    
+                    if (templateMatch && colorMatch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            function showResumePreview(resume) {
+                // Create modal for resume preview
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="background: white; border-radius: 10px; max-width: 800px; max-height: 90vh; overflow: auto; position: relative;">
+                        <div style="position: sticky; top: 0; background: white; padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="margin: 0;">Resume Preview</h3>
+                            <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div id="previewContent"></div>
+                        </div>
+                        <div style="position: sticky; bottom: 0; background: white; padding: 20px; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="downloadResumePDF('${resume.id || 'current'}')" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                                <i class="fas fa-download"></i> Download PDF
+                            </button>
+                            <button onclick="editResume('${resume.id || 'current'}')" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                                <i class="fas fa-edit"></i> Edit Resume
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                modal.className = 'modal';
+                document.body.appendChild(modal);
+                
+                // Generate resume preview
+                const previewContent = modal.querySelector('#previewContent');
+                const resumeHTML = generateResumeHTML(resume);
+                previewContent.innerHTML = resumeHTML;
+                
+                // Close modal on background click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            function generateResumeHTML(resume) {
+                const data = resume.data;
+                const colors = getColorScheme(resume.color);
+                
+                return `
+                    <div class="resume ${resume.template}-template" style="--primary-color: ${colors.primary}; --secondary-color: ${colors.secondary}; --accent-color: ${colors.accent}; font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50; max-width: 800px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 0 20px rgba(0,0,0,0.1);">
+                        <div class="resume-header" style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid var(--primary-color);">
+                            <h1 class="name" style="font-size: 2.5rem; font-weight: bold; color: var(--primary-color); margin-bottom: 5px;">${data.personal.fullName || 'Your Name'}</h1>
+                            <h2 class="title" style="font-size: 1.3rem; color: var(--secondary-color); margin-bottom: 15px; font-weight: 500;">${data.personal.title || 'Your Title'}</h2>
+                            <div class="contact-info" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; font-size: 0.9rem; color: #666;">
+                                ${data.personal.email ? `<span><i class="fas fa-envelope"></i> ${data.personal.email}</span>` : ''}
+                                ${data.personal.phone ? `<span><i class="fas fa-phone"></i> ${data.personal.phone}</span>` : ''}
+                                ${data.personal.location ? `<span><i class="fas fa-map-marker-alt"></i> ${data.personal.location}</span>` : ''}
+                                ${data.personal.linkedin ? `<span><i class="fab fa-linkedin"></i> ${data.personal.linkedin}</span>` : ''}
+                                ${data.personal.website ? `<span><i class="fas fa-globe"></i> ${data.personal.website}</span>` : ''}
+                            </div>
+                        </div>
+                        
+                        ${data.personal.summary ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Professional Summary</h3>
+                                <p class="summary" style="font-style: italic; color: #555; margin: 0;">${data.personal.summary}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${data.experience && data.experience.length > 0 ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Professional Experience</h3>
+                                ${data.experience.map(exp => `
+                                    <div class="experience-item" style="margin-bottom: 20px;">
+                                        <div class="experience-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px;">
+                                            <h4 class="job-title" style="font-size: 1.1rem; font-weight: 600; color: var(--secondary-color); margin: 0;">${exp.title}</h4>
+                                            <span class="company" style="color: var(--primary-color); font-weight: 500;">${exp.company}</span>
+                                            <span class="duration" style="color: #666; font-size: 0.9rem;">${formatDate(exp.startDate)} - ${exp.endDate ? formatDate(exp.endDate) : 'Present'}</span>
+                                        </div>
+                                        <p class="description" style="margin: 0; color: #555;">${exp.description}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${data.education && data.education.length > 0 ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Education</h3>
+                                ${data.education.map(edu => `
+                                    <div class="education-item" style="margin-bottom: 20px;">
+                                        <div class="education-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px;">
+                                            <h4 class="degree" style="font-size: 1.1rem; font-weight: 600; color: var(--secondary-color); margin: 0;">${edu.degree}</h4>
+                                            <span class="institution" style="color: var(--primary-color); font-weight: 500;">${edu.institution}</span>
+                                            <span class="duration" style="color: #666; font-size: 0.9rem;">${formatDate(edu.startDate)} - ${edu.endDate ? formatDate(edu.endDate) : 'Present'}</span>
+                                            ${edu.gpa ? `<span class="gpa" style="color: #666; font-size: 0.9rem;">GPA: ${edu.gpa}</span>` : ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${data.skills && (data.skills.technical || data.skills.soft || data.skills.languages) ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Skills</h3>
+                                <div class="skills-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    ${data.skills.technical ? `
+                                        <div class="skill-category">
+                                            <h4 style="color: var(--primary-color); margin-bottom: 5px; font-size: 1rem;">Technical Skills</h4>
+                                            <p style="margin: 0; color: #555;">${data.skills.technical}</p>
+                                        </div>
+                                    ` : ''}
+                                    ${data.skills.soft ? `
+                                        <div class="skill-category">
+                                            <h4 style="color: var(--primary-color); margin-bottom: 5px; font-size: 1rem;">Soft Skills</h4>
+                                            <p style="margin: 0; color: #555;">${data.skills.soft}</p>
+                                        </div>
+                                    ` : ''}
+                                    ${data.skills.languages ? `
+                                        <div class="skill-category">
+                                            <h4 style="color: var(--primary-color); margin-bottom: 5px; font-size: 1rem;">Languages</h4>
+                                            <p style="margin: 0; color: #555;">${data.skills.languages}</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${data.projects && data.projects.length > 0 ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Projects</h3>
+                                ${data.projects.map(proj => `
+                                    <div class="project-item" style="margin-bottom: 20px;">
+                                        <div class="project-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px;">
+                                            <h4 class="project-name" style="font-size: 1.1rem; font-weight: 600; color: var(--secondary-color); margin: 0;">${proj.name}</h4>
+                                            ${proj.url ? `<a href="${proj.url}" class="project-url" target="_blank" style="color: var(--primary-color); text-decoration: none;"><i class="fas fa-external-link-alt"></i></a>` : ''}
+                                        </div>
+                                        ${proj.technologies ? `<p class="technologies" style="font-size: 0.9rem; color: #666; margin: 5px 0;"><strong>Technologies:</strong> ${proj.technologies}</p>` : ''}
+                                        <p class="description" style="margin: 0; color: #555;">${proj.description}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${data.skills && data.skills.certifications ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Certifications</h3>
+                                <p class="certifications" style="margin: 0; color: #555;">${data.skills.certifications}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            function getColorScheme(color) {
+                const schemes = {
+                    blue: { primary: '#1E88E5', secondary: '#1976D2', accent: '#42A5F5' },
+                    dark: { primary: '#2C3E50', secondary: '#34495E', accent: '#5D6D7E' },
+                    purple: { primary: '#8E24AA', secondary: '#7B1FA2', accent: '#AB47BC' },
+                    green: { primary: '#43A047', secondary: '#388E3C', accent: '#66BB6A' },
+                    red: { primary: '#E53935', secondary: '#D32F2F', accent: '#EF5350' },
+                    orange: { primary: '#FB8C00', secondary: '#F57C00', accent: '#FFB74D' },
+                    navy: { primary: '#1565C0', secondary: '#0D47A1', accent: '#42A5F5' },
+                    pink: { primary: '#E91E63', secondary: '#C2185B', accent: '#F06292' },
+                    gray: { primary: '#546E7A', secondary: '#455A64', accent: '#78909C' },
+                    teal: { primary: '#00ACC1', secondary: '#0097A7', accent: '#26C6DA' }
+                };
+                return schemes[color] || schemes.blue;
+            }
+
+            function formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString + '-01');
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+            }
+
+            function downloadResumePDF(resumeId) {
+                const resumeData = resumeId === 'current' ? 
+                    localStorage.getItem('savedResume') : 
+                    localStorage.getItem(resumeId);
+                
+                if (resumeData) {
+                    const resume = JSON.parse(resumeData);
+                    const resumeHTML = generateResumeHTML(resume);
+                    
+                    // Create temporary element for PDF generation
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = resumeHTML;
+                    tempDiv.style.position = 'absolute';
+                    tempDiv.style.left = '-9999px';
+                    document.body.appendChild(tempDiv);
+                    
+                    // Use html2canvas and jsPDF to generate PDF
+                    if (window.html2canvas && window.jspdf) {
+                        html2canvas(tempDiv, {
+                            scale: 2,
+                            useCORS: true,
+                            allowTaint: true
+                        }).then(canvas => {
+                            const imgData = canvas.toDataURL('image/png');
+                            const { jsPDF } = window.jspdf;
+                            const pdf = new jsPDF('p', 'mm', 'a4');
+                            
+                            const imgWidth = 210;
+                            const pageHeight = 295;
+                            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                            let heightLeft = imgHeight;
+                            
+                            let position = 0;
+                            
+                            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                            heightLeft -= pageHeight;
+                            
+                            while (heightLeft >= 0) {
+                                position = heightLeft - imgHeight;
+                                pdf.addPage();
+                                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                                heightLeft -= pageHeight;
+                            }
+                            
+                            pdf.save(`${resume.data.personal.fullName || 'resume'}.pdf`);
+                            document.body.removeChild(tempDiv);
+                        });
+                    } else {
+                        alert('PDF generation libraries not loaded. Please try again.');
+                        document.body.removeChild(tempDiv);
+                    }
+                }
+            }
 
             // Add some basic button styles
             const style = document.createElement('style');

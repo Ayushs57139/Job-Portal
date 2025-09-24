@@ -10,6 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <script src="js/api.js"></script>
         <script src="js/auth.js"></script>
+        <script src="js/chatbot-integration.js"></script>
     <style>
         * {
             margin: 0;
@@ -106,34 +107,78 @@
         .btn-register,
         .btn-employer {
             padding: 10px 20px;
-            border-radius: 25px;
+            border-radius: 6px;
             text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            position: relative;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 90px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
         
         .btn-login {
-            background: transparent;
-            color: #ff6b35;
-            border: 2px solid #ff6b35;
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
         }
         
         .btn-login:hover {
-            background: #ff6b35;
-            color: white;
+            background: rgba(102, 126, 234, 0.25);
+            color: #667eea;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
         }
         
-        .btn-register,
+        .btn-login:active {
+            transform: translateY(0);
+            background: rgba(102, 126, 234, 0.2);
+        }
+        
+        .btn-register {
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-register:hover {
+            background: rgba(102, 126, 234, 0.25);
+            color: #667eea;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .btn-register:active {
+            transform: translateY(0);
+            background: rgba(102, 126, 234, 0.2);
+        }
+        
         .btn-employer {
-            background: #ff6b35;
-            color: white;
-            border: 2px solid #ff6b35;
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
         }
         
-        .btn-register:hover,
         .btn-employer:hover {
-            background: #e55a2b;
-            border-color: #e55a2b;
+            background: rgba(102, 126, 234, 0.25);
+            color: #667eea;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .btn-employer:active {
+            transform: translateY(0);
+            background: rgba(102, 126, 234, 0.2);
         }
         
         /* User Menu Styles */
@@ -1175,7 +1220,8 @@
                     <ul>
                         <li><a href="career-guidance.html">Help Center</a></li>
                         <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms-and-conditions.html">Terms & Conditions</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>

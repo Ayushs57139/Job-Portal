@@ -82,6 +82,68 @@ class ConsultancyDashboard {
             
             // Update consultancy info if available
             this.updateConsultancyInfo();
+            
+            // Update verification status
+            this.updateVerificationStatus();
+        }
+    }
+    
+    updateVerificationStatus() {
+        const user = this.currentUser;
+        if (!user || user.userType !== 'employer') return;
+        
+        // Find or create verification status element
+        let statusElement = document.getElementById('verificationStatus');
+        if (!statusElement) {
+            // Create verification status element in sidebar
+            const sidebarHeader = document.querySelector('.sidebar-header');
+            if (sidebarHeader) {
+                statusElement = document.createElement('div');
+                statusElement.id = 'verificationStatus';
+                statusElement.style.cssText = `
+                    padding: 10px 20px;
+                    margin: 10px 0;
+                    border-radius: 5px;
+                    text-align: center;
+                    font-size: 12px;
+                    font-weight: 600;
+                `;
+                sidebarHeader.appendChild(statusElement);
+            }
+        }
+        
+        if (statusElement) {
+            let statusText = '';
+            let statusClass = '';
+            
+            if (user.isEmployerVerified && user.verificationStatus === 'verified') {
+                statusText = '✓ Verified Employer';
+                statusClass = 'verified';
+                statusElement.style.backgroundColor = '#d4edda';
+                statusElement.style.color = '#155724';
+                statusElement.style.border = '1px solid #c3e6cb';
+            } else if (user.verificationStatus === 'pending') {
+                statusText = '⏳ Verification Pending';
+                statusClass = 'pending';
+                statusElement.style.backgroundColor = '#fff3cd';
+                statusElement.style.color = '#856404';
+                statusElement.style.border = '1px solid #ffeaa7';
+            } else if (user.verificationStatus === 'rejected') {
+                statusText = '❌ Verification Rejected';
+                statusClass = 'rejected';
+                statusElement.style.backgroundColor = '#f8d7da';
+                statusElement.style.color = '#721c24';
+                statusElement.style.border = '1px solid #f5c6cb';
+            } else {
+                statusText = '⚠️ Not Verified';
+                statusClass = 'not-verified';
+                statusElement.style.backgroundColor = '#e2e3e5';
+                statusElement.style.color = '#383d41';
+                statusElement.style.border = '1px solid #d6d8db';
+            }
+            
+            statusElement.textContent = statusText;
+            statusElement.className = `verification-status ${statusClass}`;
         }
     }
     
@@ -204,6 +266,58 @@ class ConsultancyDashboard {
             case 'settings':
                 this.loadSettings();
                 break;
+            // Job Management Pages
+            case 'manage-jobs':
+                this.loadManageJobs();
+                break;
+            case 'post-job':
+                this.loadPostJob();
+                break;
+            case 'draft-jobs':
+                this.loadDraftJobs();
+                break;
+            case 'job-responses':
+                this.loadJobResponses();
+                break;
+            // Candidate Management Pages
+            case 'resume-search':
+                this.loadResumeSearch();
+                break;
+            case 'candesk':
+                this.loadCandesk();
+                break;
+            case 'matching-candidates':
+                this.loadMatchingCandidates();
+                break;
+            case 'saved-candidates':
+                this.loadSavedCandidates();
+                break;
+            case 'invite-candidates':
+                this.loadInviteCandidates();
+                break;
+            // Search & Analytics Pages
+            case 'saved-searches':
+                this.loadSavedSearches();
+                break;
+            case 'analytics':
+                this.loadAnalytics();
+                break;
+            // Community Pages
+            case 'social-centre':
+                this.loadSocialCentre();
+                break;
+            case 'community-posts':
+                this.loadCommunityPosts();
+                break;
+            case 'followers':
+                this.loadFollowers();
+                break;
+            case 'messages':
+                this.loadMessages();
+                break;
+            case 'comments':
+                this.loadComments();
+                break;
         }
     }
 
@@ -215,7 +329,27 @@ class ConsultancyDashboard {
             candidates: 'Candidates',
             revenue: 'Revenue Analytics',
             profile: 'Profile Settings',
-            settings: 'Settings'
+            settings: 'Settings',
+            // Job Management
+            'manage-jobs': 'Manage Jobs',
+            'post-job': 'Post New Job',
+            'draft-jobs': 'Draft Jobs',
+            'job-responses': 'Manage Jobs & Responses',
+            // Candidate Management
+            'resume-search': 'Resume Search',
+            'candesk': 'Candesk (Resume Search)',
+            'matching-candidates': 'Matching Candidates',
+            'saved-candidates': 'Saved Candidates',
+            'invite-candidates': 'Invite Candidates',
+            // Search & Analytics
+            'saved-searches': 'Saved Searches',
+            'analytics': 'Analytics',
+            // Community
+            'social-centre': 'Social Centre',
+            'community-posts': 'Post in Community',
+            'followers': 'Manage Followers',
+            'messages': 'Messages',
+            'comments': 'Comments'
         };
         return titles[page] || 'Consultancy Dashboard';
     }
@@ -960,6 +1094,14 @@ class ConsultancyDashboard {
     }
 
     async addJob() {
+        // Check employer verification first
+        if (!this.currentUser || this.currentUser.userType !== 'admin' && this.currentUser.userType !== 'superadmin') {
+            if (!this.currentUser.isEmployerVerified || this.currentUser.verificationStatus !== 'verified') {
+                this.showError('Your employer account is not verified yet. Please wait for admin verification before posting jobs.');
+                return;
+            }
+        }
+
         // Prevent multiple submissions
         const submitBtn = document.querySelector('#addJobForm button[type="submit"]');
         if (submitBtn && submitBtn.disabled) {
@@ -1107,6 +1249,942 @@ class ConsultancyDashboard {
 
     logout() {
         window.authUtils.logout();
+    }
+
+    // ===== NEW PAGE LOADING METHODS =====
+
+    // Job Management Pages
+    async loadManageJobs() {
+        const content = document.getElementById('manageJobsContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="page-actions">
+                <button class="btn btn-primary" onclick="consultancyDashboard.navigateToPage('post-job')">
+                    <i class="fas fa-plus"></i> Post New Job
+                </button>
+                <button class="btn btn-secondary" onclick="consultancyDashboard.loadManageJobs()">
+                    <i class="fas fa-refresh"></i> Refresh
+                </button>
+            </div>
+            
+            <div class="jobs-grid" id="manageJobsGrid">
+                <!-- Jobs will be loaded here -->
+            </div>
+        `;
+
+        // Load consultancy's jobs
+        try {
+            const response = await this.apiCall('/api/jobs/company', 'GET');
+            const jobs = response.jobs || [];
+            this.displayManageJobs(jobs);
+        } catch (error) {
+            console.error('Error loading jobs:', error);
+            content.innerHTML += '<div class="error">Failed to load jobs</div>';
+        }
+    }
+
+    async loadPostJob() {
+        const content = document.getElementById('postJobForm');
+        if (!content) return;
+
+        content.innerHTML = `
+            <form id="addJobForm" class="job-form">
+                <div class="form-section">
+                    <h3>Job Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobTitle">Job Title *</label>
+                            <input type="text" id="jobTitle" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobPostType">Job Post Type *</label>
+                            <select id="jobPostType" name="jobPostType" required>
+                                <option value="">Select Type</option>
+                                <option value="Sales">Sales</option>
+                                <option value="Java">Java</option>
+                                <option value="React">React</option>
+                                <option value="Python">Python</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="jobDescription">Job Description *</label>
+                        <textarea id="jobDescription" name="description" rows="5" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employmentType">Employment Type *</label>
+                            <select id="employmentType" name="employmentType" required>
+                                <option value="">Select Type</option>
+                                <option value="Permanent">Permanent</option>
+                                <option value="Internship">Internship</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Part-time">Part-time</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobModeType">Job Mode *</label>
+                            <select id="jobModeType" name="jobModeType" required>
+                                <option value="">Select Mode</option>
+                                <option value="Work From Office">Work From Office</option>
+                                <option value="Work From Home">Work From Home</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Company Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="companyName">Company Name *</label>
+                            <input type="text" id="companyName" name="companyName" value="${this.currentUser?.profile?.company?.name || ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="totalEmployees">Total Employees</label>
+                            <select id="totalEmployees" name="totalEmployees">
+                                <option value="">Select Size</option>
+                                <option value="0-10">0-10</option>
+                                <option value="11-50">11-50</option>
+                                <option value="51-100">51-100</option>
+                                <option value="101-500">101-500</option>
+                                <option value="500+">500+</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="companyWebsite">Company Website</label>
+                        <input type="url" id="companyWebsite" name="companyWebsite" value="${this.currentUser?.profile?.company?.website || ''}">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Location & Salary</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobState">State *</label>
+                            <input type="text" id="jobState" name="state" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobCity">City *</label>
+                            <input type="text" id="jobCity" name="city" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="salaryMin">Min Salary (₹)</label>
+                            <input type="number" id="salaryMin" name="salaryMin" placeholder="500000">
+                        </div>
+                        <div class="form-group">
+                            <label for="salaryMax">Max Salary (₹)</label>
+                            <input type="number" id="salaryMax" name="salaryMax" placeholder="1000000">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Skills & Requirements</h3>
+                    <div class="form-group">
+                        <label for="jobSkills">Required Skills (comma-separated)</label>
+                        <input type="text" id="jobSkills" name="skills" placeholder="JavaScript, React, Node.js">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="experienceMin">Min Experience</label>
+                            <select id="experienceMin" name="experienceMin">
+                                <option value="">Select</option>
+                                <option value="Fresher">Fresher</option>
+                                <option value="1 Year">1 Year</option>
+                                <option value="2 Years">2 Years</option>
+                                <option value="3 Years">3 Years</option>
+                                <option value="5+ Years">5+ Years</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="experienceMax">Max Experience</label>
+                            <select id="experienceMax" name="experienceMax">
+                                <option value="">Select</option>
+                                <option value="1 Year">1 Year</option>
+                                <option value="2 Years">2 Years</option>
+                                <option value="3 Years">3 Years</option>
+                                <option value="5 Years">5 Years</option>
+                                <option value="10+ Years">10+ Years</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="consultancyDashboard.saveDraft()">
+                        <i class="fas fa-save"></i> Save as Draft
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Post Job
+                    </button>
+                </div>
+            </form>
+        `;
+
+        // Add form event listener
+        document.getElementById('addJobForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.addJob();
+        });
+    }
+
+    async loadDraftJobs() {
+        const content = document.getElementById('draftJobsContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="page-actions">
+                <button class="btn btn-primary" onclick="consultancyDashboard.navigateToPage('post-job')">
+                    <i class="fas fa-plus"></i> Create New Draft
+                </button>
+                <button class="btn btn-secondary" onclick="consultancyDashboard.loadDraftJobs()">
+                    <i class="fas fa-refresh"></i> Refresh
+                </button>
+            </div>
+            
+            <div class="draft-jobs-grid" id="draftJobsGrid">
+                <!-- Draft jobs will be loaded here -->
+            </div>
+        `;
+
+        // Load draft jobs
+        try {
+            const response = await this.apiCall('/api/jobs/drafts', 'GET');
+            const drafts = response.drafts || [];
+            this.displayDraftJobs(drafts);
+        } catch (error) {
+            console.error('Error loading draft jobs:', error);
+            content.innerHTML += '<div class="error">Failed to load draft jobs</div>';
+        }
+    }
+
+    async loadJobResponses() {
+        const content = document.getElementById('jobResponsesContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="responses-header">
+                <div class="responses-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalResponses">0</span>
+                        <span class="stat-label">Total Responses</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="newResponses">0</span>
+                        <span class="stat-label">New This Week</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="shortlisted">0</span>
+                        <span class="stat-label">Shortlisted</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="responses-filters">
+                <select id="jobFilter" onchange="consultancyDashboard.filterResponses()">
+                    <option value="">All Jobs</option>
+                </select>
+                <select id="statusFilter" onchange="consultancyDashboard.filterResponses()">
+                    <option value="">All Status</option>
+                    <option value="applied">Applied</option>
+                    <option value="reviewed">Reviewed</option>
+                    <option value="shortlisted">Shortlisted</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="hired">Hired</option>
+                </select>
+            </div>
+            
+            <div class="responses-table" id="responsesTable">
+                <!-- Responses will be loaded here -->
+            </div>
+        `;
+
+        // Load job responses
+        try {
+            const response = await this.apiCall('/api/applications/company', 'GET');
+            const responses = response.applications || [];
+            this.displayJobResponses(responses);
+        } catch (error) {
+            console.error('Error loading job responses:', error);
+            content.innerHTML += '<div class="error">Failed to load job responses</div>';
+        }
+    }
+
+    // Candidate Management Pages
+    async loadResumeSearch() {
+        const content = document.getElementById('resumeSearchContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="search-filters">
+                <div class="filter-section">
+                    <h3>Search Filters</h3>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Keywords</label>
+                            <input type="text" id="searchKeywords" placeholder="Skills, job title, company...">
+                        </div>
+                        <div class="filter-group">
+                            <label>Location</label>
+                            <input type="text" id="searchLocation" placeholder="City, State">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Experience</label>
+                            <select id="searchExperience">
+                                <option value="">Any Experience</option>
+                                <option value="0-1">0-1 Years</option>
+                                <option value="1-3">1-3 Years</option>
+                                <option value="3-5">3-5 Years</option>
+                                <option value="5+">5+ Years</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Salary Range</label>
+                            <select id="searchSalary">
+                                <option value="">Any Salary</option>
+                                <option value="0-3">0-3 LPA</option>
+                                <option value="3-6">3-6 LPA</option>
+                                <option value="6-10">6-10 LPA</option>
+                                <option value="10+">10+ LPA</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" onclick="consultancyDashboard.searchResumes()">
+                            <i class="fas fa-search"></i> Search Resumes
+                        </button>
+                        <button class="btn btn-secondary" onclick="consultancyDashboard.saveSearch()">
+                            <i class="fas fa-save"></i> Save Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="search-results" id="resumeSearchResults">
+                <!-- Search results will be loaded here -->
+            </div>
+        `;
+    }
+
+    async loadCandesk() {
+        const content = document.getElementById('candeskContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="candesk-header">
+                <h3>Advanced Candidate Search & Management</h3>
+                <div class="candesk-actions">
+                    <button class="btn btn-primary" onclick="consultancyDashboard.advancedSearch()">
+                        <i class="fas fa-search-plus"></i> Advanced Search
+                    </button>
+                    <button class="btn btn-secondary" onclick="consultancyDashboard.bulkActions()">
+                        <i class="fas fa-tasks"></i> Bulk Actions
+                    </button>
+                </div>
+            </div>
+            
+            <div class="candesk-filters">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All Candidates</button>
+                    <button class="filter-tab" data-filter="recent">Recent</button>
+                    <button class="filter-tab" data-filter="saved">Saved</button>
+                    <button class="filter-tab" data-filter="contacted">Contacted</button>
+                </div>
+            </div>
+            
+            <div class="candesk-results" id="candeskResults">
+                <!-- Candesk results will be loaded here -->
+            </div>
+        `;
+    }
+
+    async loadMatchingCandidates() {
+        const content = document.getElementById('matchingCandidatesContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="matching-header">
+                <h3>Candidates Matching Your Job Requirements</h3>
+                <div class="matching-stats">
+                    <span class="match-count" id="matchCount">0</span> candidates found
+                </div>
+            </div>
+            
+            <div class="matching-filters">
+                <select id="jobMatchFilter" onchange="consultancyDashboard.filterMatchingCandidates()">
+                    <option value="">Select Job to Match</option>
+                </select>
+                <select id="matchScoreFilter" onchange="consultancyDashboard.filterMatchingCandidates()">
+                    <option value="">All Match Scores</option>
+                    <option value="90-100">90-100%</option>
+                    <option value="80-89">80-89%</option>
+                    <option value="70-79">70-79%</option>
+                    <option value="60-69">60-69%</option>
+                </select>
+            </div>
+            
+            <div class="matching-results" id="matchingResults">
+                <!-- Matching candidates will be loaded here -->
+            </div>
+        `;
+    }
+
+    async loadSavedCandidates() {
+        const content = document.getElementById('savedCandidatesContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="saved-header">
+                <h3>Your Saved Candidates</h3>
+                <div class="saved-actions">
+                    <button class="btn btn-primary" onclick="consultancyDashboard.exportSavedCandidates()">
+                        <i class="fas fa-download"></i> Export List
+                    </button>
+                    <button class="btn btn-secondary" onclick="consultancyDashboard.bulkInvite()">
+                        <i class="fas fa-envelope"></i> Bulk Invite
+                    </button>
+                </div>
+            </div>
+            
+            <div class="saved-filters">
+                <input type="text" id="savedSearch" placeholder="Search saved candidates..." onkeyup="consultancyDashboard.searchSavedCandidates()">
+                <select id="savedSort" onchange="consultancyDashboard.sortSavedCandidates()">
+                    <option value="date">Sort by Date Saved</option>
+                    <option value="name">Sort by Name</option>
+                    <option value="experience">Sort by Experience</option>
+                </select>
+            </div>
+            
+            <div class="saved-results" id="savedResults">
+                <!-- Saved candidates will be loaded here -->
+            </div>
+        `;
+    }
+
+    async loadInviteCandidates() {
+        const content = document.getElementById('inviteCandidatesContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="invite-header">
+                <h3>Invite Candidates to Apply</h3>
+                <p>Send personalized invitations to candidates for your job openings</p>
+            </div>
+            
+            <div class="invite-methods">
+                <div class="invite-method">
+                    <h4><i class="fas fa-envelope"></i> Email Invitations</h4>
+                    <p>Send email invitations to specific candidates</p>
+                    <button class="btn btn-primary" onclick="consultancyDashboard.showEmailInvite()">
+                        Send Email Invites
+                    </button>
+                </div>
+                
+                <div class="invite-method">
+                    <h4><i class="fas fa-link"></i> Share Job Link</h4>
+                    <p>Generate shareable links for your job postings</p>
+                    <button class="btn btn-secondary" onclick="consultancyDashboard.showJobLinks()">
+                        Generate Links
+                    </button>
+                </div>
+                
+                <div class="invite-method">
+                    <h4><i class="fas fa-users"></i> Bulk Invitations</h4>
+                    <p>Invite multiple candidates at once</p>
+                    <button class="btn btn-secondary" onclick="consultancyDashboard.showBulkInvite()">
+                        Bulk Invite
+                    </button>
+                </div>
+            </div>
+            
+            <div class="invite-history" id="inviteHistory">
+                <!-- Invitation history will be loaded here -->
+            </div>
+        `;
+    }
+
+    // Search & Analytics Pages
+    async loadSavedSearches() {
+        const content = document.getElementById('savedSearchesContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="saved-searches-header">
+                <h3>Your Saved Searches</h3>
+                <button class="btn btn-primary" onclick="consultancyDashboard.createNewSearch()">
+                    <i class="fas fa-plus"></i> Create New Search
+                </button>
+            </div>
+            
+            <div class="saved-searches-grid" id="savedSearchesGrid">
+                <!-- Saved searches will be loaded here -->
+            </div>
+        `;
+    }
+
+    async loadAnalytics() {
+        const content = document.getElementById('analyticsContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="analytics-dashboard">
+                <div class="analytics-header">
+                    <h3>Consultancy Analytics Dashboard</h3>
+                    <div class="analytics-filters">
+                        <select id="analyticsPeriod" onchange="consultancyDashboard.updateAnalytics()">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="365">Last Year</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h4>Job Performance</h4>
+                        <div class="analytics-chart" id="jobPerformanceChart">
+                            <!-- Chart will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h4>Application Trends</h4>
+                        <div class="analytics-chart" id="applicationTrendsChart">
+                            <!-- Chart will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h4>Candidate Sources</h4>
+                        <div class="analytics-chart" id="candidateSourcesChart">
+                            <!-- Chart will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h4>Response Rates</h4>
+                        <div class="analytics-chart" id="responseRatesChart">
+                            <!-- Chart will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Community Pages
+    async loadSocialCentre() {
+        const content = document.getElementById('socialCentreContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="social-centre">
+                <div class="social-header">
+                    <h3>FreeJobWala Community</h3>
+                    <p>Connect with other employers and share insights</p>
+                </div>
+                
+                <div class="social-feed">
+                    <div class="post-composer">
+                        <textarea placeholder="Share an update with the community..." id="communityPost"></textarea>
+                        <div class="composer-actions">
+                            <button class="btn btn-primary" onclick="consultancyDashboard.postToCommunity()">
+                                <i class="fas fa-paper-plane"></i> Post
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="social-posts" id="socialPosts">
+                        <!-- Community posts will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    async loadCommunityPosts() {
+        const content = document.getElementById('communityPostsContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="community-posts">
+                <div class="posts-header">
+                    <h3>Your Community Posts</h3>
+                    <button class="btn btn-primary" onclick="consultancyDashboard.navigateToPage('social-centre')">
+                        <i class="fas fa-plus"></i> Create New Post
+                    </button>
+                </div>
+                
+                <div class="posts-filters">
+                    <select id="postStatusFilter" onchange="consultancyDashboard.filterCommunityPosts()">
+                        <option value="">All Posts</option>
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                        <option value="scheduled">Scheduled</option>
+                    </select>
+                </div>
+                
+                <div class="posts-list" id="communityPostsList">
+                    <!-- Community posts will be loaded here -->
+                </div>
+            </div>
+        `;
+    }
+
+    async loadFollowers() {
+        const content = document.getElementById('followersContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="followers-management">
+                <div class="followers-header">
+                    <h3>Manage Your Followers</h3>
+                    <div class="followers-stats">
+                        <span class="follower-count" id="followerCount">0</span> followers
+                    </div>
+                </div>
+                
+                <div class="followers-filters">
+                    <input type="text" id="followerSearch" placeholder="Search followers..." onkeyup="consultancyDashboard.searchFollowers()">
+                    <select id="followerSort" onchange="consultancyDashboard.sortFollowers()">
+                        <option value="recent">Recently Followed</option>
+                        <option value="name">Name</option>
+                        <option value="activity">Most Active</option>
+                    </select>
+                </div>
+                
+                <div class="followers-list" id="followersList">
+                    <!-- Followers will be loaded here -->
+                </div>
+            </div>
+        `;
+    }
+
+    async loadMessages() {
+        const content = document.getElementById('messagesContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="messages-container">
+                <div class="messages-header">
+                    <h3>Messages</h3>
+                    <button class="btn btn-primary" onclick="consultancyDashboard.composeMessage()">
+                        <i class="fas fa-plus"></i> Compose
+                    </button>
+                </div>
+                
+                <div class="messages-layout">
+                    <div class="messages-sidebar">
+                        <div class="message-filters">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="unread">Unread</button>
+                            <button class="filter-btn" data-filter="candidates">Candidates</button>
+                            <button class="filter-btn" data-filter="employers">Employers</button>
+                        </div>
+                        
+                        <div class="conversations-list" id="conversationsList">
+                            <!-- Conversations will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="messages-main">
+                        <div class="message-view" id="messageView">
+                            <div class="no-message-selected">
+                                <i class="fas fa-comments"></i>
+                                <p>Select a conversation to view messages</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    async loadComments() {
+        const content = document.getElementById('commentsContent');
+        if (!content) return;
+
+        content.innerHTML = `
+            <div class="comments-management">
+                <div class="comments-header">
+                    <h3>Comments on Your Posts</h3>
+                    <div class="comments-stats">
+                        <span class="comment-count" id="commentCount">0</span> total comments
+                    </div>
+                </div>
+                
+                <div class="comments-filters">
+                    <select id="commentPostFilter" onchange="consultancyDashboard.filterComments()">
+                        <option value="">All Posts</option>
+                    </select>
+                    <select id="commentStatusFilter" onchange="consultancyDashboard.filterComments()">
+                        <option value="">All Comments</option>
+                        <option value="approved">Approved</option>
+                        <option value="pending">Pending</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                
+                <div class="comments-list" id="commentsList">
+                    <!-- Comments will be loaded here -->
+                </div>
+            </div>
+        `;
+    }
+
+    // ===== DISPLAY METHODS =====
+
+    displayManageJobs(jobs) {
+        const grid = document.getElementById('manageJobsGrid');
+        if (!grid) return;
+
+        if (jobs.length === 0) {
+            grid.innerHTML = '<div class="no-data">No jobs posted yet. <a href="#" onclick="consultancyDashboard.navigateToPage(\'post-job\')">Post your first job</a></div>';
+            return;
+        }
+
+        grid.innerHTML = jobs.map(job => `
+            <div class="job-card">
+                <div class="job-header">
+                    <h4>${job.title}</h4>
+                    <span class="job-status ${job.status}">${job.status}</span>
+                </div>
+                <div class="job-details">
+                    <p><i class="fas fa-building"></i> ${job.company?.name || 'Company'}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> ${job.location?.city}, ${job.location?.state}</p>
+                    <p><i class="fas fa-briefcase"></i> ${job.employmentType}</p>
+                    <p><i class="fas fa-users"></i> ${job.applications?.length || 0} applications</p>
+                </div>
+                <div class="job-actions">
+                    <button class="btn btn-sm btn-primary" onclick="consultancyDashboard.viewJob('${job._id}')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                    <button class="btn btn-sm btn-secondary" onclick="consultancyDashboard.editJob('${job._id}')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="consultancyDashboard.deleteJob('${job._id}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    displayDraftJobs(drafts) {
+        const grid = document.getElementById('draftJobsGrid');
+        if (!grid) return;
+
+        if (drafts.length === 0) {
+            grid.innerHTML = '<div class="no-data">No draft jobs. <a href="#" onclick="consultancyDashboard.navigateToPage(\'post-job\')">Create your first draft</a></div>';
+            return;
+        }
+
+        grid.innerHTML = drafts.map(draft => `
+            <div class="draft-card">
+                <div class="draft-header">
+                    <h4>${draft.title || 'Untitled Draft'}</h4>
+                    <span class="draft-date">${this.formatTimeAgo(new Date(draft.updatedAt))}</span>
+                </div>
+                <div class="draft-preview">
+                    <p>${draft.description?.substring(0, 100)}...</p>
+                </div>
+                <div class="draft-actions">
+                    <button class="btn btn-sm btn-primary" onclick="consultancyDashboard.editDraft('${draft._id}')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="consultancyDashboard.publishDraft('${draft._id}')">
+                        <i class="fas fa-paper-plane"></i> Publish
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="consultancyDashboard.deleteDraft('${draft._id}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    displayJobResponses(responses) {
+        const table = document.getElementById('responsesTable');
+        if (!table) return;
+
+        if (responses.length === 0) {
+            table.innerHTML = '<div class="no-data">No job responses yet.</div>';
+            return;
+        }
+
+        table.innerHTML = `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Job Title</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                        <th>Match Score</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${responses.map(response => `
+                        <tr>
+                            <td>
+                                <div class="candidate-info">
+                                    <strong>${response.fullName}</strong>
+                                    <small>${response.email}</small>
+                                </div>
+                            </td>
+                            <td>${response.job?.title || 'N/A'}</td>
+                            <td>${this.formatTimeAgo(new Date(response.createdAt))}</td>
+                            <td>
+                                <span class="status-badge ${response.status}">${response.status}</span>
+                            </td>
+                            <td>
+                                <div class="match-score">
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: ${response.matchScore || 0}%"></div>
+                                    </div>
+                                    <span>${response.matchScore || 0}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="consultancyDashboard.viewResponse('${response._id}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="consultancyDashboard.shortlistResponse('${response._id}')">
+                                    <i class="fas fa-check"></i> Shortlist
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // ===== UTILITY METHODS =====
+
+    async saveDraft() {
+        console.log('Saving job as draft...');
+    }
+
+    async searchResumes() {
+        console.log('Searching resumes...');
+    }
+
+    async saveSearch() {
+        console.log('Saving search...');
+    }
+
+    async advancedSearch() {
+        console.log('Advanced search...');
+    }
+
+    async bulkActions() {
+        console.log('Bulk actions...');
+    }
+
+    async filterMatchingCandidates() {
+        console.log('Filtering matching candidates...');
+    }
+
+    async exportSavedCandidates() {
+        console.log('Exporting saved candidates...');
+    }
+
+    async bulkInvite() {
+        console.log('Bulk invite...');
+    }
+
+    async searchSavedCandidates() {
+        console.log('Searching saved candidates...');
+    }
+
+    async sortSavedCandidates() {
+        console.log('Sorting saved candidates...');
+    }
+
+    async showEmailInvite() {
+        console.log('Showing email invite...');
+    }
+
+    async showJobLinks() {
+        console.log('Showing job links...');
+    }
+
+    async showBulkInvite() {
+        console.log('Showing bulk invite...');
+    }
+
+    async createNewSearch() {
+        console.log('Creating new search...');
+    }
+
+    async updateAnalytics() {
+        console.log('Updating analytics...');
+    }
+
+    async postToCommunity() {
+        console.log('Posting to community...');
+    }
+
+    async filterCommunityPosts() {
+        console.log('Filtering community posts...');
+    }
+
+    async searchFollowers() {
+        console.log('Searching followers...');
+    }
+
+    async sortFollowers() {
+        console.log('Sorting followers...');
+    }
+
+    async composeMessage() {
+        console.log('Composing message...');
+    }
+
+    async filterComments() {
+        console.log('Filtering comments...');
+    }
+
+    async editDraft(draftId) {
+        console.log('Editing draft:', draftId);
+    }
+
+    async publishDraft(draftId) {
+        console.log('Publishing draft:', draftId);
+    }
+
+    async deleteDraft(draftId) {
+        console.log('Deleting draft:', draftId);
+    }
+
+    async viewResponse(responseId) {
+        console.log('Viewing response:', responseId);
+    }
+
+    async shortlistResponse(responseId) {
+        console.log('Shortlisting response:', responseId);
     }
 }
 

@@ -28,7 +28,13 @@ router.post('/register', async (req, res) => {
             email,
             password,
             phone,
-            company
+            userType: 'employer',
+            employerType: 'company',
+            profile: {
+                company: company
+            },
+            verificationStatus: 'pending',
+            isEmployerVerified: false
         });
 
         await newCompany.save();

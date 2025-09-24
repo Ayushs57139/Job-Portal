@@ -1,6 +1,77 @@
 // Companies Page JavaScript
 let allCompanies = [];
 let filteredCompanies = [];
+let searchTimeout;
+
+// Dynamic search functionality
+function initializeSearch() {
+    const searchInput = document.getElementById('companySearchInput');
+    const industryFilter = document.getElementById('companyIndustryFilter');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearchInput);
+        searchInput.addEventListener('focus', handleSearchFocus);
+        searchInput.addEventListener('blur', handleSearchBlur);
+    }
+    
+    if (industryFilter) {
+        industryFilter.addEventListener('change', handleIndustryFilter);
+    }
+}
+
+function handleSearchInput(e) {
+    const query = e.target.value.toLowerCase().trim();
+    
+    // Clear previous timeout
+    clearTimeout(searchTimeout);
+    
+    // Add loading state
+    e.target.style.background = 'rgba(102, 126, 234, 0.1)';
+    
+    // Debounce search
+    searchTimeout = setTimeout(() => {
+        filterCompanies(query, document.getElementById('companyIndustryFilter').value);
+        e.target.style.background = 'rgba(255, 255, 255, 0.8)';
+    }, 300);
+}
+
+function handleSearchFocus(e) {
+    e.target.parentElement.style.transform = 'scale(1.02)';
+    e.target.parentElement.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+}
+
+function handleSearchBlur(e) {
+    e.target.parentElement.style.transform = 'scale(1)';
+    e.target.parentElement.style.boxShadow = 'none';
+}
+
+function handleIndustryFilter(e) {
+    const industry = e.target.value;
+    const searchQuery = document.getElementById('companySearchInput').value.toLowerCase().trim();
+    filterCompanies(searchQuery, industry);
+}
+
+function filterCompanies(searchQuery, industry) {
+    filteredCompanies = allCompanies.filter(company => {
+        const matchesSearch = !searchQuery || 
+            company.name.toLowerCase().includes(searchQuery) ||
+            company.description.toLowerCase().includes(searchQuery);
+        
+        const matchesIndustry = !industry || company.industry === industry;
+        
+        return matchesSearch && matchesIndustry;
+    });
+    
+    displayCompanies();
+    updateSearchResults();
+}
+
+function updateSearchResults() {
+    const resultsCount = document.getElementById('searchResultsCount');
+    if (resultsCount) {
+        resultsCount.textContent = `${filteredCompanies.length} companies found`;
+    }
+}
 
 // Load companies from jobs data
 async function loadCompanies() {
@@ -41,6 +112,7 @@ async function loadCompanies() {
             
             console.log('Loaded companies:', allCompanies.length);
             displayCompanies();
+            initializeSearch();
         } else {
             showNoCompaniesMessage();
         }

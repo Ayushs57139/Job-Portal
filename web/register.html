@@ -11,6 +11,7 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/chatbot.js"></script>
+    <script src="js/chatbot-integration.js"></script>
     <style>
         * {
             margin: 0;
@@ -170,6 +171,66 @@
         .user-type-description {
             font-size: 12px;
             color: #666;
+        }
+
+        .jobseeker-welcome {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f2ff 100%);
+            border-radius: 16px;
+            border: 2px solid #667eea;
+            margin-bottom: 20px;
+        }
+
+        .jobseeker-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .jobseeker-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .jobseeker-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .employer-link {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .employer-link p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .employer-register-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .employer-register-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .form-group {
@@ -434,56 +495,20 @@
                     </div>
                 </div>
 
-            <h1 class="welcome-title">Create Account</h1>
-            <p class="welcome-subtitle">Join thousands of job seekers and employers</p>
+            <h1 class="welcome-title">Create Job Seeker Account</h1>
+            <p class="welcome-subtitle">Join thousands of job seekers finding their dream careers</p>
 
             <form id="registerForm">
                 <div id="alertContainer"></div>
 
-                <!-- User Type Selection -->
+                <!-- Job Seeker Registration -->
                 <div class="user-type-selection">
-                    <label class="user-type-label">I am a *</label>
-                    <div class="user-type-options">
-                        <div class="user-type-option">
-                            <input type="radio" id="jobseeker" name="userType" value="jobseeker" onchange="handleUserTypeChange()">
-                            <label for="jobseeker" class="user-type-card">
-                                <div class="user-type-icon">👤</div>
-                                <div class="user-type-title">Job Seeker</div>
-                                <div class="user-type-description">Looking for job opportunities</div>
-                            </label>
-                        </div>
-                        <div class="user-type-option">
-                            <input type="radio" id="employer" name="userType" value="employer" onchange="handleUserTypeChange()">
-                            <label for="employer" class="user-type-card">
-                                <div class="user-type-icon">🏢</div>
-                                <div class="user-type-title">Employer</div>
-                                <div class="user-type-description">Hiring talent for companies</div>
-                            </label>
-                        </div>
+                    <div class="jobseeker-welcome">
+                        <div class="jobseeker-icon">👤</div>
+                        <div class="jobseeker-title">Job Seeker Registration</div>
+                        <div class="jobseeker-description">Join thousands of job seekers finding their dream careers</div>
                     </div>
-                </div>
-
-                <!-- Employer Type Selection (Hidden by default) -->
-                <div class="employer-type-section" id="employerTypeSection">
-                    <label class="user-type-label">What type of employer are you? *</label>
-                    <div class="employer-type-options">
-                        <div class="employer-type-option">
-                            <input type="radio" id="company" name="employerType" value="company">
-                            <label for="company" class="employer-type-card">
-                                <div class="employer-type-icon">🏭</div>
-                                <div class="employer-type-title">Company</div>
-                                <div class="employer-type-description">Direct employer hiring for your company</div>
-                            </label>
-                        </div>
-                        <div class="employer-type-option">
-                            <input type="radio" id="consultancy" name="employerType" value="consultancy">
-                            <label for="consultancy" class="employer-type-card">
-                                <div class="employer-type-icon">🤝</div>
-                                <div class="employer-type-title">Consultancy</div>
-                                <div class="employer-type-description">Recruitment agency helping others hire</div>
-                            </label>
-                        </div>
-                    </div>
+                    <input type="hidden" name="userType" value="jobseeker">
                 </div>
 
                 <!-- Personal Information -->
@@ -531,16 +556,25 @@
         </div>
 
         <div class="register-image-section">
-            <h2>Find Your Perfect Match</h2>
-            <p>Connect with the right opportunities and talent</p>
+            <h2>Find Your Dream Job</h2>
+            <p>Connect with the right opportunities and advance your career</p>
             <ul class="features">
                 <li><i class="fas fa-check-circle"></i> Access to thousands of job listings</li>
                 <li><i class="fas fa-check-circle"></i> Advanced search and filtering</li>
-                <li><i class="fas fa-check-circle"></i> Real-time notifications</li>
+                <li><i class="fas fa-check-circle"></i> Real-time job notifications</li>
                 <li><i class="fas fa-check-circle"></i> Professional profile building</li>
                 <li><i class="fas fa-check-circle"></i> Direct communication with employers</li>
                 <li><i class="fas fa-check-circle"></i> Career guidance and support</li>
+                <li><i class="fas fa-check-circle"></i> Resume builder with professional templates</li>
+                <li><i class="fas fa-check-circle"></i> Skill assessment and recommendations</li>
             </ul>
+            
+            <div class="employer-link">
+                <p>Are you an employer?</p>
+                <a href="employer-options.html" class="employer-register-btn">
+                    <i class="fas fa-building"></i> Register as Employer
+                </a>
+            </div>
         </div>
     </div>
 
@@ -613,16 +647,8 @@
                     // Redirect to appropriate dashboard based on user type
                     if (currentUser.userType === 'admin' || currentUser.userType === 'superadmin') {
                         window.location.href = 'admin.html';
-                    } else if (currentUser.userType === 'employer') {
-                        if (currentUser.employerType === 'consultancy') {
-                            window.location.href = 'consultancy-dashboard.html';
-                        } else if (currentUser.employerType === 'company') {
-                            window.location.href = 'company-dashboard.html';
-                        } else {
-                            window.location.href = 'dashboard.html';
-                        }
                     } else {
-                        window.location.href = 'index.html';
+                        window.location.href = 'dashboard.html';
                     }
                 } catch (error) {
                     console.error('Error parsing user data:', error);
@@ -632,52 +658,22 @@
             }
         }
 
-        function handleUserTypeChange() {
-            const userType = document.querySelector('input[name="userType"]:checked')?.value;
-            const employerTypeSection = document.getElementById('employerTypeSection');
-            
-            if (userType === 'employer') {
-                employerTypeSection.classList.add('show');
-                // Make employer type required
-                document.querySelectorAll('input[name="employerType"]').forEach(input => {
-                    input.required = true;
-                });
-            } else {
-                employerTypeSection.classList.remove('show');
-                // Remove employer type requirement
-                document.querySelectorAll('input[name="employerType"]').forEach(input => {
-                    input.required = false;
-                    input.checked = false;
-                });
-            }
-        }
+        // User type is now fixed as jobseeker, no need for change handler
 
         // Registration form submission
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(e.target);
-            const userType = formData.get('userType');
-            const employerType = formData.get('employerType');
+            const userType = 'jobseeker'; // Fixed as jobseeker
             
             console.log('Form data collected:');
             console.log('userType:', userType);
-            console.log('employerType:', employerType);
             console.log('firstName:', formData.get('firstName'));
             console.log('lastName:', formData.get('lastName'));
             console.log('email:', formData.get('email'));
             console.log('phone:', formData.get('phone'));
             console.log('password:', formData.get('password') ? '[PROVIDED]' : '[MISSING]');
-            
-            if (!userType) {
-                showAlert('Please select your user type', 'error');
-                return;
-            }
-            
-            if (userType === 'employer' && !employerType) {
-                showAlert('Please select your employer type', 'error');
-                return;
-            }
             
             // Check if API service is available
             console.log('Checking API service availability...');
@@ -708,8 +704,7 @@
                     email: formData.get('email'),
                     phone: formData.get('phone'),
                     password: formData.get('password'),
-                    userType: userType,
-                    employerType: employerType
+                    userType: userType
                 };
                 
                 console.log('Registration data:', registrationData);
@@ -735,19 +730,9 @@
                         });
                     }
                     
-                    // Redirect based on user type
+                    // Redirect to job seeker dashboard
                     setTimeout(() => {
-                        if (data.user.userType === 'employer') {
-                            if (data.user.employerType === 'consultancy') {
-                                window.location.href = 'consultancy-dashboard.html';
-                            } else if (data.user.employerType === 'company') {
-                                window.location.href = 'company-dashboard.html';
-                            } else {
-                                window.location.href = 'dashboard.html';
-                            }
-                        } else {
-                            window.location.href = 'index.html';
-                        }
+                        window.location.href = 'dashboard.html';
                     }, 1500);
                 } else {
                     console.error('Registration failed:', data);
