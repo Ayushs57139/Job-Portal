@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile - JobWala</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .profile-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left Panel - Benefits */
+        .benefits-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .benefits-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .benefits-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .logo-free {
+            color: #1E88E5;
+        }
+
+        .logo-job {
+            color: #ff6b35;
+        }
+
+        .logo-wala {
+            color: #1E88E5;
+        }
+
+        .complete-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .complete-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .benefits-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .benefits-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .benefits-list li i {
+            color: #667eea;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .trusted-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .company-logos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            opacity: 0.7;
+        }
+
+        .company-logo {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Right Panel - Form */
+        .form-panel {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            color: #5a6fd8;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .step-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #dc3545;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .option-btn {
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .option-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: #667eea;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: #667eea;
+        }
+
+        .step-dot.completed {
+            background: #28a745;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                flex-direction: column;
+            }
+            
+            .benefits-panel {
+                padding: 40px 20px;
+            }
+            
+            .form-panel {
+                padding: 20px;
+            }
+            
+            .form-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Left Panel - Benefits -->
+        <div class="benefits-panel">
+            <div class="benefits-content">
+                <div class="logo">
+                    <span class="logo-free">Free</span><span class="logo-job">Job</span><span class="logo-wala">Wala</span>
+                </div>
+                
+                <div class="complete-card">
+                    <h2 class="complete-title">Complete your profile!</h2>
+                    <ul class="benefits-list">
+                        <li><i class="fas fa-check"></i> Personalised job matches</li>
+                        <li><i class="fas fa-check"></i> Direct connect with HRs</li>
+                        <li><i class="fas fa-check"></i> Latest updates on the job</li>
+                        <li><i class="fas fa-check"></i> Professional profile building</li>
+                        <li><i class="fas fa-check"></i> Skill assessment and recommendations</li>
+                    </ul>
+                </div>
+                
+                <p class="trusted-text">Trusted by over 2 lakhs+ companies</p>
+                <div class="company-logos">
+                    <div class="company-logo">Paytm</div>
+                    <div class="company-logo">Uber</div>
+                    <div class="company-logo">Grab</div>
+                    <div class="company-logo">Licious</div>
+                    <div class="company-logo">TATA</div>
+                    <div class="company-logo">Infosys</div>
+                    <div class="company-logo">TCS</div>
+                    <div class="company-logo">Wipro</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Form -->
+        <div class="form-panel">
+            <div class="form-container">
+                <!-- Step 1: Basic Details -->
+                <div id="step1" class="step">
+                    <div class="form-header">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="fas fa-arrow-left"></i> Basic Details
+                        </button>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="step-title">Tell us your full name</h2>
+                    <p class="step-subtitle">This will be displayed on your profile</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="fullName" placeholder="Enter full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth (DOB)</label>
+                        <input type="date" class="form-input" id="dateOfBirth" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Gender</label>
+                        <div class="option-grid">
+                            <button type="button" class="option-btn" data-value="male">Male</button>
+                            <button type="button" class="option-btn" data-value="female">Female</button>
+                            <button type="button" class="option-btn" data-value="other">Other</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address (Optional)</label>
+                        <input type="email" class="form-input" id="email" placeholder="Enter email address">
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox" id="whatsappUpdates">
+                        <label class="checkbox-label" for="whatsappUpdates">Send me important job updates on WhatsApp</label>
+                    </div>
+                </div>
+
+                <!-- Step 2: Education Details -->
+                <div id="step2" class="step hidden">
+                    <div class="form-header">
+                        <button class="back-btn" onclick="goToStep(1)">
+                            <i class="fas fa-arrow-left"></i> Education Details
+                        </button>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="step-title">What is your highest level of education?</h2>
+                    <p class="step-subtitle">Select highest education level even if not completed</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Education Level</label>
+                        <div class="option-grid">
+                            <button type="button" class="option-btn" data-value="10th">10th or Below 10th</button>
+                            <button type="button" class="option-btn" data-value="12th">12th Pass</button>
+                            <button type="button" class="option-btn" data-value="diploma">Diploma</button>
+                            <button type="button" class="option-btn" data-value="iti">ITI</button>
+                            <button type="button" class="option-btn" data-value="graduate">Graduate</button>
+                            <button type="button" class="option-btn" data-value="postgraduate">Post Graduate</button>
+                            <button type="button" class="option-btn" data-value="doctorate">Doctorate</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Degree/Course</label>
+                        <input type="text" class="form-input" id="degree" placeholder="Enter your degree or course">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Institution/University</label>
+                        <input type="text" class="form-input" id="institution" placeholder="Enter institution name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Specialization (Optional)</label>
+                        <input type="text" class="form-input" id="specialization" placeholder="Enter specialization">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Education Status</label>
+                        <div class="option-grid">
+                            <button type="button" class="option-btn" data-value="completed">Completed</button>
+                            <button type="button" class="option-btn" data-value="pursuing">Pursuing</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Professional Details -->
+                <div id="step3" class="step hidden">
+                    <div class="form-header">
+                        <button class="back-btn" onclick="goToStep(2)">
+                            <i class="fas fa-arrow-left"></i> Professional Details
+                        </button>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="step-title">Tell us about your professional experience</h2>
+                    <p class="step-subtitle">This helps us match you with relevant jobs</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Total Experience</label>
+                        <div class="option-grid">
+                            <button type="button" class="option-btn" data-value="Fresher">Fresher</button>
+                            <button type="button" class="option-btn" data-value="3 Months">3 Months</button>
+                            <button type="button" class="option-btn" data-value="6 Months">6 Months</button>
+                            <button type="button" class="option-btn" data-value="9 Months">9 Months</button>
+                            <button type="button" class="option-btn" data-value="1 Year">1 Year</button>
+                            <button type="button" class="option-btn" data-value="1.5 Years">1.5 Years</button>
+                            <button type="button" class="option-btn" data-value="2 Years">2 Years</button>
+                            <button type="button" class="option-btn" data-value="2.5 Years">2.5 Years</button>
+                            <button type="button" class="option-btn" data-value="3 Years">3 Years</button>
+                            <button type="button" class="option-btn" data-value="3.5 Years">3.5 Years</button>
+                            <button type="button" class="option-btn" data-value="4 Years">4 Years</button>
+                            <button type="button" class="option-btn" data-value="4.5 Years">4.5 Years</button>
+                            <button type="button" class="option-btn" data-value="5 Years">5 Years</button>
+                            <button type="button" class="option-btn" data-value="5.5 Years">5.5 Years</button>
+                            <button type="button" class="option-btn" data-value="6 Years">6 Years</button>
+                            <button type="button" class="option-btn" data-value="6.5 Years">6.5 Years</button>
+                            <button type="button" class="option-btn" data-value="7 Years">7 Years</button>
+                            <button type="button" class="option-btn" data-value="7.5 Years">7.5 Years</button>
+                            <button type="button" class="option-btn" data-value="8 Years">8 Years</button>
+                            <button type="button" class="option-btn" data-value="8.5 Years">8.5 Years</button>
+                            <button type="button" class="option-btn" data-value="9 Years">9 Years</button>
+                            <button type="button" class="option-btn" data-value="9.5 Years">9.5 Years</button>
+                            <button type="button" class="option-btn" data-value="10 Years">10 Years</button>
+                            <button type="button" class="option-btn" data-value="10.5 Years">10.5 Years</button>
+                            <button type="button" class="option-btn" data-value="11 Years">11 Years</button>
+                            <button type="button" class="option-btn" data-value="11.5 Years">11.5 Years</button>
+                            <button type="button" class="option-btn" data-value="12 Years">12 Years</button>
+                            <button type="button" class="option-btn" data-value="12.5 Years">12.5 Years</button>
+                            <button type="button" class="option-btn" data-value="13 Years">13 Years</button>
+                            <button type="button" class="option-btn" data-value="13.5 Years">13.5 Years</button>
+                            <button type="button" class="option-btn" data-value="14 Years">14 Years</button>
+                            <button type="button" class="option-btn" data-value="14.5 Years">14.5 Years</button>
+                            <button type="button" class="option-btn" data-value="15 Years">15 Years</button>
+                            <button type="button" class="option-btn" data-value="15.5 Years">15.5 Years</button>
+                            <button type="button" class="option-btn" data-value="16 Years">16 Years</button>
+                            <button type="button" class="option-btn" data-value="16.5 Years">16.5 Years</button>
+                            <button type="button" class="option-btn" data-value="17 Years">17 Years</button>
+                            <button type="button" class="option-btn" data-value="17.5 Years">17.5 Years</button>
+                            <button type="button" class="option-btn" data-value="18 Years">18 Years</button>
+                            <button type="button" class="option-btn" data-value="18.5 Years">18.5 Years</button>
+                            <button type="button" class="option-btn" data-value="19 Years">19 Years</button>
+                            <button type="button" class="option-btn" data-value="19.5 Years">19.5 Years</button>
+                            <button type="button" class="option-btn" data-value="20 Years">20 Years</button>
+                            <button type="button" class="option-btn" data-value="20.5 Years">20.5 Years</button>
+                            <button type="button" class="option-btn" data-value="21 Years">21 Years</button>
+                            <button type="button" class="option-btn" data-value="21.5 Years">21.5 Years</button>
+                            <button type="button" class="option-btn" data-value="22 Years">22 Years</button>
+                            <button type="button" class="option-btn" data-value="22.5 Years">22.5 Years</button>
+                            <button type="button" class="option-btn" data-value="23 Years">23 Years</button>
+                            <button type="button" class="option-btn" data-value="23.5 Years">23.5 Years</button>
+                            <button type="button" class="option-btn" data-value="24 Years">24 Years</button>
+                            <button type="button" class="option-btn" data-value="24.5 Years">24.5 Years</button>
+                            <button type="button" class="option-btn" data-value="25 Years">25 Years</button>
+                            <button type="button" class="option-btn" data-value="25.5 Years">25.5 Years</button>
+                            <button type="button" class="option-btn" data-value="26 Years">26 Years</button>
+                            <button type="button" class="option-btn" data-value="26.5 Years">26.5 Years</button>
+                            <button type="button" class="option-btn" data-value="27 Years">27 Years</button>
+                            <button type="button" class="option-btn" data-value="27.5 Years">27.5 Years</button>
+                            <button type="button" class="option-btn" data-value="28 Years">28 Years</button>
+                            <button type="button" class="option-btn" data-value="28.5 Years">28.5 Years</button>
+                            <button type="button" class="option-btn" data-value="29 Years">29 Years</button>
+                            <button type="button" class="option-btn" data-value="29.5 Years">29.5 Years</button>
+                            <button type="button" class="option-btn" data-value="30 Years">30 Years</button>
+                            <button type="button" class="option-btn" data-value="30.5 Years">30.5 Years</button>
+                            <button type="button" class="option-btn" data-value="31 Years">31 Years</button>
+                            <button type="button" class="option-btn" data-value="31 Years Plus">31 Years Plus</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Current Job Title (Optional)</label>
+                        <input type="text" class="form-input" id="currentJobTitle" placeholder="Enter your current job title">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Current Company (Optional)</label>
+                        <input type="text" class="form-input" id="currentCompany" placeholder="Enter your current company">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Skills (Optional)</label>
+                        <input type="text" class="form-input" id="skills" placeholder="Enter your skills separated by commas">
+                    </div>
+                </div>
+
+                <!-- Step 4: Location & Preferences -->
+                <div id="step4" class="step hidden">
+                    <div class="form-header">
+                        <button class="back-btn" onclick="goToStep(3)">
+                            <i class="fas fa-arrow-left"></i> Location & Preferences
+                        </button>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="step-title">Where are you located?</h2>
+                    <p class="step-subtitle">This helps us show you relevant local jobs</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Current City</label>
+                        <input type="text" class="form-input" id="currentCity" placeholder="Enter your current city" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Preferred Job Locations (Optional)</label>
+                        <input type="text" class="form-input" id="preferredLocations" placeholder="Enter preferred cities separated by commas">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Job Type Preference</label>
+                        <div class="option-grid">
+                            <button type="button" class="option-btn" data-value="fulltime">Full Time</button>
+                            <button type="button" class="option-btn" data-value="parttime">Part Time</button>
+                            <button type="button" class="option-btn" data-value="contract">Contract</button>
+                            <button type="button" class="option-btn" data-value="internship">Internship</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Expected Salary (Optional)</label>
+                        <input type="number" class="form-input" id="expectedSalary" placeholder="Enter expected salary in LPA">
+                    </div>
+                </div>
+
+                <!-- Step 5: Review & Complete -->
+                <div id="step5" class="step hidden">
+                    <div class="form-header">
+                        <button class="back-btn" onclick="goToStep(4)">
+                            <i class="fas fa-arrow-left"></i> Review & Complete
+                        </button>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="step-title">Review your profile</h2>
+                    <p class="step-subtitle">Please review your information before completing</p>
+                    
+                    <div id="profileReview" class="profile-review">
+                        <!-- Profile review content will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="skipBtn" onclick="skipProfile()">Skip for Now</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next</button>
+                </div>
+
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step-dot active" data-step="1"></div>
+                    <div class="step-dot" data-step="2"></div>
+                    <div class="step-dot" data-step="3"></div>
+                    <div class="step-dot" data-step="4"></div>
+                    <div class="step-dot" data-step="5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let profileData = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateStepIndicator();
+        });
+
+        function setupEventListeners() {
+            // Option buttons
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const group = this.parentElement;
+                    group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+
+            // Form inputs
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('error');
+                });
+            });
+        }
+
+        function nextStep() {
+            if (validateCurrentStep()) {
+                saveCurrentStepData();
+                
+                if (currentStep < 5) {
+                    currentStep++;
+                    showStep(currentStep);
+                    updateStepIndicator();
+                    updateNextButton();
+                } else {
+                    completeProfile();
+                }
+            }
+        }
+
+        function goToStep(step) {
+            currentStep = step;
+            showStep(currentStep);
+            updateStepIndicator();
+            updateNextButton();
+        }
+
+        function goBack() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+                updateStepIndicator();
+                updateNextButton();
+            } else {
+                // Go back to registration or login
+                window.location.href = 'register.html';
+            }
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`step${step}`).classList.remove('hidden');
+        }
+
+        function updateStepIndicator() {
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index + 1 < currentStep) {
+                    dot.classList.add('completed');
+                } else if (index + 1 === currentStep) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        function updateNextButton() {
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentStep === 5) {
+                nextBtn.textContent = 'Complete Profile';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        function validateCurrentStep() {
+            let isValid = true;
+            
+            switch(currentStep) {
+                case 1:
+                    const fullName = document.getElementById('fullName');
+                    const dateOfBirth = document.getElementById('dateOfBirth');
+                    const gender = document.querySelector('.option-btn.selected');
+                    
+                    if (!fullName.value.trim()) {
+                        showError(fullName, 'Full name is required');
+                        isValid = false;
+                    }
+                    if (!dateOfBirth.value) {
+                        showError(dateOfBirth, 'Date of birth is required');
+                        isValid = false;
+                    }
+                    if (!gender) {
+                        alert('Please select your gender');
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 2:
+                    const educationLevel = document.querySelector('#step2 .option-btn.selected');
+                    if (!educationLevel) {
+                        alert('Please select your education level');
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 3:
+                    const experience = document.querySelector('#step3 .option-btn.selected');
+                    if (!experience) {
+                        alert('Please select your experience level');
+                        isValid = false;
+                    }
+                    break;
+                    
+                case 4:
+                    const currentCity = document.getElementById('currentCity');
+                    if (!currentCity.value.trim()) {
+                        showError(currentCity, 'Current city is required');
+                        isValid = false;
+                    }
+                    break;
+            }
+            
+            return isValid;
+        }
+
+        function showError(input, message) {
+            input.classList.add('error');
+            let errorDiv = input.parentElement.querySelector('.error-message');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                input.parentElement.appendChild(errorDiv);
+            }
+            errorDiv.textContent = message;
+        }
+
+        function saveCurrentStepData() {
+            switch(currentStep) {
+                case 1:
+                    profileData.fullName = document.getElementById('fullName').value;
+                    profileData.dateOfBirth = document.getElementById('dateOfBirth').value;
+                    profileData.gender = document.querySelector('#step1 .option-btn.selected')?.dataset.value;
+                    profileData.email = document.getElementById('email').value;
+                    profileData.whatsappUpdates = document.getElementById('whatsappUpdates').checked;
+                    break;
+                    
+                case 2:
+                    profileData.educationLevel = document.querySelector('#step2 .option-btn.selected')?.dataset.value;
+                    profileData.degree = document.getElementById('degree').value;
+                    profileData.institution = document.getElementById('institution').value;
+                    profileData.specialization = document.getElementById('specialization').value;
+                    profileData.educationStatus = document.querySelector('#step2 .option-btn.selected[data-value="completed"], #step2 .option-btn.selected[data-value="pursuing"]')?.dataset.value;
+                    break;
+                    
+                case 3:
+                    profileData.experience = document.querySelector('#step3 .option-btn.selected')?.dataset.value;
+                    profileData.currentJobTitle = document.getElementById('currentJobTitle').value;
+                    profileData.currentCompany = document.getElementById('currentCompany').value;
+                    profileData.skills = document.getElementById('skills').value;
+                    break;
+                    
+                case 4:
+                    profileData.currentCity = document.getElementById('currentCity').value;
+                    profileData.preferredLocations = document.getElementById('preferredLocations').value;
+                    profileData.jobTypePreference = document.querySelector('#step4 .option-btn.selected')?.dataset.value;
+                    profileData.expectedSalary = document.getElementById('expectedSalary').value;
+                    break;
+            }
+        }
+
+        function completeProfile() {
+            // Show loading
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = true;
+            nextBtn.textContent = 'Completing Profile...';
+            
+            // Send profile data to server
+            fetch('/api/users/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getAuthToken()}`
+                },
+                body: JSON.stringify({
+                    profile: profileData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Get user data to show user ID
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    const userId = userData.userId || 'N/A';
+                    
+                    alert(`Profile completed successfully!\n\nYour User ID: ${userId}\n\nYou can use this User ID, your email, or phone number to login.\n\nRedirecting to dashboard...`);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    throw new Error(data.message || 'Failed to complete profile');
+                }
+            })
+            .catch(error => {
+                console.error('Error completing profile:', error);
+                alert('Failed to complete profile. You can update it later.');
+                window.location.href = 'dashboard.html';
+            })
+            .finally(() => {
+                nextBtn.disabled = false;
+                nextBtn.textContent = 'Complete Profile';
+            });
+        }
+
+        function skipProfile() {
+            if (confirm('Are you sure you want to skip profile completion? You can complete it later.')) {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        function getAuthToken() {
+            // Get token from localStorage or sessionStorage
+            return localStorage.getItem('authToken') || sessionStorage.getItem('authToken') || '';
+        }
+
+        // Populate profile review in step 5
+        function populateProfileReview() {
+            const reviewDiv = document.getElementById('profileReview');
+            reviewDiv.innerHTML = `
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">Personal Information</h3>
+                    <p><strong>Name:</strong> ${profileData.fullName || 'Not provided'}</p>
+                    <p><strong>Date of Birth:</strong> ${profileData.dateOfBirth || 'Not provided'}</p>
+                    <p><strong>Gender:</strong> ${profileData.gender || 'Not provided'}</p>
+                    <p><strong>Email:</strong> ${profileData.email || 'Not provided'}</p>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">Education</h3>
+                    <p><strong>Education Level:</strong> ${profileData.educationLevel || 'Not provided'}</p>
+                    <p><strong>Degree:</strong> ${profileData.degree || 'Not provided'}</p>
+                    <p><strong>Institution:</strong> ${profileData.institution || 'Not provided'}</p>
+                    <p><strong>Specialization:</strong> ${profileData.specialization || 'Not provided'}</p>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">Professional</h3>
+                    <p><strong>Experience:</strong> ${profileData.experience || 'Not provided'}</p>
+                    <p><strong>Current Job:</strong> ${profileData.currentJobTitle || 'Not provided'}</p>
+                    <p><strong>Current Company:</strong> ${profileData.currentCompany || 'Not provided'}</p>
+                    <p><strong>Skills:</strong> ${profileData.skills || 'Not provided'}</p>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">Preferences</h3>
+                    <p><strong>Current City:</strong> ${profileData.currentCity || 'Not provided'}</p>
+                    <p><strong>Preferred Locations:</strong> ${profileData.preferredLocations || 'Not provided'}</p>
+                    <p><strong>Job Type:</strong> ${profileData.jobTypePreference || 'Not provided'}</p>
+                    <p><strong>Expected Salary:</strong> ${profileData.expectedSalary ? profileData.expectedSalary + ' LPA' : 'Not provided'}</p>
+                </div>
+            `;
+        }
+
+        // Override nextStep for step 5 to show review
+        function nextStep() {
+            if (validateCurrentStep()) {
+                saveCurrentStepData();
+                
+                if (currentStep < 5) {
+                    currentStep++;
+                    showStep(currentStep);
+                    updateStepIndicator();
+                    updateNextButton();
+                } else {
+                    populateProfileReview();
+                    completeProfile();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

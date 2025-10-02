@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Fields Demo - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B35 0%, #e55a2b 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .demo-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Custom Fields Styles */
+        .custom-field {
+            margin-bottom: 20px;
+        }
+
+        .custom-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .custom-field .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .custom-field .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .custom-field .form-check {
+            margin-bottom: 10px;
+        }
+
+        .custom-field .form-check-input {
+            margin-right: 8px;
+        }
+
+        .custom-field .form-check-label {
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .custom-field .radio-group,
+        .custom-field .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .custom-field .form-text {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .custom-field .required {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-edit"></i> Custom Fields Demo</h1>
+            <p>Demonstration of dynamic custom fields across different sections</p>
+        </div>
+
+        <div class="content">
+            <!-- Job Posting Custom Fields -->
+            <div class="demo-section">
+                <h3><i class="fas fa-briefcase"></i> Job Posting Custom Fields</h3>
+                <p>These fields are configured for the job posting form:</p>
+                <div id="jobPostingFields">
+                    <div class="loading">Loading custom fields...</div>
+                </div>
+                <button class="btn btn-primary" onclick="validateAndShowData('jobPostingFields', 'job_posting')">
+                    <i class="fas fa-check"></i> Validate & Show Data
+                </button>
+                <div id="jobPostingResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- User Registration Custom Fields -->
+            <div class="demo-section">
+                <h3><i class="fas fa-user-plus"></i> User Registration Custom Fields</h3>
+                <p>These fields are configured for the user registration form:</p>
+                <div id="userRegistrationFields">
+                    <div class="loading">Loading custom fields...</div>
+                </div>
+                <button class="btn btn-primary" onclick="validateAndShowData('userRegistrationFields', 'user_registration')">
+                    <i class="fas fa-check"></i> Validate & Show Data
+                </button>
+                <div id="userRegistrationResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- Company Profile Custom Fields -->
+            <div class="demo-section">
+                <h3><i class="fas fa-building"></i> Company Profile Custom Fields</h3>
+                <p>These fields are configured for the company profile form:</p>
+                <div id="companyProfileFields">
+                    <div class="loading">Loading custom fields...</div>
+                </div>
+                <button class="btn btn-primary" onclick="validateAndShowData('companyProfileFields', 'company_profile')">
+                    <i class="fas fa-check"></i> Validate & Show Data
+                </button>
+                <div id="companyProfileResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- Application Form Custom Fields -->
+            <div class="demo-section">
+                <h3><i class="fas fa-file-alt"></i> Application Form Custom Fields</h3>
+                <p>These fields are configured for the application form:</p>
+                <div id="applicationFormFields">
+                    <div class="loading">Loading custom fields...</div>
+                </div>
+                <button class="btn btn-primary" onclick="validateAndShowData('applicationFormFields', 'application_form')">
+                    <i class="fas fa-check"></i> Validate & Show Data
+                </button>
+                <div id="applicationFormResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- Admin Panel Custom Fields -->
+            <div class="demo-section">
+                <h3><i class="fas fa-cog"></i> Admin Panel Custom Fields</h3>
+                <p>These fields are configured for the admin panel:</p>
+                <div id="adminPanelFields">
+                    <div class="loading">Loading custom fields...</div>
+                </div>
+                <button class="btn btn-primary" onclick="validateAndShowData('adminPanelFields', 'admin_panel')">
+                    <i class="fas fa-check"></i> Validate & Show Data
+                </button>
+                <div id="adminPanelResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="demo-section">
+                <h3><i class="fas fa-info-circle"></i> How to Use Custom Fields</h3>
+                <div style="line-height: 1.6;">
+                    <p><strong>1. Admin Panel:</strong> Go to the admin panel and click on "Custom Fields" to manage all form fields.</p>
+                    <p><strong>2. Add Fields:</strong> Click "Add New Field" to create custom fields for any section.</p>
+                    <p><strong>3. Field Types:</strong> Support for text, email, phone, number, textarea, dropdown, radio, checkbox, date, file upload, and more.</p>
+                    <p><strong>4. Validation:</strong> Set required fields, min/max length, patterns, and custom validation rules.</p>
+                    <p><strong>5. Placement:</strong> Choose which section the field appears in and set display order.</p>
+                    <p><strong>6. Styling:</strong> Customize width, CSS classes, placeholders, and help text.</p>
+                    <p><strong>7. Dynamic Loading:</strong> Fields are automatically loaded and rendered in forms without code changes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/customFields.js"></script>
+    <script>
+        // Load custom fields for all sections when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            const sections = [
+                { container: 'jobPostingFields', section: 'job_posting' },
+                { container: 'userRegistrationFields', section: 'user_registration' },
+                { container: 'companyProfileFields', section: 'company_profile' },
+                { container: 'applicationFormFields', section: 'application_form' },
+                { container: 'adminPanelFields', section: 'admin_panel' }
+            ];
+
+            for (const { container, section } of sections) {
+                try {
+                    await window.customFieldsRenderer.renderFields(container, section);
+                } catch (error) {
+                    console.error(`Error loading custom fields for ${section}:`, error);
+                    document.getElementById(container).innerHTML = `
+                        <div class="error">
+                            <i class="fas fa-exclamation-triangle"></i> 
+                            No custom fields configured for ${section} section yet.
+                        </div>
+                    `;
+                }
+            }
+        });
+
+        // Function to validate fields and show data
+        function validateAndShowData(containerId, section) {
+            const container = document.getElementById(containerId);
+            const resultContainer = document.getElementById(containerId.replace('Fields', 'Result'));
+            
+            // Validate fields
+            const validation = window.customFieldsRenderer.validateFields(containerId);
+            
+            if (!validation.isValid) {
+                resultContainer.innerHTML = `Validation Errors:\n${validation.errors.join('\n')}`;
+                resultContainer.className = 'result error';
+                resultContainer.style.display = 'block';
+                return;
+            }
+
+            // Get field values
+            const fieldValues = window.customFieldsRenderer.getFieldValues(containerId);
+            
+            if (Object.keys(fieldValues).length === 0) {
+                resultContainer.innerHTML = 'No custom fields configured for this section.';
+                resultContainer.className = 'result';
+                resultContainer.style.display = 'block';
+                return;
+            }
+
+            // Display data
+            resultContainer.innerHTML = `Custom Fields Data for ${section}:\n\n${JSON.stringify(fieldValues, null, 2)}`;
+            resultContainer.className = 'result';
+            resultContainer.style.display = 'block';
+        }
+
+        // Function to clear all results
+        function clearAllResults() {
+            const resultContainers = document.querySelectorAll('.result');
+            resultContainers.forEach(container => {
+                container.style.display = 'none';
+            });
+        }
+
+        // Add clear button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'btn btn-warning';
+            clearBtn.innerHTML = '<i class="fas fa-trash"></i> Clear All Results';
+            clearBtn.onclick = clearAllResults;
+            
+            const header = document.querySelector('.header');
+            header.appendChild(clearBtn);
+        });
+    </script>
+</body>
+</html>

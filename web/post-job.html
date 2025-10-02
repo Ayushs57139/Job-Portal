@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Job - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B35 0%, #e55a2b 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .form-section h3 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid #FF6B35;
+            padding-bottom: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group label.required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+
+        /* Custom Fields Styles */
+        .custom-field {
+            margin-bottom: 20px;
+        }
+
+        .custom-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .custom-field .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .custom-field .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .custom-field .form-check {
+            margin-bottom: 10px;
+        }
+
+        .custom-field .form-check-input {
+            margin-right: 8px;
+        }
+
+        .custom-field .form-check-label {
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .custom-field .radio-group,
+        .custom-field .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .custom-field .form-text {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .custom-field .required {
+            color: #e74c3c;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .multi-select {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .multi-select label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .multi-select input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .submit-section {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #FF6B35 0%, #e55a2b 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #FF6B35 0%, #e55a2b 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .section-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: 2px solid #FF6B35;
+            background: white;
+            color: #FF6B35;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn.active {
+            background: #FF6B35;
+            color: white;
+        }
+
+        .nav-btn:hover {
+            background: #FF6B35;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-briefcase"></i> Post a Job</h1>
+            <p>Fill in the details to post your job opening</p>
+        </div>
+
+        <div class="form-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="section-navigation">
+                <button class="nav-btn active" onclick="showSection('company')">Company Info</button>
+                <button class="nav-btn" onclick="showSection('job')">Job Details</button>
+                <button class="nav-btn" onclick="showSection('location')">Location</button>
+                <button class="nav-btn" onclick="showSection('requirements')">Requirements</button>
+                <button class="nav-btn" onclick="showSection('contact')">Contact</button>
+            </div>
+
+            <form id="jobForm">
+                <!-- Company Information Section -->
+                <div class="form-section" id="company-section">
+                    <h3><i class="fas fa-building"></i> Company Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="companyName" class="required">Company/Consultancy Name</label>
+                            <input type="text" id="companyName" name="company.name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="totalEmployees" class="required">Total Employees Count</label>
+                            <select id="totalEmployees" name="company.totalEmployees" required>
+                                <option value="">Select Employee Count</option>
+                                <option value="0-10">0-10</option>
+                                <option value="11-50">11-50</option>
+                                <option value="51-100">51-100</option>
+                                <option value="101-200">101-200</option>
+                                <option value="201-500">201-500</option>
+                                <option value="500-1000">500-1000</option>
+                                <option value="1001-2000">1001-2000</option>
+                                <option value="2000-3000">2000-3000</option>
+                                <option value="4000 Above">4000 Above</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="companyWebsite">Company Website</label>
+                            <input type="url" id="companyWebsite" name="company.website">
+                        </div>
+                        <div class="form-group">
+                            <label for="companyIndustry">Industry/Sectors</label>
+                            <input type="text" id="companyIndustry" name="company.industry" placeholder="e.g., IT, Healthcare, Finance">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Details Section -->
+                <div class="form-section" id="job-section" style="display: none;">
+                    <h3><i class="fas fa-tasks"></i> Job Details</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobTitle" class="required">Job Title/Designation</label>
+                            <input type="text" id="jobTitle" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobPostType" class="required">Job Post Type</label>
+                            <select id="jobPostType" name="jobPostType" required>
+                                <option value="">Select Job Type</option>
+                                <option value="Sales">Sales</option>
+                                <option value="MS Office">MS Office</option>
+                                <option value="MS Word">MS Word</option>
+                                <option value="Field Sales">Field Sales</option>
+                                <option value="Home Loan Sales">Home Loan Sales</option>
+                                <option value="HL">HL</option>
+                                <option value="LAP">LAP</option>
+                                <option value="Java">Java</option>
+                                <option value="React">React</option>
+                                <option value="Angular">Angular</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employmentType" class="required">Employment Type</label>
+                            <select id="employmentType" name="employmentType" required>
+                                <option value="">Select Employment Type</option>
+                                <option value="Permanent">Permanent</option>
+                                <option value="Temporary/Contract Job">Temporary/Contract Job</option>
+                                <option value="Freelance">Freelance</option>
+                                <option value="Apprenticeship">Apprenticeship</option>
+                                <option value="Internship">Internship</option>
+                                <option value="NAPS">NAPS</option>
+                                <option value="Trainee">Trainee</option>
+                                <option value="Fresher">Fresher</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobModeType" class="required">Job Mode Type</label>
+                            <select id="jobModeType" name="jobModeType" required>
+                                <option value="">Select Job Mode</option>
+                                <option value="Full Time">Full Time</option>
+                                <option value="Part Time">Part Time</option>
+                                <option value="Any">Any</option>
+                                <option value="Work From Home">Work From Home</option>
+                                <option value="Work From Office">Work From Office</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="Remote">Remote</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobShiftType" class="required">Job Shift Type</label>
+                            <select id="jobShiftType" name="jobShiftType" required>
+                                <option value="">Select Shift Type</option>
+                                <option value="Day Shift">Day Shift</option>
+                                <option value="Night Shift">Night Shift</option>
+                                <option value="Rotational Shift">Rotational Shift</option>
+                                <option value="Split Shift">Split Shift</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="numberOfVacancy" class="required">Number of Vacancy</label>
+                            <input type="number" id="numberOfVacancy" name="numberOfVacancy" min="1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="skills" class="required">Skills/IT Skills</label>
+                        <input type="text" id="skills" name="skills" placeholder="Enter skills separated by commas" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="required">Job Description (Max 2500 words)</label>
+                        <textarea id="description" name="description" maxlength="2500" required></textarea>
+                        <small>Character count: <span id="charCount">0</span>/2500</small>
+                    </div>
+                </div>
+
+                <!-- Location Section -->
+                <div class="form-section" id="location-section" style="display: none;">
+                    <h3><i class="fas fa-map-marker-alt"></i> Location Details</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobState" class="required">Job State</label>
+                            <input type="text" id="jobState" name="location.state" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobCity" class="required">Job City/Region</label>
+                            <input type="text" id="jobCity" name="location.city" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobLocality">Job Locality (Optional)</label>
+                            <input type="text" id="jobLocality" name="location.locality">
+                        </div>
+                        <div class="form-group">
+                            <label for="distanceFromLocation">Distance From Job Location</label>
+                            <input type="text" id="distanceFromLocation" name="location.distanceFromLocation" placeholder="e.g., 5 km from city center">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="includeWillingToRelocate" name="location.includeWillingToRelocate">
+                            <label for="includeWillingToRelocate">Include Willing To Relocate Candidates</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requirements Section -->
+                <div class="form-section" id="requirements-section" style="display: none;">
+                    <h3><i class="fas fa-user-check"></i> Candidate Requirements</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="experienceType" class="required">Experience Type</label>
+                            <select id="experienceType" name="experienceType" required>
+                                <option value="">Select Experience Type</option>
+                                <option value="Fresher">Fresher</option>
+                                <option value="Experienced">Experienced</option>
+                                <option value="Student">Student</option>
+                                <option value="All Types">All Types</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="minExperience" class="required">Minimum Experience</label>
+                            <select id="minExperience" name="totalExperience.min" required>
+                                <option value="">Select Min Experience</option>
+                                <option value="Fresher">Fresher</option>
+                                <option value="3 Months">3 Months</option>
+                                <option value="6 Months">6 Months</option>
+                                <option value="9 Months">9 Months</option>
+                                <option value="1 Year">1 Year</option>
+                                <option value="1.5 Years">1.5 Years</option>
+                                <option value="2 Years">2 Years</option>
+                                <option value="2.5 Years">2.5 Years</option>
+                                <option value="3 Years">3 Years</option>
+                                <option value="3.5 Years">3.5 Years</option>
+                                <option value="4 Years">4 Years</option>
+                                <option value="4.5 Years">4.5 Years</option>
+                                <option value="5 Years">5 Years</option>
+                                <option value="5.5 Years">5.5 Years</option>
+                                <option value="6 Years">6 Years</option>
+                                <option value="6.5 Years">6.5 Years</option>
+                                <option value="7 Years">7 Years</option>
+                                <option value="7.5 Years">7.5 Years</option>
+                                <option value="8 Years">8 Years</option>
+                                <option value="8.5 Years">8.5 Years</option>
+                                <option value="9 Years">9 Years</option>
+                                <option value="9.5 Years">9.5 Years</option>
+                                <option value="10 Years">10 Years</option>
+                                <option value="10.5 Years">10.5 Years</option>
+                                <option value="11 Years">11 Years</option>
+                                <option value="11.5 Years">11.5 Years</option>
+                                <option value="12 Years">12 Years</option>
+                                <option value="12.5 Years">12.5 Years</option>
+                                <option value="13 Years">13 Years</option>
+                                <option value="13.5 Years">13.5 Years</option>
+                                <option value="14 Years">14 Years</option>
+                                <option value="14.5 Years">14.5 Years</option>
+                                <option value="15 Years">15 Years</option>
+                                <option value="15.5 Years">15.5 Years</option>
+                                <option value="16 Years">16 Years</option>
+                                <option value="16.5 Years">16.5 Years</option>
+                                <option value="17 Years">17 Years</option>
+                                <option value="17.5 Years">17.5 Years</option>
+                                <option value="18 Years">18 Years</option>
+                                <option value="18.5 Years">18.5 Years</option>
+                                <option value="19 Years">19 Years</option>
+                                <option value="19.5 Years">19.5 Years</option>
+                                <option value="20 Years">20 Years</option>
+                                <option value="20.5 Years">20.5 Years</option>
+                                <option value="21 Years">21 Years</option>
+                                <option value="21.5 Years">21.5 Years</option>
+                                <option value="22 Years">22 Years</option>
+                                <option value="22.5 Years">22.5 Years</option>
+                                <option value="23 Years">23 Years</option>
+                                <option value="23.5 Years">23.5 Years</option>
+                                <option value="24 Years">24 Years</option>
+                                <option value="24.5 Years">24.5 Years</option>
+                                <option value="25 Years">25 Years</option>
+                                <option value="25.5 Years">25.5 Years</option>
+                                <option value="26 Years">26 Years</option>
+                                <option value="26.5 Years">26.5 Years</option>
+                                <option value="27 Years">27 Years</option>
+                                <option value="27.5 Years">27.5 Years</option>
+                                <option value="28 Years">28 Years</option>
+                                <option value="28.5 Years">28.5 Years</option>
+                                <option value="29 Years">29 Years</option>
+                                <option value="29.5 Years">29.5 Years</option>
+                                <option value="30 Years">30 Years</option>
+                                <option value="30+ Years">30+ Years</option>
+                                <option value="31 Years Plus">31 Years Plus</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="maxExperience" class="required">Maximum Experience</label>
+                            <select id="maxExperience" name="totalExperience.max" required>
+                                <option value="">Select Max Experience</option>
+                                <option value="Fresher">Fresher</option>
+                                <option value="3 Months">3 Months</option>
+                                <option value="6 Months">6 Months</option>
+                                <option value="9 Months">9 Months</option>
+                                <option value="1 Year">1 Year</option>
+                                <option value="1.5 Years">1.5 Years</option>
+                                <option value="2 Years">2 Years</option>
+                                <option value="2.5 Years">2.5 Years</option>
+                                <option value="3 Years">3 Years</option>
+                                <option value="3.5 Years">3.5 Years</option>
+                                <option value="4 Years">4 Years</option>
+                                <option value="4.5 Years">4.5 Years</option>
+                                <option value="5 Years">5 Years</option>
+                                <option value="5.5 Years">5.5 Years</option>
+                                <option value="6 Years">6 Years</option>
+                                <option value="6.5 Years">6.5 Years</option>
+                                <option value="7 Years">7 Years</option>
+                                <option value="7.5 Years">7.5 Years</option>
+                                <option value="8 Years">8 Years</option>
+                                <option value="8.5 Years">8.5 Years</option>
+                                <option value="9 Years">9 Years</option>
+                                <option value="9.5 Years">9.5 Years</option>
+                                <option value="10 Years">10 Years</option>
+                                <option value="10.5 Years">10.5 Years</option>
+                                <option value="11 Years">11 Years</option>
+                                <option value="11.5 Years">11.5 Years</option>
+                                <option value="12 Years">12 Years</option>
+                                <option value="12.5 Years">12.5 Years</option>
+                                <option value="13 Years">13 Years</option>
+                                <option value="13.5 Years">13.5 Years</option>
+                                <option value="14 Years">14 Years</option>
+                                <option value="14.5 Years">14.5 Years</option>
+                                <option value="15 Years">15 Years</option>
+                                <option value="15.5 Years">15.5 Years</option>
+                                <option value="16 Years">16 Years</option>
+                                <option value="16.5 Years">16.5 Years</option>
+                                <option value="17 Years">17 Years</option>
+                                <option value="17.5 Years">17.5 Years</option>
+                                <option value="18 Years">18 Years</option>
+                                <option value="18.5 Years">18.5 Years</option>
+                                <option value="19 Years">19 Years</option>
+                                <option value="19.5 Years">19.5 Years</option>
+                                <option value="20 Years">20 Years</option>
+                                <option value="20.5 Years">20.5 Years</option>
+                                <option value="21 Years">21 Years</option>
+                                <option value="21.5 Years">21.5 Years</option>
+                                <option value="22 Years">22 Years</option>
+                                <option value="22.5 Years">22.5 Years</option>
+                                <option value="23 Years">23 Years</option>
+                                <option value="23.5 Years">23.5 Years</option>
+                                <option value="24 Years">24 Years</option>
+                                <option value="24.5 Years">24.5 Years</option>
+                                <option value="25 Years">25 Years</option>
+                                <option value="25.5 Years">25.5 Years</option>
+                                <option value="26 Years">26 Years</option>
+                                <option value="26.5 Years">26.5 Years</option>
+                                <option value="27 Years">27 Years</option>
+                                <option value="27.5 Years">27.5 Years</option>
+                                <option value="28 Years">28 Years</option>
+                                <option value="28.5 Years">28.5 Years</option>
+                                <option value="29 Years">29 Years</option>
+                                <option value="29.5 Years">29.5 Years</option>
+                                <option value="30 Years">30 Years</option>
+                                <option value="30+ Years">30+ Years</option>
+                                <option value="31 Years Plus">31 Years Plus</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="joiningPeriod" class="required">Joining Period</label>
+                            <select id="joiningPeriod" name="joiningPeriod" required>
+                                <option value="">Select Joining Period</option>
+                                <option value="Immediate Joining">Immediate Joining</option>
+                                <option value="7 Days">7 Days</option>
+                                <option value="15 Days">15 Days</option>
+                                <option value="30 Days">30 Days</option>
+                                <option value="45 Days">45 Days</option>
+                                <option value="60 Days">60 Days</option>
+                                <option value="90 Days">90 Days</option>
+                                <option value="Any">Any</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="minSalary" class="required">Minimum Salary (INR per month)</label>
+                            <input type="number" id="minSalary" name="salary.min" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="maxSalary" class="required">Maximum Salary (INR per month)</label>
+                            <input type="number" id="maxSalary" name="salary.max" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hideSalary" name="salary.hideFromCandidates">
+                            <label for="hideSalary">Hide Salary Details From Candidates</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Benefits</label>
+                        <div class="multi-select">
+                            <label><input type="checkbox" name="additionalBenefits" value="Office Cab/Shuttle"> Office Cab/Shuttle</label>
+                            <label><input type="checkbox" name="additionalBenefits" value="Food Allowance"> Food Allowance</label>
+                            <label><input type="checkbox" name="additionalBenefits" value="Health Insurance"> Health Insurance</label>
+                            <label><input type="checkbox" name="additionalBenefits" value="Annual Bonus"> Annual Bonus</label>
+                            <label><input type="checkbox" name="additionalBenefits" value="PF"> PF</label>
+                            <label><input type="checkbox" name="additionalBenefits" value="ESIC"> ESIC</label>
+                            <label><input type="checkbox" name="additionalBenefits" value="Laptop"> Laptop</label>
+                            <label><input type="checkbox" name="additionalBenefits" value="Mobile Phone"> Mobile Phone</label>
+                            <label><input type="checkbox" name="additionalBenefits" value="Flexible Working Hours"> Flexible Working Hours</label>
+                            <label><input type="checkbox" name="additionalBenefits" value="Accommodation"> Accommodation</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender Preference</label>
+                        <div class="multi-select">
+                            <label><input type="checkbox" name="gender" value="Male"> Male</label>
+                            <label><input type="checkbox" name="gender" value="Female"> Female</label>
+                            <label><input type="checkbox" name="gender" value="Transgender"> Transgender</label>
+                            <label><input type="checkbox" name="gender" value="Other"> Other</label>
+                            <label><input type="checkbox" name="gender" value="All Types"> All Types</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Education Requirements</label>
+                        <div class="multi-select">
+                            <label><input type="checkbox" name="education" value="10th Pass"> 10th Pass</label>
+                            <label><input type="checkbox" name="education" value="12th Pass"> 12th Pass</label>
+                            <label><input type="checkbox" name="education" value="Below 10th"> Below 10th</label>
+                            <label><input type="checkbox" name="education" value="No Education"> No Education</label>
+                            <label><input type="checkbox" name="education" value="ITI"> ITI</label>
+                            <label><input type="checkbox" name="education" value="Diploma"> Diploma</label>
+                            <label><input type="checkbox" name="education" value="Graduate"> Graduate</label>
+                            <label><input type="checkbox" name="education" value="Post Graduate"> Post Graduate</label>
+                            <label><input type="checkbox" name="education" value="PPG"> PPG</label>
+                            <label><input type="checkbox" name="education" value="Doctorate"> Doctorate</label>
+                            <label><input type="checkbox" name="education" value="Ph.D"> Ph.D</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="form-section" id="contact-section" style="display: none;">
+                    <h3><i class="fas fa-phone"></i> HR/Contact Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hrName" class="required">HR/Contact Person Name</label>
+                            <input type="text" id="hrName" name="hrContact.name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hrNumber" class="required">HR/Contact Person Number</label>
+                            <input type="tel" id="hrNumber" name="hrContact.number" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hrEmail" class="required">HR/Contact Person Email</label>
+                            <input type="email" id="hrEmail" name="hrContact.email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hrWhatsapp">HR/Contact Person WhatsApp Number</label>
+                            <input type="tel" id="hrWhatsapp" name="hrContact.whatsappNumber">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hrTimingStart">HR Contact Timing (Start)</label>
+                            <input type="time" id="hrTimingStart" name="hrContact.timing.start">
+                        </div>
+                        <div class="form-group">
+                            <label for="hrTimingEnd">HR Contact Timing (End)</label>
+                            <input type="time" id="hrTimingEnd" name="hrContact.timing.end">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>HR Contact Days</label>
+                        <div class="multi-select">
+                            <label><input type="checkbox" name="hrContact.days" value="Monday"> Monday</label>
+                            <label><input type="checkbox" name="hrContact.days" value="Tuesday"> Tuesday</label>
+                            <label><input type="checkbox" name="hrContact.days" value="Wednesday"> Wednesday</label>
+                            <label><input type="checkbox" name="hrContact.days" value="Thursday"> Thursday</label>
+                            <label><input type="checkbox" name="hrContact.days" value="Friday"> Friday</label>
+                            <label><input type="checkbox" name="hrContact.days" value="Saturday"> Saturday</label>
+                            <label><input type="checkbox" name="hrContact.days" value="Sunday"> Sunday</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="includeWalkinDetails" name="includeWalkinDetails">
+                            <label for="includeWalkinDetails">Include Walk-in Details</label>
+                        </div>
+                    </div>
+
+                    <div id="walkinDetails" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="walkinStartDate">Walk-in Start Date</label>
+                                <input type="date" id="walkinStartDate" name="walkinDetails.startDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="walkinEndDate">Walk-in End Date</label>
+                                <input type="date" id="walkinEndDate" name="walkinDetails.endDate">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="walkinTiming">Walk-in Timing</label>
+                                <input type="text" id="walkinTiming" name="walkinDetails.timing" placeholder="e.g., 9:00 AM - 5:00 PM">
+                            </div>
+                            <div class="form-group">
+                                <label for="walkinDuration">Duration (Days)</label>
+                                <input type="number" id="walkinDuration" name="walkinDetails.duration" min="1">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="walkinContactName">Contact Person Name</label>
+                                <input type="text" id="walkinContactName" name="walkinDetails.contactPersonName">
+                            </div>
+                            <div class="form-group">
+                                <label for="walkinContactNumber">Contact Person Number</label>
+                                <input type="tel" id="walkinContactNumber" name="walkinDetails.contactPersonNumber">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="walkinVenue">Walk-in Venue Address</label>
+                            <textarea id="walkinVenue" name="walkinDetails.venueAddress" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="walkinMapUrl">Google Map URL</label>
+                            <input type="url" id="walkinMapUrl" name="walkinDetails.googleMapUrl" placeholder="https://maps.google.com/...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Fields Section -->
+                <div class="form-section" id="custom-fields-section">
+                    <h3><i class="fas fa-edit"></i> Additional Information</h3>
+                    <div id="customFieldsContainer">
+                        <!-- Custom fields will be loaded here dynamically -->
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Post Job
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/customFields.js"></script>
+    <script>
+        let currentSection = 'company';
+        const sections = ['company', 'job', 'location', 'requirements', 'contact'];
+
+        // Load custom fields when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await window.customFieldsRenderer.renderFields('customFieldsContainer', 'job_posting');
+            } catch (error) {
+                console.error('Error loading custom fields:', error);
+            }
+        });
+
+        function showSection(sectionName) {
+            // Hide all sections
+            sections.forEach(section => {
+                document.getElementById(section + '-section').style.display = 'none';
+                document.querySelector(`[onclick="showSection('${section}')"]`).classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionName + '-section').style.display = 'block';
+            document.querySelector(`[onclick="showSection('${sectionName}')"]`).classList.add('active');
+            
+            currentSection = sectionName;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const currentIndex = sections.indexOf(currentSection);
+            const progress = ((currentIndex + 1) / sections.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Character count for description
+        document.getElementById('description').addEventListener('input', function() {
+            const charCount = this.value.length;
+            document.getElementById('charCount').textContent = charCount;
+            
+            if (charCount > 2500) {
+                this.value = this.value.substring(0, 2500);
+                document.getElementById('charCount').textContent = '2500';
+            }
+        });
+
+        // Show/hide walk-in details
+        document.getElementById('includeWalkinDetails').addEventListener('change', function() {
+            const walkinDetails = document.getElementById('walkinDetails');
+            walkinDetails.style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Form submission
+        document.getElementById('jobForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting Job...';
+
+            try {
+                const formData = new FormData(this);
+                const jobData = {};
+
+                // Convert FormData to object
+                for (let [key, value] of formData.entries()) {
+                    if (key.includes('.')) {
+                        const keys = key.split('.');
+                        let current = jobData;
+                        for (let i = 0; i < keys.length - 1; i++) {
+                            if (!current[keys[i]]) current[keys[i]] = {};
+                            current = current[keys[i]];
+                        }
+                        current[keys[keys.length - 1]] = value;
+                    } else {
+                        if (jobData[key]) {
+                            if (Array.isArray(jobData[key])) {
+                                jobData[key].push(value);
+                            } else {
+                                jobData[key] = [jobData[key], value];
+                            }
+                        } else {
+                            jobData[key] = value;
+                        }
+                    }
+                }
+
+                // Process skills
+                if (jobData.skills) {
+                    jobData.skills = jobData.skills.split(',').map(skill => skill.trim()).filter(skill => skill);
+                }
+
+                // Validate custom fields
+                const customFieldsValidation = window.customFieldsRenderer.validateFields('customFieldsContainer');
+                if (!customFieldsValidation.isValid) {
+                    alert('Please fix the following errors:\n' + customFieldsValidation.errors.join('\n'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Post Job';
+                    return;
+                }
+
+                // Get custom fields data
+                const customFieldsData = window.customFieldsRenderer.getFieldValues('customFieldsContainer');
+                jobData.customFields = customFieldsData;
+
+                // Get auth token
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Please login to post a job');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await fetch('http://localhost:5000/api/jobs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(jobData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Job posted successfully!');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Error posting job: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error posting job. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Post Job';
+            }
+        });
+
+        // Initialize
+        updateProgress();
+        
+        // Check employer verification status
+        checkEmployerVerification();
+    </script>
+    
+    <script>
+        // Check if employer is verified before allowing job posting
+        async function checkEmployerVerification() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showVerificationError('Please login to post jobs');
+                    return;
+                }
+
+                const response = await fetch('http://localhost:5000/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    showVerificationError('Authentication failed');
+                    return;
+                }
+
+                const result = await response.json();
+                const user = result.user;
+
+                // Check if user is admin (can always post jobs)
+                if (user.userType === 'admin' || user.userType === 'superadmin') {
+                    return; // Admin can post jobs
+                }
+
+                // Check if user is employer and verified
+                if (user.userType === 'employer') {
+                    if (!user.isEmployerVerified || user.verificationStatus !== 'verified') {
+                        showVerificationError('Your employer account is not verified yet. Please wait for admin verification before posting jobs.');
+                        return;
+                    }
+                } else {
+                    showVerificationError('Only verified employers can post jobs');
+                    return;
+                }
+
+            } catch (error) {
+                console.error('Error checking verification:', error);
+                showVerificationError('Failed to verify employer status');
+            }
+        }
+
+        function showVerificationError(message) {
+            const formContainer = document.querySelector('.form-container');
+            const header = document.querySelector('.header');
+            
+            // Hide the form
+            formContainer.style.display = 'none';
+            
+            // Create verification error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'verification-error';
+            errorDiv.style.cssText = `
+                padding: 40px;
+                text-align: center;
+                background: white;
+            `;
+            
+            errorDiv.innerHTML = `
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <div style="font-size: 4rem; color: #e74c3c; margin-bottom: 20px;">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h2 style="color: #2c3e50; margin-bottom: 20px;">Account Verification Required</h2>
+                    <p style="color: #7f8c8d; font-size: 1.1rem; margin-bottom: 30px; line-height: 1.6;">
+                        ${message}
+                    </p>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                        <h3 style="color: #2c3e50; margin-bottom: 15px;">What happens next?</h3>
+                        <ul style="text-align: left; color: #7f8c8d; line-height: 1.8;">
+                            <li>Your account will be reviewed by our admin team</li>
+                            <li>You'll receive an email notification once verified</li>
+                            <li>After verification, you can post unlimited jobs</li>
+                            <li>This process usually takes 1-2 business days</li>
+                        </ul>
+                    </div>
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <a href="dashboard.html" class="btn" style="background: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                        </a>
+                        <a href="index.html" class="btn" style="background: #95a5a6; color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            // Insert after header
+            header.insertAdjacentElement('afterend', errorDiv);
+        }
+    </script>
+    
+    <script src="js/chatbot-integration.js"></script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packages - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+    <style>
+        /* Packages Page Specific Styles */
+        .packages-page-header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 80px 0 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .packages-page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .packages-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin: 0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .pricing-card.featured {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .pricing-header {
+            margin-bottom: 30px;
+        }
+
+        .pricing-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .pricing-period {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .pricing-description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 10px 0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pricing-features li i {
+            color: #667eea;
+            font-size: 1rem;
+        }
+
+        .pricing-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .pricing-btn.secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .pricing-btn.secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .faq-section {
+            background: #f8f9fa;
+            padding: 60px 0;
+            margin-bottom: 60px;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .faq-answer {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            background: white;
+            color: #ff6b6b;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .packages-page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .packages-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .faq-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section {
+                padding: 40px 20px;
+            }
+
+            .cta-section h2 {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        /* User Menu Styles */
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .user-dropdown {
+            position: relative;
+        }
+        
+        .user-dropdown-toggle {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .user-dropdown-toggle:hover {
+            background: #f8f9fa;
+            color: #333;
+        }
+        
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            margin-top: 5px;
+        }
+        
+        .user-dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #1E88E5;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 8px 0;
+        }
+        
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <div class="logo-text">
+                            <span class="logo-free">Free</span>
+                            <span class="logo-job">job</span>
+                            <span class="logo-wala">wala</span>
+                            <div class="logo-swoosh"></div>
+                        </div>
+                    </a>
+                </div>
+                
+                <nav class="nav">
+                    <ul class="nav-links">
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="companies.html">Companies</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="resume.html">Resume</a></li>
+                        <li><a href="blogs.html">Blogs</a></li>
+                        <li><a href="packages.html" class="active">Packages</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions" id="headerActions">
+                    <!-- User menu (shown when logged in) -->
+                    <div id="userMenu" class="user-menu" style="display: none;">
+                        <div class="user-info">
+                            <span id="userName" class="user-name"></span>
+                            <div class="user-dropdown">
+                                <button class="user-dropdown-toggle" onclick="toggleUserDropdown()">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="user-dropdown-menu" id="userDropdownMenu">
+                                    <a href="dashboard.html" class="dropdown-item">
+                                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                                    </a>
+                                    <a href="profile.html" class="dropdown-item">
+                                        <i class="fas fa-user"></i> Profile
+                                    </a>
+                                    <a href="my-applications.html" class="dropdown-item">
+                                        <i class="fas fa-file-alt"></i> My Applications
+                                    </a>
+                                    <a href="saved-jobs.html" class="dropdown-item">
+                                        <i class="fas fa-bookmark"></i> Saved Jobs
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" class="dropdown-item" onclick="logout()">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Packages Page Header -->
+    <div class="packages-page-header">
+        <div class="container">
+            <h1>Choose Your Plan</h1>
+            <p class="packages-subtitle">Select the perfect package for your career needs and unlock your potential</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Pricing Grid -->
+        <div class="pricing-grid">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <div class="pricing-name">Free</div>
+                    <div class="pricing-price">$0</div>
+                    <div class="pricing-period">per month</div>
+                </div>
+                <div class="pricing-description">
+                    Perfect for getting started with your job search
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Browse all job listings</li>
+                    <li><i class="fas fa-check"></i> Apply to unlimited jobs</li>
+                    <li><i class="fas fa-check"></i> Basic resume templates</li>
+                    <li><i class="fas fa-check"></i> Email support</li>
+                    <li><i class="fas fa-check"></i> Job alerts</li>
+                </ul>
+                <button class="pricing-btn secondary">Get Started</button>
+            </div>
+
+            <!-- Professional Plan -->
+            <div class="pricing-card featured">
+                <div class="pricing-header">
+                    <div class="pricing-name">Professional</div>
+                    <div class="pricing-price">$29</div>
+                    <div class="pricing-period">per month</div>
+                </div>
+                <div class="pricing-description">
+                    Most popular choice for serious job seekers
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Everything in Free</li>
+                    <li><i class="fas fa-check"></i> Advanced resume builder</li>
+                    <li><i class="fas fa-check"></i> AI-powered job matching</li>
+                    <li><i class="fas fa-check"></i> Priority application support</li>
+                    <li><i class="fas fa-check"></i> Interview preparation tools</li>
+                    <li><i class="fas fa-check"></i> Career guidance sessions</li>
+                    <li><i class="fas fa-check"></i> Premium templates</li>
+                </ul>
+                <button class="pricing-btn">Choose Professional</button>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <div class="pricing-name">Premium</div>
+                    <div class="pricing-price">$59</div>
+                    <div class="pricing-period">per month</div>
+                </div>
+                <div class="pricing-description">
+                    For professionals who want the ultimate career advantage
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Everything in Professional</li>
+                    <li><i class="fas fa-check"></i> One-on-one career coaching</li>
+                    <li><i class="fas fa-check"></i> Mock interview sessions</li>
+                    <li><i class="fas fa-check"></i> LinkedIn profile optimization</li>
+                    <li><i class="fas fa-check"></i> Salary negotiation guidance</li>
+                    <li><i class="fas fa-check"></i> Direct recruiter access</li>
+                    <li><i class="fas fa-check"></i> 24/7 priority support</li>
+                </ul>
+                <button class="pricing-btn secondary">Choose Premium</button>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 40px; color: #333;">Frequently Asked Questions</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question">Can I change my plan anytime?</div>
+                        <div class="faq-answer">Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Is there a free trial?</div>
+                        <div class="faq-answer">Yes, we offer a 14-day free trial for all paid plans. No credit card required to start your trial.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">What payment methods do you accept?</div>
+                        <div class="faq-answer">We accept all major credit cards, PayPal, and bank transfers. All payments are processed securely.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Can I cancel my subscription?</div>
+                        <div class="faq-answer">Yes, you can cancel your subscription at any time. You'll continue to have access to paid features until the end of your billing period.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Do you offer refunds?</div>
+                        <div class="faq-answer">We offer a 30-day money-back guarantee. If you're not satisfied, contact us for a full refund.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Is my data secure?</div>
+                        <div class="faq-answer">Absolutely. We use industry-standard encryption and security measures to protect your personal information and data.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action Section -->
+        <div class="cta-section">
+            <h2>Ready to Start Your Career Journey?</h2>
+            <p>Join thousands of professionals who have found their dream jobs with JobWala</p>
+            <div class="cta-buttons">
+                <a href="register.html" class="cta-btn">Start Free Trial</a>
+                <a href="contact.html" class="cta-btn">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>JobWala</h3>
+                    <p>Connecting talent with opportunity</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="companies.html">Companies</a></li>
+                        <li><a href="services.html">Services</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 JobWala. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+</body>
+</html>

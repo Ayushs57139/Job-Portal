@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Options - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .options-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+            padding: 60px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .logo-free {
+            color: #1E88E5;
+        }
+        
+        .logo-job {
+            color: #ff6b35;
+        }
+        
+        .logo-wala {
+            color: #1E88E5;
+        }
+        
+        .logo-swoosh {
+            position: absolute;
+            bottom: -8px;
+            left: -5px;
+            right: -5px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 0%, #ff6b35 20%, #ff6b35 80%, transparent 100%);
+            border-radius: 2px;
+            transform: rotate(-2deg);
+        }
+
+        .title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .option-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .company-card {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+        }
+
+        .consultancy-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .sales-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .card-description {
+            font-size: 16px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn-login {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-register {
+            background: white;
+            color: #333;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-register:hover {
+            background: transparent;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #f0f0f0;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .features {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 40px;
+            margin-top: 40px;
+        }
+
+        .features-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .feature-text {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Sales Enquiry Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .modal-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+            color: #2c3e50;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-cancel {
+            background: #ecf0f1;
+            color: #7f8c8d;
+            border: 2px solid #bdc3c7;
+            padding: 13px 35px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .btn-cancel:hover {
+            background: #d5dbdb;
+            color: #5d6d7e;
+            transform: translateY(-1px);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .options-container {
+                padding: 30px 20px;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .modal-content {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+
+    <div class="options-container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-text">
+                    <span class="logo-free">Free</span>
+                    <span class="logo-job">job</span>
+                    <span class="logo-wala">wala</span>
+                    <div class="logo-swoosh"></div>
+                </div>
+            </div>
+            <h1 class="title">Choose Your Employer Type</h1>
+            <p class="subtitle">Select whether you're a company or consultancy to access the appropriate login and registration options</p>
+        </div>
+
+        <div class="options-grid">
+            <!-- Company Option -->
+            <div class="option-card company-card">
+                <div class="card-icon">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <h3 class="card-title">Company</h3>
+                <p class="card-description">For businesses looking to hire talent directly for their organization</p>
+                <div class="card-actions">
+                    <a href="company-login.html" class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i> Company Login
+                    </a>
+                    <a href="company-register.html" class="btn-register">
+                        <i class="fas fa-user-plus"></i> Company Registration
+                    </a>
+                </div>
+            </div>
+
+            <!-- Consultancy Option -->
+            <div class="option-card consultancy-card">
+                <div class="card-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3 class="card-title">Consultancy</h3>
+                <p class="card-description">For recruitment agencies and consulting firms providing hiring services</p>
+                <div class="card-actions">
+                    <a href="consultancy-login.html" class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i> Consultancy Login
+                    </a>
+                    <a href="consultancy-register.html" class="btn-register">
+                        <i class="fas fa-user-plus"></i> Consultancy Registration
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sales Enquiry Option -->
+            <div class="option-card sales-card">
+                <div class="card-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3 class="card-title">Sales Enquiry</h3>
+                <p class="card-description">Get in touch with our sales team for personalized solutions and pricing</p>
+                <div class="card-actions">
+                    <button onclick="openSalesEnquiryModal()" class="btn-login">
+                        <i class="fas fa-comments"></i> Contact Sales
+                    </button>
+                    <button onclick="openSalesEnquiryModal()" class="btn-register">
+                        <i class="fas fa-phone"></i> Get Quote
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <h3 class="features-title">Why Choose JobWala?</h3>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="feature-text">Access to thousands of qualified candidates</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="feature-text">Advanced analytics and reporting</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="feature-text">24/7 dedicated support</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-text">Secure and reliable platform</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="feature-text">Mobile-friendly interface</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="feature-text">Quick and efficient hiring process</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Enquiry Modal -->
+    <div id="salesEnquiryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSalesEnquiryModal()">&times;</span>
+            <div class="modal-header">
+                <h2>Sales Enquiry</h2>
+                <p>Get in touch with our sales team for personalized solutions</p>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i>
+                Thank you for your enquiry! Our sales team will contact you within 24 hours.
+            </div>
+            
+            <div id="errorMessage" class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText">There was an error submitting your enquiry. Please try again.</span>
+            </div>
+
+            <form id="salesEnquiryForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="company">Company Name *</label>
+                        <input type="text" id="company" name="company" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="position">Position/Title *</label>
+                        <input type="text" id="position" name="position" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="industry">Industry *</label>
+                        <select id="industry" name="industry" required>
+                            <option value="">Select Industry</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Education">Education</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Consulting">Consulting</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="companySize">Company Size *</label>
+                        <select id="companySize" name="companySize" required>
+                            <option value="">Select Company Size</option>
+                            <option value="1-10">1-10 employees</option>
+                            <option value="11-50">11-50 employees</option>
+                            <option value="51-200">51-200 employees</option>
+                            <option value="201-500">201-500 employees</option>
+                            <option value="501-1000">501-1000 employees</option>
+                            <option value="1000+">1000+ employees</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="enquiryType">Enquiry Type *</label>
+                        <select id="enquiryType" name="enquiryType" required>
+                            <option value="">Select Enquiry Type</option>
+                            <option value="pricing">Pricing Information</option>
+                            <option value="demo">Request Demo</option>
+                            <option value="custom-solution">Custom Solution</option>
+                            <option value="partnership">Partnership Opportunity</option>
+                            <option value="support">Technical Support</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">Budget Range</label>
+                        <select id="budget" name="budget">
+                            <option value="">Select Budget Range</option>
+                            <option value="under-1l">Under ₹1,00,000</option>
+                            <option value="1l-2l">₹1,00,000 - ₹2,00,000</option>
+                            <option value="2l-5l">₹2,00,000 - ₹5,00,000</option>
+                            <option value="5l-10l">₹5,00,000 - ₹10,00,000</option>
+                            <option value="10l-25l">₹10,00,000 - ₹25,00,000</option>
+                            <option value="25l+">₹25,00,000+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Please describe your requirements and how we can help you..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="hearAbout">How did you hear about us?</label>
+                    <select id="hearAbout" name="hearAbout">
+                        <option value="">Select Option</option>
+                        <option value="google">Google Search</option>
+                        <option value="social-media">Social Media</option>
+                        <option value="referral">Referral</option>
+                        <option value="advertisement">Advertisement</option>
+                        <option value="event">Event/Conference</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeSalesEnquiryModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i> Submit Enquiry
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/chatbot-integration.js"></script>
+    <script>
+        // Sales Enquiry Modal Functions
+        function openSalesEnquiryModal() {
+            document.getElementById('salesEnquiryModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSalesEnquiryModal() {
+            document.getElementById('salesEnquiryModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('salesEnquiryForm').reset();
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('salesEnquiryModal');
+            if (event.target === modal) {
+                closeSalesEnquiryModal();
+            }
+        }
+
+        // Form submission
+        document.getElementById('salesEnquiryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const enquiryData = Object.fromEntries(formData.entries());
+            
+            // Add timestamp
+            enquiryData.submittedAt = new Date().toISOString();
+            enquiryData.status = 'new';
+            
+            try {
+                const response = await fetch('/api/sales-enquiry', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(enquiryData)
+                });
+
+                if (response.ok) {
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('errorMessage').style.display = 'none';
+                    this.reset();
+                    
+                    // Auto close modal after 3 seconds
+                    setTimeout(() => {
+                        closeSalesEnquiryModal();
+                    }, 3000);
+                } else {
+                    const errorData = await response.json();
+                    document.getElementById('errorText').textContent = errorData.message || 'There was an error submitting your enquiry. Please try again.';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('successMessage').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error submitting enquiry:', error);
+                document.getElementById('errorText').textContent = 'Network error. Please check your connection and try again.';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('successMessage').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

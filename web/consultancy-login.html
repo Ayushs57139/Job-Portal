@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Consultancy Login - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/api.js"></script>
+    <script src="js/chatbot.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            min-height: 600px;
+        }
+
+        .login-form-section {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-image-section {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .logo-free {
+            color: #1E88E5;
+        }
+        
+        .logo-job {
+            color: #ff6b35;
+        }
+        
+        .logo-wala {
+            color: #1E88E5;
+        }
+        
+        .logo-swoosh {
+            position: absolute;
+            bottom: -8px;
+            left: -5px;
+            right: -5px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 0%, #ff6b35 20%, #ff6b35 80%, transparent 100%);
+            border-radius: 2px;
+            transform: rotate(-2deg);
+        }
+
+        .user-type-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .user-type-badge i {
+            margin-right: 8px;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: #666;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e9ecef;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .register-links {
+            text-align: center;
+        }
+
+        .register-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .register-link:hover {
+            color: #764ba2;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #f0f0f0;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .image-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .image-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .features {
+            list-style: none;
+            text-align: left;
+        }
+
+        .features li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .features li i {
+            margin-right: 15px;
+            font-size: 20px;
+            width: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 500px;
+            }
+
+            .login-image-section {
+                display: none;
+            }
+
+            .login-form-section {
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="employer-options.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Back to Options
+    </a>
+
+    <div class="login-container">
+        <div class="login-form-section">
+                <div class="logo">
+                    <div class="logo-text">
+                        <span class="logo-free">Free</span>
+                        <span class="logo-job">job</span>
+                        <span class="logo-wala">wala</span>
+                        <div class="logo-swoosh"></div>
+                    </div>
+                </div>
+
+            <div class="user-type-badge">
+                <i class="fas fa-handshake"></i>
+                <span>Consultancy Login</span>
+            </div>
+
+            <h1 class="welcome-title">Welcome Back!</h1>
+            <p class="welcome-subtitle">Sign in to your consultancy account</p>
+
+            <form id="consultancyLoginForm">
+                <div id="alertContainer"></div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Consultancy Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="Enter your consultancy email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span id="loginBtnText">Sign In to Consultancy Dashboard</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>Don't have a consultancy account?</span>
+            </div>
+
+            <div class="register-links">
+                <a href="consultancy-register.html" class="register-link">Create Consultancy Account</a>
+            </div>
+        </div>
+
+        <div class="login-image-section">
+            <h2>Connect Talent with Opportunity</h2>
+            <p>Help companies find the right talent and candidates find their dream jobs</p>
+            <ul class="features">
+                <li><i class="fas fa-check-circle"></i> Access to premium job listings</li>
+                <li><i class="fas fa-check-circle"></i> Advanced candidate matching</li>
+                <li><i class="fas fa-check-circle"></i> Client relationship management</li>
+                <li><i class="fas fa-check-circle"></i> Performance analytics</li>
+                <li><i class="fas fa-check-circle"></i> Dedicated support team</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // Check for existing login
+        document.addEventListener('DOMContentLoaded', function() {
+            checkExistingLogin();
+            
+            // Check if API service is loaded with a delay
+            setTimeout(() => {
+                if (!window.api) {
+                    console.error('API service not loaded');
+                    showAlert('API service not loaded. Please refresh the page.', 'error');
+                } else {
+                    console.log('API service loaded successfully');
+                }
+            }, 500);
+        });
+
+        function checkExistingLogin() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (token && user) {
+                try {
+                    currentUser = JSON.parse(user);
+                    
+                    // Redirect to consultancy dashboard
+                    window.location.href = 'consultancy-dashboard.html';
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                }
+            }
+        }
+
+        // Consultancy login form submission
+        document.getElementById('consultancyLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showAlert('Please fill in all fields', 'error');
+                return;
+            }
+            
+            // Check if API service is available
+            if (!window.api) {
+                showAlert('API service not loaded. Please refresh the page and try again.', 'error');
+                return;
+            }
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loginBtnText.textContent = 'Signing In...';
+            
+            try {
+                console.log('Starting consultancy login process...');
+                
+                // Use API service for login
+                const data = await window.api.login({ 
+                    loginId: email, 
+                    password, 
+                    userType: 'employer',
+                    employerType: 'consultancy'
+                });
+                
+                console.log('Login response data:', data);
+                
+                if (data.token) {
+                    console.log('Login successful, storing data...');
+                    
+                    // Validate user type matches consultancy
+                    const actualUserType = data.user.userType;
+                    const actualEmployerType = data.user.employerType;
+                    
+                    // Strict validation - only allow consultancy users
+                    if (actualUserType !== 'employer' || actualEmployerType !== 'consultancy') {
+                        showAlert('This is not a consultancy account. Please use the correct login page.', 'error');
+                        return;
+                    }
+                    
+                    showAlert('Login successful! Redirecting to consultancy dashboard...', 'success');
+                    
+                    // Trigger global auth update
+                    if (window.globalAuth) {
+                        window.globalAuth.handleLogin({
+                            token: data.token,
+                            user: data.user
+                        });
+                    }
+                    
+                    setTimeout(() => {
+                        window.location.href = 'consultancy-dashboard.html';
+                    }, 1500);
+                } else {
+                    console.error('Login failed:', data);
+                    showAlert(data.message || 'Login failed', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Login failed: ' + error.message, 'error');
+            } finally {
+                // Re-enable button
+                loginBtn.disabled = false;
+                loginBtnText.textContent = 'Sign In to Consultancy Dashboard';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+            
+            // Auto-hide success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, 5000);
+            }
+        }
+    </script>
+    <script src="js/chatbot-integration.js"></script>
+</body>
+</html>

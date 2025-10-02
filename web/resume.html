@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <div class="logo-text">
+                            <span class="logo-free">Free</span>
+                            <span class="logo-job">job</span>
+                            <span class="logo-wala">wala</span>
+                            <div class="logo-swoosh"></div>
+                        </div>
+                    </a>
+                </div>
+                
+                <nav class="nav">
+                    <ul class="nav-links">
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="companies.html">Companies</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="resume.html" class="active">Resume</a></li>
+                        <li><a href="packages.html">Packages</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <a href="dashboard.html" class="btn-login">Dashboard</a>
+                    <a href="resume-builder.html" class="btn-register">Create Resume</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Resume Page Content -->
+    <div class="container" style="padding: 60px 0;">
+        <div style="text-align: center; margin-bottom: 60px;">
+            <h1 style="font-size: 3rem; color: #333; margin-bottom: 15px;">Professional Resume Builder</h1>
+            <p style="font-size: 1.3rem; color: #666; max-width: 600px; margin: 0 auto;">Create stunning, ATS-friendly resumes that get you noticed by employers</p>
+        </div>
+
+        <!-- Features Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 60px;">
+            <div style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); text-align: center;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; color: white;">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <h3 style="color: #333; margin-bottom: 15px;">10 Unique Templates</h3>
+                <p style="color: #666; margin: 0;">Choose from modern, classic, creative, and professional designs</p>
+            </div>
+
+            <div style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); text-align: center;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #43A047, #2E7D32); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; color: white;">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3 style="color: #333; margin-bottom: 15px;">Real-time Preview</h3>
+                <p style="color: #666; margin: 0;">See your resume update instantly as you type</p>
+            </div>
+
+            <div style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); text-align: center;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #E53935, #C62828); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; color: white;">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h3 style="color: #333; margin-bottom: 15px;">PDF Download</h3>
+                <p style="color: #666; margin: 0;">Download your resume as a professional PDF instantly</p>
+            </div>
+        </div>
+
+        <!-- Main CTA Section -->
+        <div style="background: white; border-radius: 20px; padding: 50px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); text-align: center;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; font-size: 2rem; color: white;">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <h2 style="color: #333; margin-bottom: 20px; font-size: 2.2rem;">Ready to Build Your Resume?</h2>
+            <p style="color: #666; margin-bottom: 40px; font-size: 1.1rem; max-width: 500px; margin-left: auto; margin-right: auto;">Create a professional resume in minutes with our easy-to-use builder. No registration required!</p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="resume-builder.html" style="background: rgba(102, 126, 234, 0.15); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.2); padding: 18px 40px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.2s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);" onmouseover="this.style.background='rgba(102, 126, 234, 0.25)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.2)'" onmouseout="this.style.background='rgba(102, 126, 234, 0.15)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(102, 126, 234, 0.1)'">Start Building Now</a>
+                <a href="dashboard.html" style="background: rgba(102, 126, 234, 0.15); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.2); padding: 18px 40px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.2s ease; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);" onmouseover="this.style.background='rgba(102, 126, 234, 0.25)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.2)'" onmouseout="this.style.background='rgba(102, 126, 234, 0.15)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(102, 126, 234, 0.1)'">View My Resumes</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>JobWala</h3>
+                    <p>Connecting talent with opportunity</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="companies.html">Companies</a></li>
+                        <li><a href="services.html">Services</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 JobWala. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/chatbot-integration.js"></script>
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Login - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            min-height: 600px;
+        }
+
+        .login-form-section {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-image-section {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .logo-free {
+            color: #1E88E5;
+        }
+        
+        .logo-job {
+            color: #ff6b35;
+        }
+        
+        .logo-wala {
+            color: #1E88E5;
+        }
+        
+        .logo-swoosh {
+            position: absolute;
+            bottom: -8px;
+            left: -5px;
+            right: -5px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 0%, #ff6b35 20%, #ff6b35 80%, transparent 100%);
+            border-radius: 2px;
+            transform: rotate(-2deg);
+        }
+
+        .user-type-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #2c3e50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .user-type-badge i {
+            margin-right: 8px;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-help {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .form-select {
+            cursor: pointer;
+        }
+
+        .user-type-selection {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .user-type-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .user-type-btn:hover {
+            border-color: #667eea;
+            background: white;
+        }
+
+        .user-type-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .employer-type-selection {
+            display: flex;
+            gap: 10px;
+        }
+
+        .employer-type-btn {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .employer-type-btn:hover {
+            border-color: #667eea;
+            background: white;
+        }
+
+        .employer-type-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: #666;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e9ecef;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .register-links {
+            text-align: center;
+        }
+
+        .register-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .register-link:hover {
+            color: #764ba2;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .image-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .image-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .features {
+            list-style: none;
+            text-align: left;
+        }
+
+        .features li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .features li i {
+            margin-right: 15px;
+            font-size: 20px;
+            width: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 500px;
+            }
+
+            .login-image-section {
+                display: none;
+            }
+
+            .login-form-section {
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+
+    <div class="login-container">
+        <div class="login-form-section">
+                <div class="logo">
+                    <div class="logo-text">
+                        <span class="logo-free">Free</span>
+                        <span class="logo-job">job</span>
+                        <span class="logo-wala">wala</span>
+                        <div class="logo-swoosh"></div>
+                    </div>
+                </div>
+
+            <div class="user-type-badge" id="userTypeBadge">
+                <i class="fas fa-user"></i>
+                <span id="userTypeText">Job Seeker Login</span>
+            </div>
+
+            <h1 class="welcome-title">Welcome Back!</h1>
+            <p class="welcome-subtitle" id="welcomeSubtitle">Sign in to your job seeker account</p>
+
+            <form id="loginForm">
+                <div id="alertContainer"></div>
+
+                <div class="user-type-selection">
+                    <button type="button" class="user-type-btn active" data-type="jobseeker" onclick="selectUserType('jobseeker')">
+                        <i class="fas fa-user"></i> Job Seeker
+                    </button>
+                    <button type="button" class="user-type-btn" data-type="employer" onclick="selectUserType('employer')">
+                        <i class="fas fa-building"></i> Employer
+                    </button>
+                    <button type="button" class="user-type-btn" data-type="superadmin" onclick="selectUserType('superadmin')">
+                        <i class="fas fa-shield-alt"></i> Admin
+                    </button>
+                </div>
+
+                <div class="form-group" id="employerTypeGroup" style="display: none;">
+                    <label class="form-label">Employer Type</label>
+                    <div class="employer-type-selection">
+                        <button type="button" class="employer-type-btn active" data-type="company" onclick="selectEmployerType('company')">
+                            <i class="fas fa-industry"></i> Company
+                        </button>
+                        <button type="button" class="employer-type-btn" data-type="consultancy" onclick="selectEmployerType('consultancy')">
+                            <i class="fas fa-handshake"></i> Consultancy
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginId" class="form-label">Login ID</label>
+                    <input type="text" id="loginId" class="form-input" placeholder="Enter User ID, Email, or Phone Number" required>
+                    <small class="form-help">You can login with your User ID (JW12345678), Email, or Phone Number</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span id="loginBtnText">Sign In</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>Don't have an account?</span>
+            </div>
+
+            <div class="register-links">
+                <a href="register.html" class="register-link">Create Account</a>
+            </div>
+        </div>
+
+        <div class="login-image-section">
+            <h2 id="imageTitle">Find Your Dream Job</h2>
+            <p id="imageDescription">Connect with top employers and discover opportunities that match your skills and aspirations</p>
+            <ul class="features" id="featuresList">
+                <li><i class="fas fa-check-circle"></i> Browse thousands of job listings</li>
+                <li><i class="fas fa-check-circle"></i> Create professional profiles</li>
+                <li><i class="fas fa-check-circle"></i> Get matched with relevant jobs</li>
+                <li><i class="fas fa-check-circle"></i> Track application status</li>
+                <li><i class="fas fa-check-circle"></i> Receive job recommendations</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // User type configurations
+        const userTypeConfigs = {
+            jobseeker: {
+                badge: { icon: 'fas fa-user', text: 'Job Seeker Login' },
+                subtitle: 'Sign in to your job seeker account',
+                title: 'Find Your Dream Job',
+                description: 'Connect with top employers and discover opportunities that match your skills and aspirations',
+                features: [
+                    'Browse thousands of job listings',
+                    'Create professional profiles',
+                    'Get matched with relevant jobs',
+                    'Track application status',
+                    'Receive job recommendations'
+                ]
+            },
+            employer: {
+                badge: { icon: 'fas fa-building', text: 'Employer Login' },
+                subtitle: 'Sign in to your employer account',
+                title: 'Grow Your Business',
+                description: 'Find the best talent for your organization with our comprehensive hiring platform',
+                features: [
+                    'Post unlimited job listings',
+                    'Access to premium candidate database',
+                    'Advanced analytics and reporting',
+                    '24/7 customer support',
+                    'Custom recruitment solutions'
+                ]
+            },
+            admin: {
+                badge: { icon: 'fas fa-shield-alt', text: 'Admin Login' },
+                subtitle: 'Sign in to your admin account',
+                title: 'Manage Your Platform',
+                description: 'Access powerful admin tools to manage users, jobs, and platform settings',
+                features: [
+                    'User management dashboard',
+                    'Job posting oversight',
+                    'Analytics and reporting',
+                    'System configuration',
+                    'Security monitoring'
+                ]
+            },
+            superadmin: {
+                badge: { icon: 'fas fa-shield-alt', text: 'Admin Login' },
+                subtitle: 'Sign in to your admin account',
+                title: 'Manage Your Platform',
+                description: 'Access powerful admin tools to manage users, jobs, and platform settings',
+                features: [
+                    'User management dashboard',
+                    'Job posting oversight',
+                    'Analytics and reporting',
+                    'System configuration',
+                    'Security monitoring'
+                ]
+            }
+        };
+
+        // Check for existing login
+        document.addEventListener('DOMContentLoaded', function() {
+            checkExistingLogin();
+            handleURLParameters();
+            
+            // Check if API service is loaded with a delay
+            setTimeout(() => {
+                if (!window.api) {
+                    console.error('API service not loaded');
+                    showAlert('API service not loaded. Please refresh the page.', 'error');
+                } else {
+                    console.log('API service loaded successfully');
+                    console.log('API service methods:', Object.keys(window.api));
+                    console.log('API service base URL:', window.api.baseURL);
+                }
+            }, 500);
+        });
+
+        function checkExistingLogin() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('currentUser') || localStorage.getItem('user');
+            
+            if (token && user) {
+                try {
+                    currentUser = JSON.parse(user);
+                    
+                    // Check for stored redirect URL first
+                    const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                    if (redirectUrl) {
+                        localStorage.removeItem('redirectAfterLogin');
+                        window.location.href = redirectUrl;
+                        return;
+                    }
+                    
+                    // Redirect to appropriate dashboard based on user type
+                    // All users go to the unified dashboard
+                    window.location.href = 'dashboard.html';
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('currentUser');
+                }
+            } else {
+                // Store current page URL for redirect after login
+                const currentUrl = document.referrer || window.location.href;
+                if (currentUrl && !currentUrl.includes('login.html') && !currentUrl.includes('register.html')) {
+                    localStorage.setItem('redirectAfterLogin', currentUrl);
+                }
+            }
+        }
+
+        function handleURLParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userType = urlParams.get('type');
+            const employerType = urlParams.get('employerType');
+            
+            if (userType && employerType) {
+                console.log('URL parameters detected:', { userType, employerType });
+                
+                // Auto-select user type
+                if (userType === 'employer') {
+                    selectUserType('employer');
+                    
+                    // Auto-select employer type
+                    if (employerType === 'company' || employerType === 'consultancy') {
+                        selectEmployerType(employerType);
+                    }
+                } else if (userType === 'jobseeker') {
+                    selectUserType('jobseeker');
+                } else if (userType === 'admin' || userType === 'superadmin') {
+                    selectUserType('superadmin');
+                }
+            }
+        }
+
+        function selectUserType(userType) {
+            // Update button states
+            document.querySelectorAll('.user-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${userType}"]`).classList.add('active');
+            
+            const employerTypeGroup = document.getElementById('employerTypeGroup');
+            const config = userTypeConfigs[userType];
+            
+            // Show/hide employer type selection
+            if (userType === 'employer') {
+                employerTypeGroup.style.display = 'block';
+            } else {
+                employerTypeGroup.style.display = 'none';
+            }
+            
+            // Update UI elements
+            updateUIForUserType(userType);
+        }
+
+        function selectEmployerType(employerType) {
+            // Update button states
+            document.querySelectorAll('.employer-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${employerType}"]`).classList.add('active');
+        }
+
+        function updateUIForUserType(userType) {
+            const config = userTypeConfigs[userType];
+            
+            // Update badge
+            const badge = document.getElementById('userTypeBadge');
+            const badgeIcon = badge.querySelector('i');
+            const badgeText = document.getElementById('userTypeText');
+            badgeIcon.className = config.badge.icon;
+            badgeText.textContent = config.badge.text;
+            
+            // Update subtitle
+            document.getElementById('welcomeSubtitle').textContent = config.subtitle;
+            
+            // Update login ID placeholder
+            const loginIdInput = document.getElementById('loginId');
+            if (userType === 'employer') {
+                loginIdInput.placeholder = 'Enter User ID, Company Email, or Phone';
+            } else if (userType === 'admin' || userType === 'superadmin') {
+                loginIdInput.placeholder = 'Enter User ID, Admin Email, or Phone';
+            } else {
+                loginIdInput.placeholder = 'Enter User ID, Email, or Phone Number';
+            }
+            
+            // Update image section
+            document.getElementById('imageTitle').textContent = config.title;
+            document.getElementById('imageDescription').textContent = config.description;
+            
+            // Update features list
+            const featuresList = document.getElementById('featuresList');
+            featuresList.innerHTML = config.features.map(feature => 
+                `<li><i class="fas fa-check-circle"></i> ${feature}</li>`
+            ).join('');
+        }
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loginId = document.getElementById('loginId').value;
+            const password = document.getElementById('password').value;
+            const selectedUserType = document.querySelector('.user-type-btn.active').dataset.type;
+            const selectedEmployerType = document.querySelector('.employer-type-btn.active')?.dataset.type || 'company';
+            
+            if (!loginId || !password) {
+                showAlert('Please fill in all fields', 'error');
+                return;
+            }
+            
+            // Check if API service is available
+            if (!window.api) {
+                showAlert('API service not loaded. Please refresh the page and try again.', 'error');
+                return;
+            }
+            
+            // Check if API service is properly initialized
+            if (!window.api.request) {
+                showAlert('API service not properly initialized. Please refresh the page and try again.', 'error');
+                return;
+            }
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loginBtnText.textContent = 'Signing In...';
+            
+            try {
+                console.log('Starting login process...');
+                console.log('Login credentials:', { loginId, userType: selectedUserType, employerType: selectedEmployerType });
+                console.log('API service available:', !!window.api);
+                
+                // Use API service for login
+                const data = await window.api.login({ 
+                    loginId, 
+                    password, 
+                    userType: selectedUserType,
+                    employerType: selectedEmployerType
+                });
+                
+                console.log('Login response data:', data);
+                
+                if (data.token) {
+                    console.log('Login successful, storing data...');
+                    
+                    // Validate user type matches selection
+                    const actualUserType = data.user.userType;
+                    const actualEmployerType = data.user.employerType;
+                    
+                    // Check if user type matches selection
+                    if (selectedUserType === 'employer' && actualUserType !== 'employer') {
+                        showAlert('This account is not an employer account. Please select the correct user type.', 'error');
+                        return;
+                    }
+                    
+                    if (selectedUserType === 'admin' && (actualUserType !== 'admin' && actualUserType !== 'superadmin')) {
+                        showAlert('This account is not an admin account. Please select the correct user type.', 'error');
+                        return;
+                    }
+                    
+                    if (selectedUserType === 'jobseeker' && actualUserType !== 'jobseeker') {
+                        showAlert('This account is not a job seeker account. Please select the correct user type.', 'error');
+                        return;
+                    }
+                    
+                    // For employers, check employer type
+                    if (selectedUserType === 'employer' && actualUserType === 'employer') {
+                        if (selectedEmployerType !== actualEmployerType) {
+                            showAlert(`This account is a ${actualEmployerType} account, not a ${selectedEmployerType} account. Please select the correct employer type.`, 'error');
+                            return;
+                        }
+                    }
+                    
+                    // Auth data is already stored by API service
+                    // Handle admin login - store additional admin data
+                    if (data.user.userType === 'admin' || data.user.userType === 'superadmin') {
+                        localStorage.setItem('adminToken', data.token);
+                        localStorage.setItem('adminUser', JSON.stringify(data.user));
+                    }
+                    
+                    showAlert('Login successful! Redirecting...', 'success');
+                    
+                    // Store user data for global auth
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    
+                    // Trigger global auth update
+                    if (window.globalAuth) {
+                        console.log('Updating global auth...');
+                        window.globalAuth.handleLogin({
+                            token: data.token,
+                            user: data.user
+                        });
+                    }
+                    
+                    console.log('Setting redirect timeout...');
+                    setTimeout(() => {
+                        console.log('Redirecting user...');
+                        
+                        // Check for stored redirect URL
+                        const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                        if (redirectUrl) {
+                            localStorage.removeItem('redirectAfterLogin');
+                            window.location.href = redirectUrl;
+                            return;
+                        }
+                        
+                        // Check if user came from packages page
+                        const referrer = document.referrer;
+                        const isFromPackages = referrer.includes('packages.html');
+                        
+                        // Redirect based on user type and source
+                        console.log('Login successful, user type:', data.user.userType);
+                        console.log('User data:', data.user);
+                        
+                        // All users go to the unified dashboard
+                        if (isFromPackages) {
+                            // If user came from packages, redirect back to packages
+                            window.location.href = 'packages.html';
+                        } else {
+                            // All users go to the unified dashboard
+                            window.location.href = 'dashboard.html';
+                        }
+                    }, 1500);
+                } else {
+                    console.error('Login failed:', data);
+                    showAlert(data.message || 'Login failed', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                console.error('Error details:', error.message);
+                console.error('Error stack:', error.stack);
+                
+                // Check if it's a network error
+                if (error.message.includes('fetch')) {
+                    showAlert('Network error: Please check your connection and make sure the server is running.', 'error');
+                } else if (error.message.includes('CORS')) {
+                    showAlert('CORS error: Please check server configuration.', 'error');
+                } else {
+                    showAlert('Login failed: ' + error.message, 'error');
+                }
+            } finally {
+                // Re-enable button
+                loginBtn.disabled = false;
+                loginBtnText.textContent = 'Sign In';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+            
+            // Auto-hide success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, 5000);
+            }
+        }
+    </script>
+    <script src="js/chatbot-integration.js"></script>
+</body>
+</html>

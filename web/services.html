@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+    <style>
+        /* Services Page Specific Styles */
+        .services-page-header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 80px 0 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .services-page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .services-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin: 0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        .service-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .service-features li {
+            padding: 8px 0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .service-features li i {
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        .service-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .service-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            background: white;
+            color: #ff6b6b;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+        }
+
+        .cta-btn.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .cta-btn.secondary:hover {
+            background: white;
+            color: #ff6b6b;
+        }
+
+        .testimonials-section {
+            background: #f8f9fa;
+            padding: 60px 0;
+            margin-bottom: 60px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .author-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .author-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .services-page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .services-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .service-card {
+                padding: 30px 20px;
+            }
+
+            .cta-section {
+                padding: 40px 20px;
+            }
+
+            .cta-section h2 {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* User Menu Styles */
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .user-dropdown {
+            position: relative;
+        }
+        
+        .user-dropdown-toggle {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .user-dropdown-toggle:hover {
+            background: #f8f9fa;
+            color: #333;
+        }
+        
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            margin-top: 5px;
+        }
+        
+        .user-dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #1E88E5;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 8px 0;
+        }
+        
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <div class="logo-text">
+                            <span class="logo-free">Free</span>
+                            <span class="logo-job">job</span>
+                            <span class="logo-wala">wala</span>
+                            <div class="logo-swoosh"></div>
+                        </div>
+                    </a>
+                </div>
+                
+                <nav class="nav">
+                    <ul class="nav-links">
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="companies.html">Companies</a></li>
+                        <li><a href="services.html" class="active">Services</a></li>
+                        <li><a href="resume.html">Resume</a></li>
+                        <li><a href="blogs.html">Blogs</a></li>
+                        <li><a href="packages.html">Packages</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions" id="headerActions">
+                    <!-- User menu (shown when logged in) -->
+                    <div id="userMenu" class="user-menu" style="display: none;">
+                        <div class="user-info">
+                            <span id="userName" class="user-name"></span>
+                            <div class="user-dropdown">
+                                <button class="user-dropdown-toggle" onclick="toggleUserDropdown()">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="user-dropdown-menu" id="userDropdownMenu">
+                                    <a href="dashboard.html" class="dropdown-item">
+                                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                                    </a>
+                                    <a href="profile.html" class="dropdown-item">
+                                        <i class="fas fa-user"></i> Profile
+                                    </a>
+                                    <a href="my-applications.html" class="dropdown-item">
+                                        <i class="fas fa-file-alt"></i> My Applications
+                                    </a>
+                                    <a href="saved-jobs.html" class="dropdown-item">
+                                        <i class="fas fa-bookmark"></i> Saved Jobs
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" class="dropdown-item" onclick="logout()">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Services Page Header -->
+    <div class="services-page-header">
+        <div class="container">
+            <h1>Our Services</h1>
+            <p class="services-subtitle">Comprehensive career solutions to help you succeed in your professional journey</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Services Grid -->
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Resume Builder</h3>
+                <p>Create professional, ATS-friendly resumes with our AI-powered resume builder. Get expert templates and real-time suggestions.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> ATS-optimized templates</li>
+                    <li><i class="fas fa-check"></i> AI-powered suggestions</li>
+                    <li><i class="fas fa-check"></i> Multiple format exports</li>
+                    <li><i class="fas fa-check"></i> Real-time preview</li>
+                </ul>
+                <a href="resume.html" class="service-btn">Build Resume</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3>Career Guidance</h3>
+                <p>Get personalized career advice from industry experts. Plan your career path with our comprehensive guidance services.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> One-on-one consultations</li>
+                    <li><i class="fas fa-check"></i> Career path planning</li>
+                    <li><i class="fas fa-check"></i> Industry insights</li>
+                    <li><i class="fas fa-check"></i> Skill gap analysis</li>
+                </ul>
+                <a href="#" class="service-btn">Get Guidance</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>Interview Prep</h3>
+                <p>Master your interviews with our comprehensive preparation services. Practice with mock interviews and get expert feedback.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> Mock interviews</li>
+                    <li><i class="fas fa-check"></i> Common questions database</li>
+                    <li><i class="fas fa-check"></i> Expert feedback</li>
+                    <li><i class="fas fa-check"></i> Industry-specific prep</li>
+                </ul>
+                <a href="#" class="service-btn">Start Prep</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Skill Development</h3>
+                <p>Enhance your skills with our curated learning paths. Access courses from top instructors and industry professionals.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> Curated learning paths</li>
+                    <li><i class="fas fa-check"></i> Industry experts</li>
+                    <li><i class="fas fa-check"></i> Certificates</li>
+                    <li><i class="fas fa-check"></i> Progress tracking</li>
+                </ul>
+                <a href="#" class="service-btn">Learn Skills</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h3>Networking</h3>
+                <p>Connect with professionals in your field. Join our exclusive networking events and build meaningful relationships.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> Professional networking</li>
+                    <li><i class="fas fa-check"></i> Industry events</li>
+                    <li><i class="fas fa-check"></i> Mentorship programs</li>
+                    <li><i class="fas fa-check"></i> Online communities</li>
+                </ul>
+                <a href="#" class="service-btn">Join Network</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Career Analytics</h3>
+                <p>Track your career progress with detailed analytics. Get insights into your job search performance and market trends.</p>
+                <ul class="service-features">
+                    <li><i class="fas fa-check"></i> Progress tracking</li>
+                    <li><i class="fas fa-check"></i> Market insights</li>
+                    <li><i class="fas fa-check"></i> Performance metrics</li>
+                    <li><i class="fas fa-check"></i> Personalized reports</li>
+                </ul>
+                <a href="#" class="service-btn">View Analytics</a>
+            </div>
+        </div>
+
+        <!-- Call to Action Section -->
+        <div class="cta-section">
+            <h2>Ready to Advance Your Career?</h2>
+            <p>Join thousands of professionals who have successfully landed their dream jobs with our comprehensive services.</p>
+            <div class="cta-buttons">
+                <a href="register.html" class="cta-btn">Get Started Free</a>
+                <a href="packages.html" class="cta-btn secondary">View Packages</a>
+            </div>
+        </div>
+
+        <!-- Testimonials Section -->
+        <div class="testimonials-section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 40px; color: #333;">What Our Users Say</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"JobWala's resume builder helped me create a professional resume that got me multiple interview calls. The AI suggestions were spot on!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">S</div>
+                            <div class="author-info">
+                                <h4>Sarah Johnson</h4>
+                                <p>Software Engineer at TechCorp</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"The career guidance service was invaluable. My career coach helped me identify the right path and I landed my dream job within 3 months."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">M</div>
+                            <div class="author-info">
+                                <h4>Michael Chen</h4>
+                                <p>Product Manager at StartupXYZ</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"The interview prep sessions were fantastic. I felt confident and prepared, and it showed in my performance. Highly recommended!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">A</div>
+                            <div class="author-info">
+                                <h4>Anna Rodriguez</h4>
+                                <p>Marketing Director at DesignStudio</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>JobWala</h3>
+                    <p>Connecting talent with opportunity</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="companies.html">Companies</a></li>
+                        <li><a href="services.html">Services</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 JobWala. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+</body>
+</html>

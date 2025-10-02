@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Guidance - JobWala</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #1E88E5;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1E88E5;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #1E88E5;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .btn-login {
+            background: white;
+            border: 2px solid #1E88E5;
+            color: #1E88E5;
+            padding: 8px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-login:hover {
+            background: #1E88E5;
+            color: white;
+        }
+        
+        .btn-register {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .btn-register:hover {
+            background: #e55a2b;
+        }
+        
+        /* Main Content */
+        .hero {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        .services {
+            padding: 60px 0;
+            background: white;
+        }
+        
+        .services h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .service-card {
+            background: #f8f9fa;
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: #1E88E5;
+        }
+        
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: #1E88E5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: white;
+        }
+        
+        .service-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 16px;
+        }
+        
+        .service-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .service-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1E88E5;
+            margin-bottom: 20px;
+        }
+        
+        .btn-primary {
+            background: #1E88E5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary:hover {
+            background: #1976D2;
+        }
+        
+        .advisors {
+            background: #f8f9fa;
+            padding: 60px 0;
+        }
+        
+        .advisors h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+        }
+        
+        .advisors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .advisor-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .advisor-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #e9ecef;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #666;
+        }
+        
+        .advisor-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .advisor-card .title {
+            color: #1E88E5;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .advisor-card .experience {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        
+        .advisor-card .rating {
+            color: #ffc107;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+        
+        .testimonials {
+            background: white;
+            padding: 60px 0;
+        }
+        
+        .testimonials h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 60px;
+            color: #1E88E5;
+            line-height: 1;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .author-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #1E88E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .author-info h4 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .author-info p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, #1E88E5, #1976D2);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .cta-section p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .btn-white {
+            background: white;
+            color: #1E88E5;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-white:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: white;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            padding-top: 20px;
+            text-align: center;
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .nav-links {
+                gap: 20px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .services-grid,
+            .advisors-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">n</div>
+                    <div class="logo-text">JobWala</div>
+                </a>
+                
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="index.html#jobs">Jobs</a></li>
+                        <li><a href="index.html#companies">Companies</a></li>
+                        <li><a href="index.html#services">Services</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <a href="login.html" class="btn-login">Login</a>
+                    <a href="register.html" class="btn-register">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Expert Career Guidance</h1>
+            <p>Get personalized career advice from industry experts and take your career to the next level</p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="container">
+            <h2>Our Career Guidance Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🎯</div>
+                    <h3>Career Assessment</h3>
+                    <p>Comprehensive evaluation of your skills, interests, and career goals to identify the best career path for you.</p>
+                    <div class="service-price">₹1,999</div>
+                    <a href="#" class="btn-primary">Book Session</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">📈</div>
+                    <h3>Career Planning</h3>
+                    <p>Create a detailed roadmap for your career growth with actionable steps and milestones.</p>
+                    <div class="service-price">₹2,999</div>
+                    <a href="#" class="btn-primary">Book Session</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">💼</div>
+                    <h3>Job Search Strategy</h3>
+                    <p>Learn effective job search techniques and strategies to land your dream job faster.</p>
+                    <div class="service-price">₹1,499</div>
+                    <a href="#" class="btn-primary">Book Session</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🚀</div>
+                    <h3>Career Transition</h3>
+                    <p>Get guidance on switching careers or industries with confidence and clarity.</p>
+                    <div class="service-price">₹3,499</div>
+                    <a href="#" class="btn-primary">Book Session</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🎓</div>
+                    <h3>Skill Development</h3>
+                    <p>Identify and develop the skills needed to advance in your current or desired career.</p>
+                    <div class="service-price">₹2,499</div>
+                    <a href="#" class="btn-primary">Book Session</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">💡</div>
+                    <h3>Leadership Coaching</h3>
+                    <p>Develop leadership skills and prepare for management roles in your organization.</p>
+                    <div class="service-price">₹4,999</div>
+                    <a href="#" class="btn-primary">Book Session</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advisors Section -->
+    <section class="advisors">
+        <div class="container">
+            <h2>Meet Our Career Advisors</h2>
+            <div class="advisors-grid">
+                <div class="advisor-card">
+                    <div class="advisor-photo">👨‍💼</div>
+                    <h3>Rajesh Kumar</h3>
+                    <div class="title">Senior Career Counselor</div>
+                    <div class="experience">15+ years experience</div>
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <p>Specializes in IT career guidance and has helped 500+ professionals advance their careers.</p>
+                </div>
+                
+                <div class="advisor-card">
+                    <div class="advisor-photo">👩‍💼</div>
+                    <h3>Priya Sharma</h3>
+                    <div class="title">Executive Coach</div>
+                    <div class="experience">12+ years experience</div>
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <p>Expert in leadership development and career transitions across various industries.</p>
+                </div>
+                
+                <div class="advisor-card">
+                    <div class="advisor-photo">👨‍🎓</div>
+                    <h3>Dr. Amit Patel</h3>
+                    <div class="title">Career Psychologist</div>
+                    <div class="experience">18+ years experience</div>
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                    <p>PhD in Industrial Psychology with expertise in career assessment and development.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>What Our Clients Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        The career guidance session helped me identify my true passion and pivot to a more fulfilling role. I'm now working as a Product Manager at a top tech company.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-photo">AS</div>
+                        <div class="author-info">
+                            <h4>Ankit Singh</h4>
+                            <p>Product Manager, TechCorp</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        The leadership coaching program transformed my approach to management. I was promoted to Director within 6 months of completing the program.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-photo">SM</div>
+                        <div class="author-info">
+                            <h4>Sunita Mehta</h4>
+                            <p>Director, Finance</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        The career transition guidance was invaluable when I wanted to switch from finance to marketing. The advisor provided a clear roadmap and I successfully made the transition.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-photo">VG</div>
+                        <div class="author-info">
+                            <h4>Vikram Gupta</h4>
+                            <p>Marketing Manager</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Advance Your Career?</h2>
+            <p>Book a session with our expert career advisors and take the first step towards your dream career.</p>
+            <a href="#" class="btn-white">Book Your Session Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <div class="logo-icon">n</div>
+                        <div class="logo-text">JobWala</div>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>About us</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Employer home</a></li>
+                        <li><a href="#">Sitemap</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Help center</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help center</a></li>
+                        <li><a href="#">Summons/Notices</a></li>
+                        <li><a href="#">Grievances</a></li>
+                        <li><a href="#">Report issue</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Privacy policy</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy policy</a></li>
+                        <li><a href="#">Terms & conditions</a></li>
+                        <li><a href="#">Fraud alert</a></li>
+                        <li><a href="#">Trust & safety</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>All trademarks are the property of their respective owners All rights reserved © 2025 Info Edge (India) Ltd.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add service card hover effects
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+                this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+            });
+        });
+
+        // Add booking functionality
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const service = this.closest('.service-card').querySelector('h3').textContent;
+                alert(`Booking ${service} session. This would redirect to a booking form in a real application.`);
+            });
+        });
+    </script>
+    <script src="js/chatbot-integration.js"></script>
+</body>
+</html>

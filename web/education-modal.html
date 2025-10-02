@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Details - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .education-modal {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .modal-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .modal-content {
+            padding: 40px;
+        }
+
+        .education-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .education-entry {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .education-entry-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .entry-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .remove-entry {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .remove-entry:hover {
+            background: #c82333;
+        }
+
+        .add-education {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .add-education:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .skip-btn {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .skip-btn:hover {
+            background: #e0a800;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .dependent-field {
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .education-modal {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="education-modal">
+        <div class="modal-header">
+            <h2 class="modal-title">
+                <i class="fas fa-graduation-cap"></i>
+                Education Details
+            </h2>
+            <p class="modal-subtitle">Please provide your educational background</p>
+        </div>
+
+        <div class="modal-content">
+            <form class="education-form" id="educationForm">
+                <div id="educationEntries">
+                    <!-- Education entries will be added dynamically -->
+                </div>
+
+                <button type="button" class="add-education" onclick="addEducationEntry()">
+                    <i class="fas fa-plus"></i>
+                    Add Another Education
+                </button>
+            </form>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="skipEducation()">
+                <i class="fas fa-forward"></i>
+                Skip for Now
+            </button>
+            <button type="button" class="btn skip-btn" onclick="skipEducation()">
+                <i class="fas fa-times"></i>
+                Cancel
+            </button>
+            <button type="button" class="btn btn-primary" onclick="saveEducation()">
+                <i class="fas fa-save"></i>
+                Save & Continue
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let educationEntries = [];
+        let entryCounter = 0;
+
+        // Education options data
+        const educationOptions = {
+            levels: ['No Education', 'Below 10th', '10th Pass', '12th Pass', 'ITI', 'Diploma', 'Graduate', 'Post Graduate', 'PPG', 'Doctorate', 'Ph.D', 'Other'],
+            institutions: ['Delhi University', 'Sharada University', 'No Education', 'Other'],
+            statuses: ['Pursuing / Running', 'Pass Out / Completed'],
+            types: ['Full Time', 'Part Time', 'Correspondence', 'Any'],
+            marksTypes: ['Grade', 'Percentage', 'Division', 'CGPA'],
+            itiTrades: ['Electrical', 'Mechanical Engineering', 'Electronics', 'Civil Engineering', 'Fitter', 'Electrical Engineering', 'Wireman', 'Computer Science & Engineering', 'Diesel Mechanic', 'Electronics & Communication Engineering', 'Mechanical', 'Automobile Engineering', 'Electrician', 'Information Technology (IT)', 'Mechanic Motor Vehicle', 'Mechatronics', 'Draughtsman (Mechanical)', 'Aeronautical Engineering', 'Draughtsman (Civil)', 'Mining Engineering', 'Tool & Die Maker', 'Medical Laboratory Technology (DMLT)', 'Mechanic Machine Tool Maintenance', 'Radiology & Imaging Technology', 'Electronics Mechanic', 'Nursing', 'Mechanic (Refrigeration & Air-Conditioning)', 'Pharmacy', 'Welder', 'Physiotherapy', 'COPA', 'Optometry', 'Stenographer', 'Veterinary Science', 'Hair & Skin Care', 'Ayurveda Pharmacy', 'Secretarial Practice', 'Accounting & Finance', 'Dress Making', 'Business Administration', 'Sewing Technology', 'Banking & Insurance', 'Plumber', 'Digital Marketing', 'Painter', 'Retail Management', 'Mechanic Two and Three Wheeler', 'Taxation', 'Financial Management', 'E-commerce', 'Office Management', 'Fashion Designing', 'Interior Designing', 'Graphic Designing', 'Animation & Multimedia', 'Journalism & Mass Communication', 'Photography', 'Event Management', 'Hotel Management', 'Fine Arts', 'Travel & Tourism', 'Biotechnology', 'Microbiology', 'Environmental Science', 'Forensic Science', 'Food Technology', 'Clinical Research', 'Education (Special Education, Early Childhood)', 'Social Work', 'Public Administration', 'Psychology', 'Library & Information Science', 'Dairy Technology', 'Food Processing', 'Industrial Safety', 'Fire & Safety Engineering', 'Applied Art', 'Drawing & Painting', 'Sculpture & Modelling', 'Textile Designing', 'Aerospace Engineering', 'Industrial Engineering', 'Information Engineering', 'Chemical Engineering', 'Instrumentation Engineering', 'Marine Engineering', 'Computer Engineering', 'Petroleum Engineering', 'Electronics Engineering', 'Textile Engineering', 'Geographic Information Systems (GIS)', 'Paint Technology', 'Elementary Education', 'Architecture', 'Chemical Fertilizer', 'Metallurgical Engineering', 'IT Smart', 'Other'],
+            graduateDegrees: ['B.A', 'B.Arch', 'B.A Hons', 'B.Com', 'B.Com Hons.', 'B.Design', 'B.Ed', 'B.EI.Ed', 'B.E / B.Tech', 'B.F Tech', 'B.Sc', 'B.Sc Hons.', 'B.P.Ed', 'B.U.M.S', 'B.Voc', 'B.Pharma', 'B.Pharma Hons.', 'Bachelor', 'BASc', 'BAF', 'BAMS', 'BBA', 'BBA Hons.', 'BCA', 'BDS', 'BFA', 'BHM', 'BHMS', 'BHMCT', 'BPA', 'BMS', 'MBBS', 'LLB', 'LLB Hons.', 'Pharma.D', 'BS', 'BVSC', 'Dual Degree (BE/B.Tech + ME/M.Tech)', 'B.Ed Special Education', 'Bachelor of Audiology and Speech Language Pathology', 'Bachelor of Commerce in Banking and Finance', 'Bachelor of Commerce in Business Economics', 'Bachelor of Development Studies', 'Bachelor of Environmental Design', 'Bachelor of Environmental Management', 'Bachelor of Event Management', 'Bachelor of international economics', 'Bachelor of Journalism and Mass Communication', 'Bachelor of Music', 'Bachelor of Music Therapy', 'Bachelor of Naturopathy and Yogic Science', 'Bachelor of Occupational Therapy', 'Bachelor of Physiotherapy', 'Bachelor of Public Health', 'Bachelor of Social innovation', 'Bachelor of Social Work', 'Bachelor of Tourism Studies in Cultural Heritage', 'Bachelor of Urban Planning', 'Bachelor of Veterinary Science', 'Bachelor of Vocational Studies', 'Bachelors of Liberal Arts', 'Certified Financial Planner', 'Company Secretary', 'Nursery Teacher Training', 'Other'],
+            postGraduateDegrees: ['M.A', 'M.Arch', 'M.A Hons', 'M.Com', 'M.Com Hons.', 'M.Design', 'M.Ed', 'M.EI.Ed', 'M.E / M.Tech', 'M.F Tech', 'M.Sc', 'M.Sc Hons.', 'M.P.Ed', 'M.U.M.S', 'M.Voc', 'M.Pharma', 'M.Pharma Hons.', 'Master', 'MASc', 'MAF', 'MAMS', 'MBA', 'MBA Hons.', 'MCA', 'MDS', 'MFA', 'MHM', 'MHMS', 'MHMCT', 'MPA', 'MMS', 'MD', 'LLM', 'LLM Hons.', 'Pharma.D', 'MS', 'MVSC', 'Dual Degree (BE/B.Tech + ME/M.Tech)', 'M.Ed Special Education', 'Master of Audiology and Speech Language Pathology', 'Master of Commerce in Banking and Finance', 'Master of Commerce in Business Economics', 'Master of Development Studies', 'Master of Environmental Design', 'Master of Environmental Management', 'Master of Event Management', 'Master of international economics', 'Master of Journalism and Mass Communication', 'Master of Music', 'Master of Music Therapy', 'Master of Naturopathy and Yogic Science', 'Master of Occupational Therapy', 'Master of Physiotherapy', 'Master of Public Health', 'Master of Social innovation', 'Master of Social Work', 'Master of Tourism Studies in Cultural Heritage', 'Master of Urban Planning', 'Master of Veterinary Science', 'Master of Vocational Studies', 'Masters of Liberal Arts', 'Certified Financial Planner', 'Company Secretary', 'Nursery Teacher Training', 'Other'],
+            doctorateDegrees: ['Ph.D', 'D.Phil', 'D.Sc', 'D.Litt', 'D.M', 'M.Ch', 'D.M.S', 'Other']
+        };
+
+        function createSelect(options, name, required = false) {
+            let html = `<select name="${name}" ${required ? 'required' : ''}>`;
+            html += `<option value="">Select ${name.replace(/([A-Z])/g, ' $1').toLowerCase()}</option>`;
+            options.forEach(option => {
+                html += `<option value="${option}">${option}</option>`;
+            });
+            html += '</select>';
+            return html;
+        }
+
+        function addEducationEntry() {
+            entryCounter++;
+            const entryId = `entry_${entryCounter}`;
+            
+            const entryHtml = `
+                <div class="education-entry" id="${entryId}">
+                    <div class="education-entry-header">
+                        <div class="entry-number">${entryCounter}</div>
+                        <button type="button" class="remove-entry" onclick="removeEducationEntry('${entryId}')">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-graduation-cap"></i>
+                            Basic Information
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="levelOfEducation_${entryCounter}">Level of Education <span class="required">*</span></label>
+                                ${createSelect(educationOptions.levels, `levelOfEducation_${entryCounter}`, true)}
+                            </div>
+                            <div class="form-group">
+                                <label for="institution_${entryCounter}">Institution / University Name</label>
+                                ${createSelect(educationOptions.institutions, `institution_${entryCounter}`)}
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="educationStatus_${entryCounter}">Education Status</label>
+                                ${createSelect(educationOptions.statuses, `educationStatus_${entryCounter}`)}
+                            </div>
+                            <div class="form-group">
+                                <label for="educationType_${entryCounter}">Education Type</label>
+                                ${createSelect(educationOptions.types, `educationType_${entryCounter}`)}
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="startDate_${entryCounter}">Start Date (MM-YYYY)</label>
+                                <input type="text" name="startDate_${entryCounter}" placeholder="MM-YYYY" pattern="^(0[1-9]|1[0-2])-\\d{4}$">
+                            </div>
+                            <div class="form-group">
+                                <label for="endDate_${entryCounter}">End Date (MM-YYYY)</label>
+                                <input type="text" name="endDate_${entryCounter}" placeholder="MM-YYYY" pattern="^(0[1-9]|1[0-2])-\\d{4}$">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-book"></i>
+                            Course Details
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="degree_${entryCounter}">Degree/Course</label>
+                                <input type="text" name="degree_${entryCounter}" placeholder="Enter degree or course name">
+                            </div>
+                            <div class="form-group">
+                                <label for="specialization_${entryCounter}">Specialization</label>
+                                <input type="text" name="specialization_${entryCounter}" placeholder="Enter specialization">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="educationMedium_${entryCounter}">Education Medium</label>
+                                <input type="text" name="educationMedium_${entryCounter}" placeholder="e.g., English, Hindi, etc.">
+                            </div>
+                            <div class="form-group">
+                                <label for="marksType_${entryCounter}">Marks Type</label>
+                                ${createSelect(educationOptions.marksTypes, `marksType_${entryCounter}`)}
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="marksValue_${entryCounter}">Marks/Percentage/Grade</label>
+                                <input type="text" name="marksValue_${entryCounter}" placeholder="Enter your marks">
+                            </div>
+                            <div class="form-group">
+                                <label for="isHighest_${entryCounter}">Highest Qualification</label>
+                                <select name="isHighest_${entryCounter}">
+                                    <option value="false">No</option>
+                                    <option value="true">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ITI Specific Fields -->
+                    <div class="form-section hidden" id="itiFields_${entryCounter}">
+                        <h3 class="section-title">
+                            <i class="fas fa-tools"></i>
+                            ITI Trade Details
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="itiTrade_${entryCounter}">ITI Trade</label>
+                                ${createSelect(educationOptions.itiTrades, `itiTrade_${entryCounter}`)}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Diploma Specific Fields -->
+                    <div class="form-section hidden" id="diplomaFields_${entryCounter}">
+                        <h3 class="section-title">
+                            <i class="fas fa-certificate"></i>
+                            Diploma Field Details
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="diplomaField_${entryCounter}">Diploma Field</label>
+                                ${createSelect(educationOptions.itiTrades, `diplomaField_${entryCounter}`)}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Graduate Specific Fields -->
+                    <div class="form-section hidden" id="graduateFields_${entryCounter}">
+                        <h3 class="section-title">
+                            <i class="fas fa-university"></i>
+                            Graduate Degree Details
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="graduateDegree_${entryCounter}">Graduate Degree</label>
+                                ${createSelect(educationOptions.graduateDegrees, `graduateDegree_${entryCounter}`)}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Post Graduate Specific Fields -->
+                    <div class="form-section hidden" id="postGraduateFields_${entryCounter}">
+                        <h3 class="section-title">
+                            <i class="fas fa-master"></i>
+                            Post Graduate Degree Details
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postGraduateDegree_${entryCounter}">Post Graduate Degree</label>
+                                ${createSelect(educationOptions.postGraduateDegrees, `postGraduateDegree_${entryCounter}`)}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Doctorate Specific Fields -->
+                    <div class="form-section hidden" id="doctorateFields_${entryCounter}">
+                        <h3 class="section-title">
+                            <i class="fas fa-user-graduate"></i>
+                            Doctorate Degree Details
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="doctorateDegree_${entryCounter}">Doctorate Degree</label>
+                                ${createSelect(educationOptions.doctorateDegrees, `doctorateDegree_${entryCounter}`)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('educationEntries').insertAdjacentHTML('beforeend', entryHtml);
+            
+            // Add event listener for level of education change
+            const levelSelect = document.querySelector(`select[name="levelOfEducation_${entryCounter}"]`);
+            levelSelect.addEventListener('change', function() {
+                toggleDependentFields(entryCounter, this.value);
+            });
+            
+            educationEntries.push(entryId);
+        }
+
+        function removeEducationEntry(entryId) {
+            const entry = document.getElementById(entryId);
+            if (entry) {
+                entry.remove();
+                const index = educationEntries.indexOf(entryId);
+                if (index > -1) {
+                    educationEntries.splice(index, 1);
+                }
+            }
+        }
+
+        function toggleDependentFields(entryNumber, level) {
+            // Hide all dependent fields first
+            document.getElementById(`itiFields_${entryNumber}`).classList.add('hidden');
+            document.getElementById(`diplomaFields_${entryNumber}`).classList.add('hidden');
+            document.getElementById(`graduateFields_${entryNumber}`).classList.add('hidden');
+            document.getElementById(`postGraduateFields_${entryNumber}`).classList.add('hidden');
+            document.getElementById(`doctorateFields_${entryNumber}`).classList.add('hidden');
+            
+            // Show relevant fields based on level
+            switch(level) {
+                case 'ITI':
+                    document.getElementById(`itiFields_${entryNumber}`).classList.remove('hidden');
+                    break;
+                case 'Diploma':
+                    document.getElementById(`diplomaFields_${entryNumber}`).classList.remove('hidden');
+                    break;
+                case 'Graduate':
+                    document.getElementById(`graduateFields_${entryNumber}`).classList.remove('hidden');
+                    break;
+                case 'Post Graduate':
+                    document.getElementById(`postGraduateFields_${entryNumber}`).classList.remove('hidden');
+                    break;
+                case 'Doctorate':
+                case 'Ph.D':
+                    document.getElementById(`doctorateFields_${entryNumber}`).classList.remove('hidden');
+                    break;
+            }
+        }
+
+        function collectEducationData() {
+            const formData = new FormData(document.getElementById('educationForm'));
+            const educationData = [];
+            
+            educationEntries.forEach(entryId => {
+                const entryNumber = entryId.split('_')[1];
+                const entryData = {
+                    levelOfEducation: formData.get(`levelOfEducation_${entryNumber}`),
+                    degree: formData.get(`degree_${entryNumber}`),
+                    specialization: formData.get(`specialization_${entryNumber}`),
+                    institution: formData.get(`institution_${entryNumber}`),
+                    educationStatus: formData.get(`educationStatus_${entryNumber}`),
+                    startDate: formData.get(`startDate_${entryNumber}`),
+                    endDate: formData.get(`endDate_${entryNumber}`),
+                    educationType: formData.get(`educationType_${entryNumber}`),
+                    educationMedium: formData.get(`educationMedium_${entryNumber}`),
+                    marksType: formData.get(`marksType_${entryNumber}`),
+                    marksValue: formData.get(`marksValue_${entryNumber}`),
+                    isHighest: formData.get(`isHighest_${entryNumber}`) === 'true',
+                    itiTrade: formData.get(`itiTrade_${entryNumber}`),
+                    diplomaField: formData.get(`diplomaField_${entryNumber}`),
+                    graduateDegree: formData.get(`graduateDegree_${entryNumber}`),
+                    postGraduateDegree: formData.get(`postGraduateDegree_${entryNumber}`),
+                    doctorateDegree: formData.get(`doctorateDegree_${entryNumber}`)
+                };
+                
+                // Only add if level of education is selected
+                if (entryData.levelOfEducation) {
+                    educationData.push(entryData);
+                }
+            });
+            
+            return educationData;
+        }
+
+        function saveEducation() {
+            const educationData = collectEducationData();
+            console.log('Collected education data:', educationData);
+            
+            // Validate at least one education entry
+            if (educationData.length === 0) {
+                alert('Please add at least one education entry or skip this step.');
+                return;
+            }
+            
+            // Send data to parent window
+            if (window.parent && window.parent !== window) {
+                console.log('Sending education data to parent window (iframe)');
+                window.parent.postMessage({
+                    type: 'educationData',
+                    data: educationData
+                }, '*');
+            } else if (window.opener) {
+                console.log('Sending education data to opener window');
+                window.opener.postMessage({
+                    type: 'educationData',
+                    data: educationData
+                }, '*');
+                window.close();
+            } else {
+                // For testing purposes
+                console.log('Education Data:', educationData);
+                alert('Education data collected successfully!');
+            }
+        }
+
+        function skipEducation() {
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'skipEducation',
+                    data: []
+                }, '*');
+            } else if (window.opener) {
+                window.opener.postMessage({
+                    type: 'skipEducation',
+                    data: []
+                }, '*');
+                window.close();
+            } else {
+                // For testing purposes
+                console.log('Education step skipped');
+                alert('Education step skipped!');
+            }
+        }
+
+        // Initialize with one education entry
+        document.addEventListener('DOMContentLoaded', function() {
+            addEducationEntry();
+        });
+    </script>
+</body>
+</html>

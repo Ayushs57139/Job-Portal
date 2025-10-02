@@ -1,0 +1,7 @@
+RewriteEngine On
+
+# Redirect /admin to admin-login.html
+RewriteRule ^admin/?$ admin-login.html [L]
+
+# Redirect /admin/ to admin-login.html  
+RewriteRule ^admin/?$ admin-login.html [L]

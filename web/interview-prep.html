@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Prep - JobWala</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #1E88E5;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1E88E5;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #1E88E5;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .btn-login {
+            background: white;
+            border: 2px solid #1E88E5;
+            color: #1E88E5;
+            padding: 8px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-login:hover {
+            background: #1E88E5;
+            color: white;
+        }
+        
+        .btn-register {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .btn-register:hover {
+            background: #e55a2b;
+        }
+        
+        /* Main Content */
+        .hero {
+            background: linear-gradient(135deg, #6f42c1, #8e44ad);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        .features {
+            padding: 60px 0;
+            background: white;
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: #6f42c1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: white;
+        }
+        
+        .feature-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 16px;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .mock-interview {
+            background: #f8f9fa;
+            padding: 60px 0;
+        }
+        
+        .mock-interview h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+        }
+        
+        .mock-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        
+        .mock-content h3 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .mock-content p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .mock-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .mock-features li {
+            padding: 10px 0;
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .mock-features li::before {
+            content: '✓';
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .btn-primary {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary:hover {
+            background: #5a32a3;
+        }
+        
+        .mock-preview {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .video-placeholder {
+            background: #e9ecef;
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+        
+        .video-placeholder .play-icon {
+            width: 60px;
+            height: 60px;
+            background: #6f42c1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .pricing {
+            background: white;
+            padding: 60px 0;
+        }
+        
+        .pricing h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .pricing-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .pricing-card.featured {
+            border-color: #6f42c1;
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #6f42c1;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .pricing-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-card .price {
+            font-size: 48px;
+            font-weight: 700;
+            color: #6f42c1;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-card .price span {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .pricing-card ul {
+            list-style: none;
+            margin: 30px 0;
+        }
+        
+        .pricing-card li {
+            padding: 8px 0;
+            color: #666;
+        }
+        
+        .pricing-card li::before {
+            content: '✓';
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .resources {
+            background: #f8f9fa;
+            padding: 60px 0;
+        }
+        
+        .resources h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+        }
+        
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .resource-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .resource-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .resource-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .resource-card .btn-small {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .resource-card .btn-small:hover {
+            background: #5a32a3;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: white;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            padding-top: 20px;
+            text-align: center;
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .nav-links {
+                gap: 20px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .mock-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .features-grid,
+            .pricing-grid,
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">n</div>
+                    <div class="logo-text">JobWala</div>
+                </a>
+                
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="index.html#jobs">Jobs</a></li>
+                        <li><a href="index.html#companies">Companies</a></li>
+                        <li><a href="index.html#services">Services</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <a href="login.html" class="btn-login">Login</a>
+                    <a href="register.html" class="btn-register">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Master Your Interview Skills</h1>
+            <p>Practice with mock interviews, get expert feedback, and land your dream job with confidence</p>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>Our Interview Preparation Services</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Mock Interviews</h3>
+                    <p>Practice with real interview scenarios tailored to your industry and role</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📹</div>
+                    <h3>Video Analysis</h3>
+                    <p>Get detailed feedback on your body language, tone, and communication skills</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Question Bank</h3>
+                    <p>Access 1000+ interview questions with expert answers for your industry</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎭</div>
+                    <h3>Behavioral Prep</h3>
+                    <p>Master STAR method and behavioral interview techniques</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💼</div>
+                    <h3>Technical Prep</h3>
+                    <p>Prepare for technical interviews with coding challenges and system design</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your improvement with detailed analytics and performance metrics</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mock Interview Section -->
+    <section class="mock-interview">
+        <div class="container">
+            <h2>Try Our Mock Interview</h2>
+            <div class="mock-container">
+                <div class="mock-content">
+                    <h3>AI-Powered Mock Interviews</h3>
+                    <p>Experience realistic interview scenarios with our AI-powered mock interview system. Get instant feedback and improve your performance.</p>
+                    
+                    <ul class="mock-features">
+                        <li>Real-time video analysis</li>
+                        <li>Industry-specific questions</li>
+                        <li>Instant feedback and scoring</li>
+                        <li>Body language analysis</li>
+                        <li>Speech pattern evaluation</li>
+                        <li>Confidence level assessment</li>
+                    </ul>
+                    
+                    <a href="#" class="btn-primary">Start Mock Interview</a>
+                </div>
+                
+                <div class="mock-preview">
+                    <h3>Live Demo</h3>
+                    <div class="video-placeholder">
+                        <div class="play-icon">▶</div>
+                        <p>Click to start your mock interview</p>
+                    </div>
+                    <p>Experience the future of interview preparation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing">
+        <div class="container">
+            <h2>Choose Your Plan</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Basic</h3>
+                    <div class="price">₹499<span>/month</span></div>
+                    <ul>
+                        <li>5 Mock Interviews</li>
+                        <li>Basic Feedback</li>
+                        <li>Question Bank Access</li>
+                        <li>Email Support</li>
+                    </ul>
+                    <button class="btn-secondary">Get Started</button>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <h3>Professional</h3>
+                    <div class="price">₹999<span>/month</span></div>
+                    <ul>
+                        <li>Unlimited Mock Interviews</li>
+                        <li>Detailed Video Analysis</li>
+                        <li>Expert Feedback</li>
+                        <li>Behavioral & Technical Prep</li>
+                        <li>Progress Tracking</li>
+                        <li>Priority Support</li>
+                    </ul>
+                    <button class="btn-primary">Choose Plan</button>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>Premium</h3>
+                    <div class="price">₹1,999<span>/month</span></div>
+                    <ul>
+                        <li>Everything in Professional</li>
+                        <li>1-on-1 Expert Sessions</li>
+                        <li>Custom Interview Prep</li>
+                        <li>Resume Review Included</li>
+                        <li>LinkedIn Profile Optimization</li>
+                        <li>24/7 Support</li>
+                    </ul>
+                    <button class="btn-secondary">Choose Plan</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section class="resources">
+        <div class="container">
+            <h2>Free Interview Resources</h2>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <h3>Common Interview Questions</h3>
+                    <p>Access our comprehensive database of frequently asked interview questions with expert answers and tips.</p>
+                    <a href="#" class="btn-small">View Questions</a>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>Interview Tips & Tricks</h3>
+                    <p>Learn proven strategies to ace your interviews, from preparation to follow-up.</p>
+                    <a href="#" class="btn-small">Read Tips</a>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>Industry Guides</h3>
+                    <p>Get industry-specific interview preparation guides for tech, finance, healthcare, and more.</p>
+                    <a href="#" class="btn-small">Browse Guides</a>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>Success Stories</h3>
+                    <p>Read inspiring stories from candidates who landed their dream jobs using our platform.</p>
+                    <a href="#" class="btn-small">Read Stories</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <div class="logo-icon">n</div>
+                        <div class="logo-text">JobWala</div>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>About us</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Employer home</a></li>
+                        <li><a href="#">Sitemap</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Help center</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help center</a></li>
+                        <li><a href="#">Summons/Notices</a></li>
+                        <li><a href="#">Grievances</a></li>
+                        <li><a href="#">Report issue</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Privacy policy</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy policy</a></li>
+                        <li><a href="#">Terms & conditions</a></li>
+                        <li><a href="#">Fraud alert</a></li>
+                        <li><a href="#">Trust & safety</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>All trademarks are the property of their respective owners All rights reserved © 2025 Info Edge (India) Ltd.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add pricing card hover effects
+        document.querySelectorAll('.pricing-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+                this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('featured')) {
+                    this.style.transform = 'translateY(0)';
+                } else {
+                    this.style.transform = 'scale(1.05)';
+                }
+                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+            });
+        });
+
+        // Add mock interview functionality
+        document.querySelector('.play-icon').addEventListener('click', function() {
+            alert('Starting mock interview... This would open the interview interface in a real application.');
+        });
+
+        // Add resource card functionality
+        document.querySelectorAll('.btn-small').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const resource = this.closest('.resource-card').querySelector('h3').textContent;
+                alert(`Opening ${resource}. This would show the resource content in a real application.`);
+            });
+        });
+    </script>
+    <script src="js/chatbot-integration.js"></script>
+</body>
+</html>

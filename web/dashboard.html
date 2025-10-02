@@ -1,0 +1,2907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - JobWala</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .user-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+            text-align: center;
+        }
+
+        .sidebar-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        
+        .logo-free {
+            color: #1E88E5;
+        }
+        
+        .logo-job {
+            color: #ff6b35;
+        }
+        
+        .logo-wala {
+            color: #1E88E5;
+        }
+        
+        .logo-swoosh {
+            position: absolute;
+            bottom: -4px;
+            left: -2px;
+            right: -2px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, #ff6b35 20%, #ff6b35 80%, transparent 100%);
+            border-radius: 2px;
+            transform: rotate(-2deg);
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background: #34495e;
+        }
+
+        .sidebar-menu a.active {
+            background: #1E88E5;
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+            margin-right: 10px;
+            text-align: center;
+        }
+
+        .sidebar-menu span {
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed .sidebar-menu span {
+            opacity: 0;
+        }
+
+        /* User type menu filtering */
+        .user-type-menu {
+            display: none;
+        }
+
+        .user-type-menu.show {
+            display: block;
+        }
+
+        /* New page styles */
+        .job-card, .application-card, .candidate-card, .resume-card, 
+        .employee-card, .subuser-card, .department-card, .client-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #1E88E5;
+        }
+
+        .job-card.draft {
+            border-left-color: #ffc107;
+        }
+
+        .job-actions, .application-actions, .candidate-actions, .resume-actions,
+        .employee-actions, .subuser-actions, .department-actions, .client-actions {
+            margin-top: 15px;
+        }
+
+        .job-actions button, .application-actions button, .candidate-actions button,
+        .resume-actions button, .employee-actions button, .subuser-actions button,
+        .department-actions button, .client-actions button {
+            background: #1E88E5;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .job-actions button:hover, .application-actions button:hover, .candidate-actions button:hover,
+        .resume-actions button:hover, .employee-actions button:hover, .subuser-actions button:hover,
+        .department-actions button:hover, .client-actions button:hover {
+            background: #1565C0;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .analytics-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1E88E5;
+            margin: 10px 0;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .redirect-message {
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Stats display styles */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #1E88E5;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1E88E5;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .settings-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .settings-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1E88E5;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .form-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Profile page styles */
+        .profile-overview {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .profile-picture-section {
+            text-align: center;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-avatar {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1E88E5;
+        }
+
+        .profile-basic-info h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .profile-basic-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .profile-badges {
+            margin-top: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .badge.verified {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.premium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .profile-completion {
+            text-align: center;
+        }
+
+        .completion-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .completion-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1E88E5, #42a5f5);
+            transition: width 0.3s ease;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Filter styles */
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-applied {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-under_review {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-interview_scheduled {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .status-shortlisted {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+
+        .status-accepted {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .status-active {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-inactive {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .badge.jobseeker {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge.employer {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .badge.admin {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .badge.superadmin {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            transition: margin-left 0.3s;
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 70px;
+        }
+
+        /* Top Bar */
+        .topbar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            margin-right: 20px;
+            color: #333;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1E88E5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        /* Content */
+        .content {
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-icon.users {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-icon.applications {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-icon.saved {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-icon.views {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .stat-content h3 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table-title {
+            color: #333;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 25px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-applied {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-accepted {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-shortlisted {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-interview-scheduled {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-under-review {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1E88E5;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="user-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-text">
+                    <span class="logo-free">Free</span>
+                    <span class="logo-job">job</span>
+                    <span class="logo-wala">wala</span>
+                    <div class="logo-swoosh"></div>
+                </div>
+                <p>Dashboard</p>
+            </div>
+            <ul class="sidebar-menu" id="sidebarMenu">
+                <!-- Common menu items for all users -->
+                <li><a href="#" class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a></li>
+                
+                <!-- Job Seeker specific menu items -->
+                <li class="user-type-menu" data-user-types="jobseeker">
+                    <a href="#" class="menu-item" data-page="applications">
+                        <i class="fas fa-file-alt"></i>
+                        <span>My Applications</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="jobseeker">
+                    <a href="#" class="menu-item" data-page="saved-jobs">
+                        <i class="fas fa-bookmark"></i>
+                        <span>Saved Jobs</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="jobseeker">
+                    <a href="#" class="menu-item" data-page="resume">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Resume Builder</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="jobseeker">
+                    <a href="#" class="menu-item" data-page="jobs">
+                        <i class="fas fa-search"></i>
+                        <span>Find Jobs</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="jobseeker">
+                    <a href="#" class="menu-item" data-page="companies">
+                        <i class="fas fa-building"></i>
+                        <span>Companies</span>
+                    </a>
+                </li>
+                
+                <!-- Employer specific menu items -->
+                <li class="user-type-menu" data-user-types="employer,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="manage-jobs">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Manage Jobs</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="employer,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="post-job">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Post New Job</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="employer,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="job-responses">
+                        <i class="fas fa-reply"></i>
+                        <span>Job Responses</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="employer,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="candidate-search">
+                        <i class="fas fa-search"></i>
+                        <span>Candidate Search</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="employer,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="resume-search">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Resume Search</span>
+                    </a>
+                </li>
+                
+                <!-- Company specific menu items -->
+                <li class="user-type-menu" data-user-types="company,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="employees">
+                        <i class="fas fa-users"></i>
+                        <span>Employees</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="company,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="subusers">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Team Members</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="company,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="departments">
+                        <i class="fas fa-building"></i>
+                        <span>Departments</span>
+                    </a>
+                </li>
+                
+                <!-- Consultancy specific menu items -->
+                <li class="user-type-menu" data-user-types="consultancy,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="clients">
+                        <i class="fas fa-handshake"></i>
+                        <span>Clients</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="consultancy,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="candidates">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Candidates</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="consultancy,admin,superadmin">
+                    <a href="#" class="menu-item" data-page="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                
+                <!-- Admin specific menu items -->
+                <li class="user-type-menu" data-user-types="admin,superadmin">
+                    <a href="#" class="menu-item" data-page="admin-panel">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Admin Panel</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="admin,superadmin">
+                    <a href="#" class="menu-item" data-page="user-management">
+                        <i class="fas fa-users-cog"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li class="user-type-menu" data-user-types="admin,superadmin">
+                    <a href="#" class="menu-item" data-page="system-settings">
+                        <i class="fas fa-cogs"></i>
+                        <span>System Settings</span>
+                    </a>
+                </li>
+                
+                <!-- Common menu items for all users -->
+                <li><a href="#" class="menu-item" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a></li>
+                <li><a href="#" class="menu-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h3 id="pageTitle">Dashboard</h3>
+                </div>
+                <div class="topbar-right">
+                    <div class="user-info" onclick="userPanel.openProfile()" style="cursor: pointer;">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <span id="userName">User</span>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div id="dashboardPage" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Dashboard</h1>
+                        <p class="page-subtitle">Welcome to your JobWala Dashboard</p>
+                    </div>
+
+                    <div class="stats-grid" id="statsGrid">
+                        <div class="stat-card" data-stat="applications">
+                            <div class="stat-icon applications">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalApplications">0</h3>
+                                <p>Total Applications</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-stat="saved">
+                            <div class="stat-icon saved">
+                                <i class="fas fa-bookmark"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="savedJobs">0</h3>
+                                <p>Saved Jobs</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-stat="views">
+                            <div class="stat-icon views">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="profileViews">0</h3>
+                                <p>Profile Views</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-stat="active">
+                            <div class="stat-icon users">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="activeApplications">0</h3>
+                                <p>Active Applications</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Recent Applications</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Company</th>
+                                    <th>Status</th>
+                                    <th>Applied Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentApplicationsTable">
+                                <tr>
+                                    <td colspan="5" class="loading">
+                                        <div class="spinner"></div>
+                                        Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Saved Jobs</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Company</th>
+                                    <th>Location</th>
+                                    <th>Salary</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="savedJobsTable">
+                                <tr>
+                                    <td colspan="5" class="loading">
+                                        <div class="spinner"></div>
+                                        Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Applications Page -->
+                <div id="applicationsPage" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">My Applications</h1>
+                        <p class="page-subtitle">Track all your job applications</p>
+                    </div>
+                    <div id="applicationsStats"></div>
+                    
+                    <!-- Filters -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Filter Applications</h3>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div class="filter-row">
+                                <div class="form-group">
+                                    <label for="statusFilter">Status</label>
+                                    <select id="statusFilter" onchange="dashboard.filterApplications()">
+                                        <option value="">All Status</option>
+                                        <option value="applied">Applied</option>
+                                        <option value="under_review">Under Review</option>
+                                        <option value="interview_scheduled">Interview Scheduled</option>
+                                        <option value="shortlisted">Shortlisted</option>
+                                        <option value="accepted">Accepted</option>
+                                        <option value="rejected">Rejected</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dateFilter">Applied Date</label>
+                                    <select id="dateFilter" onchange="dashboard.filterApplications()">
+                                        <option value="">All Time</option>
+                                        <option value="today">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month">This Month</option>
+                                        <option value="3months">Last 3 Months</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="searchApplications">Search</label>
+                                    <input type="text" id="searchApplications" placeholder="Search by job title or company..." onkeyup="dashboard.filterApplications()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Applications Table -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">All Applications</h3>
+                            <div class="table-actions">
+                                <button class="btn btn-primary" onclick="dashboard.refreshApplications()">Refresh</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Company</th>
+                                    <th>Status</th>
+                                    <th>Applied Date</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allApplicationsTable">
+                                <tr>
+                                    <td colspan="6" class="loading">
+                                        <div class="spinner"></div>
+                                        Loading applications...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Application Details Modal -->
+                    <div id="applicationModal" class="modal" style="display: none;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="applicationModalTitle">Application Details</h3>
+                                <span class="close" onclick="dashboard.closeApplicationModal()">&times;</span>
+                            </div>
+                            <div class="modal-body" id="applicationModalBody">
+                                <!-- Application details will be loaded here -->
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" onclick="dashboard.closeApplicationModal()">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saved Jobs Page -->
+                <div id="savedJobsPage" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Saved Jobs</h1>
+                        <p class="page-subtitle">Your bookmarked job opportunities</p>
+                    </div>
+                    <div id="savedJobsStats"></div>
+                    
+                    <!-- Filters -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Filter Saved Jobs</h3>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div class="filter-row">
+                                <div class="form-group">
+                                    <label for="jobTypeFilter">Job Type</label>
+                                    <select id="jobTypeFilter" onchange="dashboard.filterSavedJobs()">
+                                        <option value="">All Types</option>
+                                        <option value="full-time">Full Time</option>
+                                        <option value="part-time">Part Time</option>
+                                        <option value="contract">Contract</option>
+                                        <option value="internship">Internship</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="experienceFilter">Experience</label>
+                                    <select id="experienceFilter" onchange="dashboard.filterSavedJobs()">
+                                        <option value="">All Experience</option>
+                                        <option value="fresher">Fresher</option>
+                                        <option value="0-2">0-2 Years</option>
+                                        <option value="2-5">2-5 Years</option>
+                                        <option value="5-10">5-10 Years</option>
+                                        <option value="10+">10+ Years</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="searchSavedJobs">Search</label>
+                                    <input type="text" id="searchSavedJobs" placeholder="Search by job title or company..." onkeyup="dashboard.filterSavedJobs()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Saved Jobs Table -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">All Saved Jobs</h3>
+                            <div class="table-actions">
+                                <button class="btn btn-primary" onclick="dashboard.refreshSavedJobs()">Refresh</button>
+                                <button class="btn btn-secondary" onclick="dashboard.clearAllSavedJobs()">Clear All</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Company</th>
+                                    <th>Location</th>
+                                    <th>Salary</th>
+                                    <th>Saved Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allSavedJobsTable">
+                                <tr>
+                                    <td colspan="6" class="loading">
+                                        <div class="spinner"></div>
+                                        Loading saved jobs...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Job Details Modal -->
+                    <div id="jobModal" class="modal" style="display: none;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="jobModalTitle">Job Details</h3>
+                                <span class="close" onclick="dashboard.closeJobModal()">&times;</span>
+                            </div>
+                            <div class="modal-body" id="jobModalBody">
+                                <!-- Job details will be loaded here -->
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" onclick="dashboard.applyFromModal()">Apply Now</button>
+                                <button class="btn btn-secondary" onclick="dashboard.closeJobModal()">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Page -->
+                <div id="profilePage" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Profile</h1>
+                        <p class="page-subtitle">Manage your profile information</p>
+                    </div>
+                    <div id="profileStats"></div>
+                    
+                    <!-- Profile Overview -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Profile Overview</h3>
+                        </div>
+                        <div style="padding: 25px;">
+                            <div class="profile-overview">
+                                <div class="profile-picture-section">
+                                    <div class="profile-picture" id="profilePictureContainer">
+                                        <img id="profilePicture" src="" alt="Profile Picture" style="display: none;">
+                                        <div id="profileAvatar" class="profile-avatar">A</div>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="dashboard.uploadProfilePicture()">Upload Photo</button>
+                                </div>
+                                <div class="profile-basic-info">
+                                    <h3 id="profileName">John Doe</h3>
+                                    <p id="profileTitle">Software Developer</p>
+                                    <p id="profileLocation">New York, NY</p>
+                                    <div class="profile-badges" id="profileBadges">
+                                        <span class="badge verified">Verified</span>
+                                        <span class="badge premium">Premium</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Completion -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Profile Completion</h3>
+                        </div>
+                        <div style="padding: 25px;">
+                            <div class="profile-completion">
+                                <div class="completion-bar">
+                                    <div class="completion-fill" id="profileCompletionBar" style="width: 0%"></div>
+                                </div>
+                                <p id="profileCompletionText">0% Complete</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Profile Form -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Edit Profile</h3>
+                        </div>
+                        <div style="padding: 25px;">
+                            <form id="profileForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="firstName">First Name *</label>
+                                        <input type="text" id="firstName" name="firstName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name *</label>
+                                        <input type="text" id="lastName" name="lastName" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="email">Email *</label>
+                                        <input type="email" id="email" name="email" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Phone</label>
+                                        <input type="tel" id="phone" name="phone">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="currentLocation">Current Location</label>
+                                    <input type="text" id="currentLocation" name="currentLocation" placeholder="City, State">
+                                </div>
+                                <div class="form-group">
+                                    <label for="experience">Experience</label>
+                                    <select id="experience" name="experience">
+                                        <option value="">Select Experience</option>
+                                        <option value="Fresher">Fresher</option>
+                                        <option value="3 Months">3 Months</option>
+                                        <option value="6 Months">6 Months</option>
+                                        <option value="1 Year">1 Year</option>
+                                        <option value="2 Years">2 Years</option>
+                                        <option value="3 Years">3 Years</option>
+                                        <option value="5 Years">5 Years</option>
+                                        <option value="10 Years">10 Years</option>
+                                        <option value="10+ Years">10+ Years</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="skills">Skills (comma-separated)</label>
+                                    <input type="text" id="skills" name="skills" placeholder="JavaScript, React, Node.js">
+                                </div>
+                                <div class="form-group">
+                                    <label for="bio">Bio</label>
+                                    <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Save Profile</button>
+                                    <button type="button" class="btn btn-secondary" onclick="dashboard.cancelEdit()">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resume Page -->
+                <div id="resumePage" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Resume Builder</h1>
+                        <p class="page-subtitle">Create and manage your professional resumes</p>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="stats-grid" style="margin-bottom: 30px;">
+                        <div class="stat-card" onclick="createNewResume()" style="cursor: pointer;">
+                            <div class="stat-icon users">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Create New</h3>
+                                <p>Start building a new resume</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" onclick="showTemplates()" style="cursor: pointer;">
+                            <div class="stat-icon applications">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Browse Templates</h3>
+                                <p>Explore 10+ professional designs</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" onclick="importResume()" style="cursor: pointer;">
+                            <div class="stat-icon saved">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Import Resume</h3>
+                                <p>Upload existing resume</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Saved Resumes -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">My Resumes</h3>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select id="templateFilter" onchange="filterResumes()" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <option value="">All Templates</option>
+                                    <option value="modern">Modern</option>
+                                    <option value="classic">Classic</option>
+                                    <option value="creative">Creative</option>
+                                    <option value="minimal">Minimal</option>
+                                    <option value="executive">Executive</option>
+                                    <option value="tech">Tech</option>
+                                    <option value="academic">Academic</option>
+                                    <option value="artistic">Artistic</option>
+                                    <option value="corporate">Corporate</option>
+                                    <option value="startup">Startup</option>
+                                </select>
+                                <select id="colorFilter" onchange="filterResumes()" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <option value="">All Colors</option>
+                                    <option value="blue">Blue</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="purple">Purple</option>
+                                    <option value="green">Green</option>
+                                    <option value="red">Red</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="navy">Navy</option>
+                                    <option value="pink">Pink</option>
+                                    <option value="gray">Gray</option>
+                                    <option value="teal">Teal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="padding: 25px;">
+                            <div id="resumesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                                <!-- Resumes will be loaded here -->
+                            </div>
+                            <div id="emptyResumesState" style="text-align: center; padding: 40px; display: none;">
+                                <div style="font-size: 3rem; color: #ddd; margin-bottom: 20px;">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <h3 style="color: #666; margin-bottom: 10px;">No Resumes Yet</h3>
+                                <p style="color: #999; margin-bottom: 20px;">Create your first professional resume to get started</p>
+                                <button class="btn" onclick="createNewResume()">
+                                    <i class="fas fa-plus"></i> Create Resume
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jobs Page -->
+                <div id="jobsPage" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Find Jobs</h1>
+                        <p class="page-subtitle">Search for new opportunities</p>
+                    </div>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Job Search</h3>
+                        </div>
+                        <div style="padding: 25px;">
+                            <p>Job search coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Companies Page -->
+                <div id="companiesPage" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Companies</h1>
+                        <p class="page-subtitle">Explore companies and opportunities</p>
+                    </div>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Companies</h3>
+                        </div>
+                        <div style="padding: 25px;">
+                            <p>Companies page coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div id="settingsPage" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Settings</h1>
+                        <p class="page-subtitle">Manage your account settings</p>
+                    </div>
+                    <div id="privacySettings"></div>
+                    <div id="notificationSettings"></div>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Account Settings</h3>
+                        </div>
+                        <div style="padding: 25px;">
+                            <p>Settings page coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Dashboard -->
+            <div id="companyDashboardPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Company Dashboard</h1>
+                    <p class="page-subtitle">Manage your company and job postings</p>
+                </div>
+                
+                <!-- Company Stats -->
+                <div class="stats-grid" id="companyStats">
+                    <div class="stat-card">
+                        <div class="stat-icon jobs">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="companyTotalJobs">0</h3>
+                            <p>Total Jobs Posted</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon applications">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="companyTotalApplications">0</h3>
+                            <p>Total Applications</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="companyActiveJobs">0</h3>
+                            <p>Active Jobs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon views">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="companyProfileViews">0</h3>
+                            <p>Profile Views</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Applications -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Recent Applications</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-primary" onclick="dashboard.refreshCompanyApplications()">Refresh</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Applicant</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companyApplicationsTable">
+                            <tr>
+                                <td colspan="5" class="loading">
+                                    <div class="spinner"></div>
+                                    Loading applications...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Recent Jobs -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Recent Jobs</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-success" onclick="dashboard.createJob()">Post New Job</button>
+                            <button class="btn btn-primary" onclick="dashboard.refreshCompanyJobs()">Refresh</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Applications</th>
+                                <th>Status</th>
+                                <th>Posted Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companyJobsTable">
+                            <tr>
+                                <td colspan="5" class="loading">
+                                    <div class="spinner"></div>
+                                    Loading jobs...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Consultancy Dashboard -->
+            <div id="consultancyDashboardPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Consultancy Dashboard</h1>
+                    <p class="page-subtitle">Manage your consultancy and client relationships</p>
+                </div>
+                
+                <!-- Consultancy Stats -->
+                <div class="stats-grid" id="consultancyStats">
+                    <div class="stat-card">
+                        <div class="stat-icon clients">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="consultancyTotalClients">0</h3>
+                            <p>Total Clients</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon jobs">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="consultancyTotalJobs">0</h3>
+                            <p>Jobs Posted</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon applications">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="consultancyTotalApplications">0</h3>
+                            <p>Total Applications</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon revenue">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="consultancyRevenue">₹0</h3>
+                            <p>Monthly Revenue</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Clients -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Recent Clients</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-success" onclick="dashboard.addClient()">Add Client</button>
+                            <button class="btn btn-primary" onclick="dashboard.refreshClients()">Refresh</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Industry</th>
+                                <th>Projects</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTable">
+                            <tr>
+                                <td colspan="5" class="loading">
+                                    <div class="spinner"></div>
+                                    Loading clients...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Recent Applications -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Recent Applications</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-primary" onclick="dashboard.refreshConsultancyApplications()">Refresh</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Client</th>
+                                <th>Applicant</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consultancyApplicationsTable">
+                            <tr>
+                                <td colspan="5" class="loading">
+                                    <div class="spinner"></div>
+                                    Loading applications...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Employer Pages -->
+            <div id="manageJobsPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Manage Jobs</h1>
+                    <p class="page-subtitle">Manage your posted jobs</p>
+                </div>
+                <div id="jobsContainer"></div>
+            </div>
+
+            <div id="postJobPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Post New Job</h1>
+                    <p class="page-subtitle">Create a new job posting</p>
+                </div>
+                <div class="redirect-message">
+                    <p>Redirecting to job posting form...</p>
+                </div>
+            </div>
+
+            <div id="draftJobsPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Draft Jobs</h1>
+                    <p class="page-subtitle">Manage your draft job postings</p>
+                </div>
+                <div id="draftJobsContainer"></div>
+            </div>
+
+            <div id="jobResponsesPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Job Responses</h1>
+                    <p class="page-subtitle">View and manage job applications</p>
+                </div>
+                <div id="jobResponsesContainer"></div>
+            </div>
+
+            <div id="candidateSearchPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Candidate Search</h1>
+                    <p class="page-subtitle">Search for potential candidates</p>
+                </div>
+                <div id="candidatesContainer"></div>
+            </div>
+
+            <div id="resumeSearchPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Resume Search</h1>
+                    <p class="page-subtitle">Search through candidate resumes</p>
+                </div>
+                <div id="resumesContainer"></div>
+            </div>
+
+            <!-- Company Pages -->
+            <div id="employeesPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Employees</h1>
+                    <p class="page-subtitle">Manage your company employees</p>
+                </div>
+                <div id="employeesContainer"></div>
+            </div>
+
+            <div id="subusersPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Team Members</h1>
+                    <p class="page-subtitle">Manage your team members</p>
+                </div>
+                <div id="subusersContainer"></div>
+            </div>
+
+            <div id="departmentsPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Departments</h1>
+                    <p class="page-subtitle">Manage company departments</p>
+                </div>
+                <div id="departmentsContainer"></div>
+            </div>
+
+            <!-- Consultancy Pages -->
+            <div id="clientsPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Clients</h1>
+                    <p class="page-subtitle">Manage your consultancy clients</p>
+                </div>
+                <div id="clientsContainer"></div>
+            </div>
+
+            <div id="candidatesPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Candidates</h1>
+                    <p class="page-subtitle">Manage candidate database</p>
+                </div>
+                <div id="candidatesContainer"></div>
+            </div>
+
+            <div id="analyticsPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Analytics</h1>
+                    <p class="page-subtitle">View performance analytics</p>
+                </div>
+                <div id="analyticsContainer"></div>
+            </div>
+
+            <!-- Admin Pages -->
+            <div id="adminPanelPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">Admin Panel</h1>
+                    <p class="page-subtitle">System administration</p>
+                </div>
+                <div id="adminPanelContainer"></div>
+            </div>
+
+            <div id="userManagementPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">User Management</h1>
+                    <p class="page-subtitle">Manage system users</p>
+                </div>
+                
+                <!-- Admin Stats -->
+                <div class="stats-grid" id="adminStats">
+                    <div class="stat-card">
+                        <div class="stat-icon users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon jobs">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalJobs">0</h3>
+                            <p>Total Jobs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon applications">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalApplications">0</h3>
+                            <p>Total Applications</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="activeJobs">0</h3>
+                            <p>Active Jobs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">User Management</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-primary" onclick="dashboard.refreshUsers()">Refresh</button>
+                            <button class="btn btn-success" onclick="dashboard.createUser()">Create User</button>
+                        </div>
+                    </div>
+                    
+                    <!-- User Filters -->
+                    <div style="padding: 20px; border-bottom: 1px solid #eee;">
+                        <div class="filter-row">
+                            <div class="form-group">
+                                <label for="userSearch">Search Users</label>
+                                <input type="text" id="userSearch" placeholder="Search by name or email..." onkeyup="dashboard.filterUsers()">
+                            </div>
+                            <div class="form-group">
+                                <label for="userTypeFilter">User Type</label>
+                                <select id="userTypeFilter" onchange="dashboard.filterUsers()">
+                                    <option value="">All Types</option>
+                                    <option value="jobseeker">Job Seeker</option>
+                                    <option value="employer">Employer</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="superadmin">Super Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="userStatusFilter">Status</label>
+                                <select id="userStatusFilter" onchange="dashboard.filterUsers()">
+                                    <option value="">All Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <tr>
+                                <td colspan="7" class="loading">
+                                    <div class="spinner"></div>
+                                    Loading users...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Create User Modal -->
+                <div id="createUserModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Create New User</h3>
+                            <span class="close" onclick="dashboard.closeCreateUserModal()">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form id="createUserForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="createFirstName">First Name *</label>
+                                        <input type="text" id="createFirstName" name="firstName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="createLastName">Last Name *</label>
+                                        <input type="text" id="createLastName" name="lastName" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="createEmail">Email *</label>
+                                        <input type="email" id="createEmail" name="email" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="createPhone">Phone</label>
+                                        <input type="tel" id="createPhone" name="phone">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="createUserType">User Type *</label>
+                                        <select id="createUserType" name="userType" required>
+                                            <option value="">Select Type</option>
+                                            <option value="jobseeker">Job Seeker</option>
+                                            <option value="employer">Employer</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="superadmin">Super Admin</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="createPassword">Password *</label>
+                                        <input type="password" id="createPassword" name="password" required>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" onclick="dashboard.submitCreateUser()">Create User</button>
+                            <button class="btn btn-secondary" onclick="dashboard.closeCreateUserModal()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit User Modal -->
+                <div id="editUserModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Edit User</h3>
+                            <span class="close" onclick="dashboard.closeEditUserModal()">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editUserForm">
+                                <input type="hidden" id="editUserId" name="userId">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="editFirstName">First Name *</label>
+                                        <input type="text" id="editFirstName" name="firstName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editLastName">Last Name *</label>
+                                        <input type="text" id="editLastName" name="lastName" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="editEmail">Email *</label>
+                                        <input type="email" id="editEmail" name="email" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editPhone">Phone</label>
+                                        <input type="tel" id="editPhone" name="phone">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="editUserType">User Type *</label>
+                                        <select id="editUserType" name="userType" required>
+                                            <option value="jobseeker">Job Seeker</option>
+                                            <option value="employer">Employer</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="superadmin">Super Admin</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editIsActive">Status</label>
+                                        <select id="editIsActive" name="isActive">
+                                            <option value="true">Active</option>
+                                            <option value="false">Inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" onclick="dashboard.submitEditUser()">Update User</button>
+                            <button class="btn btn-danger" onclick="dashboard.deleteUser()">Delete User</button>
+                            <button class="btn btn-secondary" onclick="dashboard.closeEditUserModal()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="systemSettingsPage" class="page hidden">
+                <div class="page-header">
+                    <h1 class="page-title">System Settings</h1>
+                    <p class="page-subtitle">Configure system settings</p>
+                </div>
+                <div id="settingsContainer"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+        <script>
+            // User Panel Object
+            const userPanel = {
+                currentPage: 'dashboard',
+                
+                init() {
+                    this.setupEventListeners();
+                    this.loadDashboardData();
+                    this.updateUserInfo();
+                },
+
+                setupEventListeners() {
+                    // Sidebar menu clicks
+                    document.querySelectorAll('.menu-item').forEach(item => {
+                        item.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const page = item.dataset.page;
+                            this.showPage(page);
+                        });
+                    });
+
+                    // Menu toggle
+                    document.getElementById('menuToggle').addEventListener('click', () => {
+                        this.toggleSidebar();
+                    });
+
+                    // Logout button
+                    document.getElementById('logoutBtn').addEventListener('click', () => {
+                        this.logout();
+                    });
+
+                    // User info click
+                    document.querySelector('.user-info').addEventListener('click', () => {
+                        this.openProfile();
+                    });
+                },
+
+                showPage(pageName) {
+                    // Hide all pages
+                    document.querySelectorAll('.page').forEach(page => {
+                        page.style.display = 'none';
+                    });
+
+                    // Show selected page
+                    const targetPage = document.getElementById(pageName + 'Page');
+                    if (targetPage) {
+                        targetPage.style.display = 'block';
+                    }
+
+                    // Update active menu item
+                    document.querySelectorAll('.menu-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
+
+                    // Update page title
+                    document.getElementById('pageTitle').textContent = this.getPageTitle(pageName);
+
+                    // Load page data
+                    this.loadPageData(pageName);
+                },
+
+                getPageTitle(pageName) {
+                    const titles = {
+                        'dashboard': 'Dashboard',
+                        'applications': 'My Applications',
+                        'saved-jobs': 'Saved Jobs',
+                        'profile': 'Profile',
+                        'resume': 'Resume Builder',
+                        'jobs': 'Find Jobs',
+                        'companies': 'Companies',
+                        'settings': 'Settings'
+                    };
+                    return titles[pageName] || 'Dashboard';
+                },
+
+                loadPageData(pageName) {
+                    switch(pageName) {
+                        case 'dashboard':
+                            this.loadDashboardData();
+                            break;
+                        case 'applications':
+                            this.loadApplicationsData();
+                            break;
+                        case 'saved-jobs':
+                            this.loadSavedJobsData();
+                            break;
+                        case 'resume':
+                            this.loadResumeData();
+                            break;
+                        default:
+                            console.log(`Loading data for ${pageName}...`);
+                    }
+                },
+
+                loadDashboardData() {
+                    this.loadDashboardStats();
+                    this.loadRecentApplications();
+                    this.loadSavedJobs();
+                },
+
+                loadDashboardStats() {
+                    // Simulate API call
+                    setTimeout(() => {
+                        const stats = {
+                            totalApplications: 12,
+                            activeApplications: 8,
+                            savedJobs: 24,
+                            profileViews: 156
+                        };
+
+                        this.animateNumber('totalApplications', stats.totalApplications);
+                        this.animateNumber('activeApplications', stats.activeApplications);
+                        this.animateNumber('savedJobs', stats.savedJobs);
+                        this.animateNumber('profileViews', stats.profileViews);
+                    }, 500);
+                },
+
+                loadRecentApplications() {
+                    // Simulate API call
+                    setTimeout(() => {
+                        const applications = [
+                            {
+                                title: 'Senior Software Developer',
+                                company: 'TechCorp Inc.',
+                                status: 'Applied',
+                                date: '2024-01-15',
+                                actions: 'View'
+                            },
+                            {
+                                title: 'Frontend Developer',
+                                company: 'WebSolutions Ltd.',
+                                status: 'Under Review',
+                                date: '2024-01-12',
+                                actions: 'View'
+                            },
+                            {
+                                title: 'Full Stack Developer',
+                                company: 'StartupXYZ',
+                                status: 'Interview Scheduled',
+                                date: '2024-01-10',
+                                actions: 'View'
+                            },
+                            {
+                                title: 'React Developer',
+                                company: 'Digital Agency',
+                                status: 'Shortlisted',
+                                date: '2024-01-08',
+                                actions: 'View'
+                            }
+                        ];
+
+                        this.populateTable('recentApplicationsTable', applications, 'applications');
+                    }, 800);
+                },
+
+                loadSavedJobs() {
+                    // Simulate API call
+                    setTimeout(() => {
+                        const savedJobs = [
+                            {
+                                title: 'Product Manager',
+                                company: 'InnovateCorp',
+                                location: 'San Francisco, CA',
+                                salary: '$120k - $150k',
+                                actions: 'Apply'
+                            },
+                            {
+                                title: 'UX Designer',
+                                company: 'DesignStudio',
+                                location: 'New York, NY',
+                                salary: '$90k - $110k',
+                                actions: 'Apply'
+                            },
+                            {
+                                title: 'Data Scientist',
+                                company: 'DataTech',
+                                location: 'Seattle, WA',
+                                salary: '$130k - $160k',
+                                actions: 'Apply'
+                            }
+                        ];
+
+                        this.populateTable('savedJobsTable', savedJobs, 'savedJobs');
+                    }, 1000);
+                },
+
+                loadApplicationsData() {
+                    // Simulate API call
+                    setTimeout(() => {
+                        const applications = [
+                            {
+                                title: 'Senior Software Developer',
+                                company: 'TechCorp Inc.',
+                                status: 'Applied',
+                                date: '2024-01-15',
+                                updated: '2024-01-15',
+                                actions: 'View'
+                            },
+                            {
+                                title: 'Frontend Developer',
+                                company: 'WebSolutions Ltd.',
+                                status: 'Under Review',
+                                date: '2024-01-12',
+                                updated: '2024-01-14',
+                                actions: 'View'
+                            },
+                            {
+                                title: 'Full Stack Developer',
+                                company: 'StartupXYZ',
+                                status: 'Interview Scheduled',
+                                date: '2024-01-10',
+                                updated: '2024-01-13',
+                                actions: 'View'
+                            },
+                            {
+                                title: 'React Developer',
+                                company: 'Digital Agency',
+                                status: 'Shortlisted',
+                                date: '2024-01-08',
+                                updated: '2024-01-12',
+                                actions: 'View'
+                            },
+                            {
+                                title: 'Python Developer',
+                                company: 'CodeCraft',
+                                status: 'Rejected',
+                                date: '2024-01-05',
+                                updated: '2024-01-11',
+                                actions: 'View'
+                            }
+                        ];
+
+                        this.populateTable('allApplicationsTable', applications, 'applications');
+                    }, 500);
+                },
+
+                loadSavedJobsData() {
+                    // Simulate API call
+                    setTimeout(() => {
+                        const savedJobs = [
+                            {
+                                title: 'Product Manager',
+                                company: 'InnovateCorp',
+                                location: 'San Francisco, CA',
+                                salary: '$120k - $150k',
+                                date: '2024-01-14',
+                                actions: 'Apply'
+                            },
+                            {
+                                title: 'UX Designer',
+                                company: 'DesignStudio',
+                                location: 'New York, NY',
+                                salary: '$90k - $110k',
+                                date: '2024-01-13',
+                                actions: 'Apply'
+                            },
+                            {
+                                title: 'Data Scientist',
+                                company: 'DataTech',
+                                location: 'Seattle, WA',
+                                salary: '$130k - $160k',
+                                date: '2024-01-12',
+                                actions: 'Apply'
+                            },
+                            {
+                                title: 'DevOps Engineer',
+                                company: 'CloudTech',
+                                location: 'Austin, TX',
+                                salary: '$110k - $140k',
+                                date: '2024-01-11',
+                                actions: 'Apply'
+                            }
+                        ];
+
+                        this.populateTable('allSavedJobsTable', savedJobs, 'savedJobs');
+                    }, 500);
+                },
+
+                populateTable(tableId, data, type) {
+                    const tbody = document.getElementById(tableId);
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        
+                        if (type === 'applications') {
+                            row.innerHTML = `
+                                <td>${item.title}</td>
+                                <td>${item.company}</td>
+                                <td><span class="status-badge status-${item.status.toLowerCase().replace(' ', '-')}">${item.status}</span></td>
+                                <td>${item.date}</td>
+                                <td>${item.updated || item.date}</td>
+                                <td><button class="btn btn-sm">${item.actions}</button></td>
+                            `;
+                        } else if (type === 'savedJobs') {
+                            row.innerHTML = `
+                                <td>${item.title}</td>
+                                <td>${item.company}</td>
+                                <td>${item.location}</td>
+                                <td>${item.salary}</td>
+                                <td>${item.date}</td>
+                                <td><button class="btn btn-sm">${item.actions}</button></td>
+                            `;
+                        }
+
+                        tbody.appendChild(row);
+                    });
+                },
+
+                animateNumber(elementId, targetNumber) {
+                    const element = document.getElementById(elementId);
+                    if (!element) return;
+
+                    let currentNumber = 0;
+                    const increment = targetNumber / 50;
+                    const timer = setInterval(() => {
+                        currentNumber += increment;
+                        if (currentNumber >= targetNumber) {
+                            currentNumber = targetNumber;
+                            clearInterval(timer);
+                        }
+                        element.textContent = Math.floor(currentNumber);
+                    }, 30);
+                },
+
+                toggleSidebar() {
+                    const sidebar = document.getElementById('sidebar');
+                    sidebar.classList.toggle('collapsed');
+                },
+
+                updateUserInfo() {
+                    const user = window.globalAuth.getCurrentUser();
+                    if (user) {
+                        const userName = user.firstName || user.name || 'User';
+                        const userAvatar = user.firstName ? user.firstName.charAt(0).toUpperCase() : 'U';
+                        
+                        document.getElementById('userName').textContent = userName;
+                        document.getElementById('userAvatar').textContent = userAvatar;
+                        document.title = `Dashboard - ${userName} - JobWala`;
+                    }
+                },
+
+                openProfile() {
+                    this.showPage('profile');
+                },
+
+                logout() {
+                    if (window.globalAuth) {
+                        window.globalAuth.logout();
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                },
+
+                loadResumeData() {
+                    this.loadSavedResumes();
+                },
+
+                loadSavedResumes() {
+                    const resumesGrid = document.getElementById('resumesGrid');
+                    const emptyState = document.getElementById('emptyResumesState');
+                    
+                    // Get saved resumes from localStorage
+                    const savedResumes = this.getSavedResumes();
+                    
+                    if (savedResumes.length === 0) {
+                        resumesGrid.style.display = 'none';
+                        emptyState.style.display = 'block';
+                        return;
+                    }
+                    
+                    resumesGrid.style.display = 'grid';
+                    emptyState.style.display = 'none';
+                    resumesGrid.innerHTML = '';
+                    
+                    savedResumes.forEach((resume, index) => {
+                        const resumeCard = this.createResumeCard(resume, index);
+                        resumesGrid.appendChild(resumeCard);
+                    });
+                },
+
+                getSavedResumes() {
+                    const resumes = [];
+                    const savedResume = localStorage.getItem('savedResume');
+                    
+                    if (savedResume) {
+                        const resumeData = JSON.parse(savedResume);
+                        resumes.push({
+                            ...resumeData,
+                            id: 'current',
+                            name: resumeData.data.personal.fullName || 'Untitled Resume',
+                            lastModified: new Date(resumeData.timestamp || Date.now())
+                        });
+                    }
+                    
+                    // Get additional saved resumes
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key.startsWith('resume_') && key !== 'savedResume') {
+                            try {
+                                const resumeData = JSON.parse(localStorage.getItem(key));
+                                resumes.push({
+                                    ...resumeData,
+                                    id: key,
+                                    name: resumeData.data.personal.fullName || 'Untitled Resume',
+                                    lastModified: new Date(resumeData.timestamp || Date.now())
+                                });
+                            } catch (e) {
+                                console.error('Error parsing resume:', key, e);
+                            }
+                        }
+                    }
+                    
+                    return resumes.sort((a, b) => b.lastModified - a.lastModified);
+                },
+
+                createResumeCard(resume, index) {
+                    const card = document.createElement('div');
+                    card.className = 'resume-card';
+                    card.style.cssText = `
+                        background: white;
+                        border: 1px solid #e9ecef;
+                        border-radius: 10px;
+                        padding: 20px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        cursor: pointer;
+                    `;
+                    
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="margin: 0 0 5px 0; color: #333; font-size: 1.1rem;">${resume.name}</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.9rem;">${this.getTemplateName(resume.template)} • ${this.getColorName(resume.color)}</p>
+                            </div>
+                            <div class="resume-actions" style="display: flex; gap: 5px;">
+                                <button onclick="event.stopPropagation(); previewResume('${resume.id}')" style="background: #667eea; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Preview">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); editResume('${resume.id}')" style="background: #28a745; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); deleteResume('${resume.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div style="color: #999; font-size: 0.8rem;">
+                            Last modified: ${resume.lastModified.toLocaleDateString()}
+                        </div>
+                    `;
+                    
+                    card.addEventListener('mouseenter', () => {
+                        card.style.transform = 'translateY(-2px)';
+                        card.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
+                    });
+                    
+                    card.addEventListener('mouseleave', () => {
+                        card.style.transform = 'translateY(0)';
+                        card.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                    });
+                    
+                    card.addEventListener('click', () => {
+                        editResume(resume.id);
+                    });
+                    
+                    return card;
+                },
+
+                getTemplateName(template) {
+                    const templates = {
+                        'modern': 'Modern',
+                        'classic': 'Classic',
+                        'creative': 'Creative',
+                        'minimal': 'Minimal',
+                        'executive': 'Executive',
+                        'tech': 'Tech',
+                        'academic': 'Academic',
+                        'artistic': 'Artistic',
+                        'corporate': 'Corporate',
+                        'startup': 'Startup'
+                    };
+                    return templates[template] || 'Unknown';
+                },
+
+                getColorName(color) {
+                    const colors = {
+                        'blue': 'Blue',
+                        'dark': 'Dark',
+                        'purple': 'Purple',
+                        'green': 'Green',
+                        'red': 'Red',
+                        'orange': 'Orange',
+                        'navy': 'Navy',
+                        'pink': 'Pink',
+                        'gray': 'Gray',
+                        'teal': 'Teal'
+                    };
+                    return colors[color] || 'Unknown';
+                }
+            };
+
+            // Initialize when DOM is loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                // Require authentication for dashboard
+                if (!window.globalAuth.requireAuth()) {
+                    return; // Will redirect to login
+                }
+                
+                // Initialize user panel
+                userPanel.init();
+            });
+
+            // Global Resume Management Functions
+            function createNewResume() {
+                window.location.href = 'resume-builder.html';
+            }
+
+            function showTemplates() {
+                window.location.href = 'resume-builder.html';
+            }
+
+            function importResume() {
+                alert('Resume import feature coming soon!');
+            }
+
+            function editResume(resumeId) {
+                if (resumeId === 'current') {
+                    window.location.href = 'resume-builder.html';
+                } else {
+                    // Load specific resume and redirect to builder
+                    const resumeData = localStorage.getItem(resumeId);
+                    if (resumeData) {
+                        localStorage.setItem('savedResume', resumeData);
+                        window.location.href = 'resume-builder.html';
+                    }
+                }
+            }
+
+            function previewResume(resumeId) {
+                const resumeData = resumeId === 'current' ? 
+                    localStorage.getItem('savedResume') : 
+                    localStorage.getItem(resumeId);
+                
+                if (resumeData) {
+                    const resume = JSON.parse(resumeData);
+                    showResumePreview(resume);
+                }
+            }
+
+            function deleteResume(resumeId) {
+                if (confirm('Are you sure you want to delete this resume?')) {
+                    if (resumeId === 'current') {
+                        localStorage.removeItem('savedResume');
+                    } else {
+                        localStorage.removeItem(resumeId);
+                    }
+                    userPanel.loadSavedResumes();
+                }
+            }
+
+            function filterResumes() {
+                const templateFilter = document.getElementById('templateFilter').value;
+                const colorFilter = document.getElementById('colorFilter').value;
+                
+                const resumeCards = document.querySelectorAll('.resume-card');
+                resumeCards.forEach(card => {
+                    const template = card.dataset.template || '';
+                    const color = card.dataset.color || '';
+                    
+                    const templateMatch = !templateFilter || template === templateFilter;
+                    const colorMatch = !colorFilter || color === colorFilter;
+                    
+                    if (templateMatch && colorMatch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            function showResumePreview(resume) {
+                // Create modal for resume preview
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="background: white; border-radius: 10px; max-width: 800px; max-height: 90vh; overflow: auto; position: relative;">
+                        <div style="position: sticky; top: 0; background: white; padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="margin: 0;">Resume Preview</h3>
+                            <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div id="previewContent"></div>
+                        </div>
+                        <div style="position: sticky; bottom: 0; background: white; padding: 20px; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="downloadResumePDF('${resume.id || 'current'}')" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                                <i class="fas fa-download"></i> Download PDF
+                            </button>
+                            <button onclick="editResume('${resume.id || 'current'}')" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                                <i class="fas fa-edit"></i> Edit Resume
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                modal.className = 'modal';
+                document.body.appendChild(modal);
+                
+                // Generate resume preview
+                const previewContent = modal.querySelector('#previewContent');
+                const resumeHTML = generateResumeHTML(resume);
+                previewContent.innerHTML = resumeHTML;
+                
+                // Close modal on background click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            function generateResumeHTML(resume) {
+                const data = resume.data;
+                const colors = getColorScheme(resume.color);
+                
+                return `
+                    <div class="resume ${resume.template}-template" style="--primary-color: ${colors.primary}; --secondary-color: ${colors.secondary}; --accent-color: ${colors.accent}; font-family: Arial, sans-serif; line-height: 1.6; color: #2c3e50; max-width: 800px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 0 20px rgba(0,0,0,0.1);">
+                        <div class="resume-header" style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid var(--primary-color);">
+                            <h1 class="name" style="font-size: 2.5rem; font-weight: bold; color: var(--primary-color); margin-bottom: 5px;">${data.personal.fullName || 'Your Name'}</h1>
+                            <h2 class="title" style="font-size: 1.3rem; color: var(--secondary-color); margin-bottom: 15px; font-weight: 500;">${data.personal.title || 'Your Title'}</h2>
+                            <div class="contact-info" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; font-size: 0.9rem; color: #666;">
+                                ${data.personal.email ? `<span><i class="fas fa-envelope"></i> ${data.personal.email}</span>` : ''}
+                                ${data.personal.phone ? `<span><i class="fas fa-phone"></i> ${data.personal.phone}</span>` : ''}
+                                ${data.personal.location ? `<span><i class="fas fa-map-marker-alt"></i> ${data.personal.location}</span>` : ''}
+                                ${data.personal.linkedin ? `<span><i class="fab fa-linkedin"></i> ${data.personal.linkedin}</span>` : ''}
+                                ${data.personal.website ? `<span><i class="fas fa-globe"></i> ${data.personal.website}</span>` : ''}
+                            </div>
+                        </div>
+                        
+                        ${data.personal.summary ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Professional Summary</h3>
+                                <p class="summary" style="font-style: italic; color: #555; margin: 0;">${data.personal.summary}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${data.experience && data.experience.length > 0 ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Professional Experience</h3>
+                                ${data.experience.map(exp => `
+                                    <div class="experience-item" style="margin-bottom: 20px;">
+                                        <div class="experience-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px;">
+                                            <h4 class="job-title" style="font-size: 1.1rem; font-weight: 600; color: var(--secondary-color); margin: 0;">${exp.title}</h4>
+                                            <span class="company" style="color: var(--primary-color); font-weight: 500;">${exp.company}</span>
+                                            <span class="duration" style="color: #666; font-size: 0.9rem;">${formatDate(exp.startDate)} - ${exp.endDate ? formatDate(exp.endDate) : 'Present'}</span>
+                                        </div>
+                                        <p class="description" style="margin: 0; color: #555;">${exp.description}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${data.education && data.education.length > 0 ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Education</h3>
+                                ${data.education.map(edu => `
+                                    <div class="education-item" style="margin-bottom: 20px;">
+                                        <div class="education-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px;">
+                                            <h4 class="degree" style="font-size: 1.1rem; font-weight: 600; color: var(--secondary-color); margin: 0;">${edu.degree}</h4>
+                                            <span class="institution" style="color: var(--primary-color); font-weight: 500;">${edu.institution}</span>
+                                            <span class="duration" style="color: #666; font-size: 0.9rem;">${formatDate(edu.startDate)} - ${edu.endDate ? formatDate(edu.endDate) : 'Present'}</span>
+                                            ${edu.gpa ? `<span class="gpa" style="color: #666; font-size: 0.9rem;">GPA: ${edu.gpa}</span>` : ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${data.skills && (data.skills.technical || data.skills.soft || data.skills.languages) ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Skills</h3>
+                                <div class="skills-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                    ${data.skills.technical ? `
+                                        <div class="skill-category">
+                                            <h4 style="color: var(--primary-color); margin-bottom: 5px; font-size: 1rem;">Technical Skills</h4>
+                                            <p style="margin: 0; color: #555;">${data.skills.technical}</p>
+                                        </div>
+                                    ` : ''}
+                                    ${data.skills.soft ? `
+                                        <div class="skill-category">
+                                            <h4 style="color: var(--primary-color); margin-bottom: 5px; font-size: 1rem;">Soft Skills</h4>
+                                            <p style="margin: 0; color: #555;">${data.skills.soft}</p>
+                                        </div>
+                                    ` : ''}
+                                    ${data.skills.languages ? `
+                                        <div class="skill-category">
+                                            <h4 style="color: var(--primary-color); margin-bottom: 5px; font-size: 1rem;">Languages</h4>
+                                            <p style="margin: 0; color: #555;">${data.skills.languages}</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${data.projects && data.projects.length > 0 ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Projects</h3>
+                                ${data.projects.map(proj => `
+                                    <div class="project-item" style="margin-bottom: 20px;">
+                                        <div class="project-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px;">
+                                            <h4 class="project-name" style="font-size: 1.1rem; font-weight: 600; color: var(--secondary-color); margin: 0;">${proj.name}</h4>
+                                            ${proj.url ? `<a href="${proj.url}" class="project-url" target="_blank" style="color: var(--primary-color); text-decoration: none;"><i class="fas fa-external-link-alt"></i></a>` : ''}
+                                        </div>
+                                        ${proj.technologies ? `<p class="technologies" style="font-size: 0.9rem; color: #666; margin: 5px 0;"><strong>Technologies:</strong> ${proj.technologies}</p>` : ''}
+                                        <p class="description" style="margin: 0; color: #555;">${proj.description}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${data.skills && data.skills.certifications ? `
+                            <div class="resume-section" style="margin-bottom: 25px;">
+                                <h3 class="section-title" style="font-size: 1.4rem; color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-bottom: 15px; font-weight: 600;">Certifications</h3>
+                                <p class="certifications" style="margin: 0; color: #555;">${data.skills.certifications}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            function getColorScheme(color) {
+                const schemes = {
+                    blue: { primary: '#1E88E5', secondary: '#1976D2', accent: '#42A5F5' },
+                    dark: { primary: '#2C3E50', secondary: '#34495E', accent: '#5D6D7E' },
+                    purple: { primary: '#8E24AA', secondary: '#7B1FA2', accent: '#AB47BC' },
+                    green: { primary: '#43A047', secondary: '#388E3C', accent: '#66BB6A' },
+                    red: { primary: '#E53935', secondary: '#D32F2F', accent: '#EF5350' },
+                    orange: { primary: '#FB8C00', secondary: '#F57C00', accent: '#FFB74D' },
+                    navy: { primary: '#1565C0', secondary: '#0D47A1', accent: '#42A5F5' },
+                    pink: { primary: '#E91E63', secondary: '#C2185B', accent: '#F06292' },
+                    gray: { primary: '#546E7A', secondary: '#455A64', accent: '#78909C' },
+                    teal: { primary: '#00ACC1', secondary: '#0097A7', accent: '#26C6DA' }
+                };
+                return schemes[color] || schemes.blue;
+            }
+
+            function formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString + '-01');
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+            }
+
+            function downloadResumePDF(resumeId) {
+                const resumeData = resumeId === 'current' ? 
+                    localStorage.getItem('savedResume') : 
+                    localStorage.getItem(resumeId);
+                
+                if (resumeData) {
+                    const resume = JSON.parse(resumeData);
+                    const resumeHTML = generateResumeHTML(resume);
+                    
+                    // Create temporary element for PDF generation
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = resumeHTML;
+                    tempDiv.style.position = 'absolute';
+                    tempDiv.style.left = '-9999px';
+                    document.body.appendChild(tempDiv);
+                    
+                    // Use html2canvas and jsPDF to generate PDF
+                    if (window.html2canvas && window.jspdf) {
+                        html2canvas(tempDiv, {
+                            scale: 2,
+                            useCORS: true,
+                            allowTaint: true
+                        }).then(canvas => {
+                            const imgData = canvas.toDataURL('image/png');
+                            const { jsPDF } = window.jspdf;
+                            const pdf = new jsPDF('p', 'mm', 'a4');
+                            
+                            const imgWidth = 210;
+                            const pageHeight = 295;
+                            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                            let heightLeft = imgHeight;
+                            
+                            let position = 0;
+                            
+                            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                            heightLeft -= pageHeight;
+                            
+                            while (heightLeft >= 0) {
+                                position = heightLeft - imgHeight;
+                                pdf.addPage();
+                                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                                heightLeft -= pageHeight;
+                            }
+                            
+                            pdf.save(`${resume.data.personal.fullName || 'resume'}.pdf`);
+                            document.body.removeChild(tempDiv);
+                        });
+                    } else {
+                        alert('PDF generation libraries not loaded. Please try again.');
+                        document.body.removeChild(tempDiv);
+                    }
+                }
+            }
+
+            // Add some basic button styles
+            const style = document.createElement('style');
+            style.textContent = `
+                .btn {
+                    background: #1E88E5;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 0.9rem;
+                }
+                .btn:hover {
+                    background: #1976D2;
+                }
+                .btn-sm {
+                    padding: 4px 8px;
+                    font-size: 0.8rem;
+                }
+            `;
+            document.head.appendChild(style);
+        </script>
+</body>
+</html>

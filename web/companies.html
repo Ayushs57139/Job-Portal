@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companies - JobWala</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+    <style>
+        /* Companies Page Specific Styles */
+        .companies-page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 60px 0 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .companies-page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .companies-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .companies-search-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 32px;
+            border-radius: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .companies-search-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .companies-search-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            opacity: 1;
+        }
+
+        .companies-search-container > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .companies-search-bar {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .companies-search-bar:hover {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .companies-search-bar .search-input-group {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .companies-search-bar .search-input-group input {
+            width: 100%;
+            padding: 16px 20px 16px 52px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            color: #2d3748;
+        }
+
+        .companies-search-bar .search-input-group input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            outline: none;
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+            color: #1a202c;
+        }
+
+        .companies-search-bar .search-input-group input::placeholder {
+            color: #718096;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .companies-search-bar .search-input-group i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .companies-search-bar .search-input-group:focus-within i {
+            color: #5a67d8;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .companies-search-bar .search-select-group {
+            min-width: 180px;
+            position: relative;
+        }
+
+        .companies-search-bar .search-select-group select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #2d3748;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .companies-search-bar .search-select-group select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            outline: none;
+            background-color: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+            color: #1a202c;
+        }
+
+        .companies-search-bar .search-select-group select:hover {
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .companies-search-bar .search-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            min-width: 140px;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .companies-search-bar .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a67d8 0%, #6a4190 100%);
+        }
+
+        .companies-search-bar .search-btn:active {
+            transform: translateY(0);
+        }
+
+        .companies-search-bar .search-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .companies-search-bar .search-btn:hover i {
+            transform: scale(1.1);
+        }
+
+        .search-results-info {
+            text-align: center;
+            margin-top: 16px;
+            padding: 12px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .results-count {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .company-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .company-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .company-info h3 {
+            color: #333;
+            margin: 0 0 5px 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .company-industry {
+            color: #667eea;
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .company-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .company-jobs {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .company-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .company-rating .stars {
+            color: #ffc107;
+            font-size: 0.9rem;
+        }
+
+        .company-rating .rating {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .company-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .company-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-view-jobs {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn-view-jobs:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .no-companies-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-companies-message i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .no-companies-message h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .loading-indicator {
+            text-align: center;
+            padding: 40px;
+            color: #4a5568;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-indicator i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .loading-indicator span {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .companies-page-header h1 {
+                font-size: 2rem;
+            }
+
+            .companies-search-container {
+                padding: 20px;
+                margin-bottom: 30px;
+                border-radius: 20px;
+            }
+
+            .companies-search-bar {
+                flex-direction: column;
+                gap: 16px;
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .companies-search-bar .search-input-group,
+            .companies-search-bar .search-select-group {
+                min-width: 100%;
+            }
+
+            .companies-search-bar .search-btn {
+                width: 100%;
+                padding: 16px 20px;
+            }
+
+            .companies-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .company-card {
+                padding: 20px;
+            }
+
+            .company-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .company-logo {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+        
+        /* User Menu Styles */
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .user-dropdown {
+            position: relative;
+        }
+        
+        .user-dropdown-toggle {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .user-dropdown-toggle:hover {
+            background: #f8f9fa;
+            color: #333;
+        }
+        
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            margin-top: 5px;
+        }
+        
+        .user-dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #1E88E5;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 8px 0;
+        }
+        
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <div class="logo-text">
+                            <span class="logo-free">Free</span>
+                            <span class="logo-job">job</span>
+                            <span class="logo-wala">wala</span>
+                            <div class="logo-swoosh"></div>
+                        </div>
+                    </a>
+                </div>
+                
+                <nav class="nav">
+                    <ul class="nav-links">
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="companies.html" class="active">Companies</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="resume.html">Resume</a></li>
+                        <li><a href="blogs.html">Blogs</a></li>
+                        <li><a href="packages.html">Packages</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions" id="headerActions">
+                    <!-- User menu (shown when logged in) -->
+                    <div id="userMenu" class="user-menu" style="display: none;">
+                        <div class="user-info">
+                            <span id="userName" class="user-name"></span>
+                            <div class="user-dropdown">
+                                <button class="user-dropdown-toggle" onclick="toggleUserDropdown()">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="user-dropdown-menu" id="userDropdownMenu">
+                                    <a href="dashboard.html" class="dropdown-item">
+                                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                                    </a>
+                                    <a href="profile.html" class="dropdown-item">
+                                        <i class="fas fa-user"></i> Profile
+                                    </a>
+                                    <a href="my-applications.html" class="dropdown-item">
+                                        <i class="fas fa-file-alt"></i> My Applications
+                                    </a>
+                                    <a href="saved-jobs.html" class="dropdown-item">
+                                        <i class="fas fa-bookmark"></i> Saved Jobs
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" class="dropdown-item" onclick="logout()">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Companies Page Header -->
+    <div class="companies-page-header">
+        <div class="container">
+            <h1>Top Companies</h1>
+            <p class="companies-subtitle">Discover opportunities from leading companies and organizations</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Company Search and Filters -->
+        <div class="companies-search-container">
+            <div class="companies-search-bar">
+                <div class="search-input-group">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="companySearchInput" placeholder="Search companies by name...">
+                </div>
+                <div class="search-select-group">
+                    <select id="companyIndustryFilter">
+                        <option value="">All Industries</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Education">Education</option>
+                        <option value="Manufacturing">Manufacturing</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Consulting">Consulting</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button class="search-btn" onclick="performCompanySearch()">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+            </div>
+            <div class="search-results-info">
+                <span id="searchResultsCount" class="results-count">Loading companies...</span>
+            </div>
+        </div>
+
+        <!-- Companies Loading Indicator -->
+        <div id="companiesLoading" class="loading-indicator">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading companies...</span>
+        </div>
+
+        <!-- Companies Grid -->
+        <div class="companies-grid" id="companiesGrid">
+            <!-- Companies will be loaded dynamically here -->
+        </div>
+
+        <!-- No Companies Found Message -->
+        <div id="noCompaniesFound" class="no-companies-message" style="display: none;">
+            <i class="fas fa-building"></i>
+            <h3>No companies found</h3>
+            <p>Try adjusting your search criteria or check back later for new opportunities.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>JobWala</h3>
+                    <p>Connecting talent with opportunity</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="companies.html">Companies</a></li>
+                        <li><a href="services.html">Services</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 JobWala. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/debug-auth.js"></script>
+    <script src="js/companies.js"></script>
+    <script src="js/chatbot-integration.js"></script>
+</body>
+</html>
